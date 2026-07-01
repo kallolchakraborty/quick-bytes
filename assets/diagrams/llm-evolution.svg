@@ -32,11 +32,11 @@
   <text x="260" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#c34113" class="brand-dark">LLM Evolution Timeline</text>
 
   <!-- Vertical line -->
-  <line x1="60" y1="56" x2="60" y2="590" stroke="#e2e8f0" stroke-width="2" class="border-default"/>
+  <line x1="60" y1="56" x2="60" y2="540" stroke="#e2e8f0" stroke-width="2" class="border-default"/>
 
   <!-- Animated pulse -->
   <circle cx="60" r="5" fill="#e95420" opacity="0.4" class="brand">
-    <animate attributeName="cy" values="56;590" dur="8s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="56;540" dur="8s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0;0.6;0.6;0" dur="8s" repeatCount="indefinite"/>
     <animate attributeName="r" values="3;6;3" dur="8s" repeatCount="indefinite"/>
   </circle>
@@ -52,12 +52,12 @@
     <g class="fade-slide">
       <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.8s" fill="freeze"/>
       <animateTransform attributeName="transform" type="translate" values="0,-8;0,0" dur="0.4s" begin="0.8s" fill="freeze"/>
-      <rect x="90" y="58" width="400" height="54" rx="8" class="bg-card border-default" stroke-width="1"/>
-      <rect x="90" y="58" width="4" height="54" rx="2" class="brand-light brand"/>
-      <text x="108" y="78" font-size="12" font-weight="700" class="text-default">Statistical LMs</text>
-      <text x="108" y="96" font-size="10" class="text-muted">n-gram models, Markov chains — sparse, no generalization</text>
-      <rect x="430" y="62" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
-      <text x="453" y="75" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">pre-2013</text>
+      <rect x="90" y="53" width="400" height="64" rx="8" class="bg-card border-default" stroke-width="1"/>
+      <rect x="90" y="53" width="4" height="64" rx="2" class="brand-light brand"/>
+      <text x="108" y="73" font-size="12" font-weight="700" class="text-default">Statistical LMs</text>
+      <text x="108" y="91" font-size="10" class="text-muted">n-gram models, Markov chains — sparse, no generalization</text>
+      <rect x="430" y="57" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="70" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">pre-2013</text>
     </g>
   </g>
 
@@ -72,88 +72,74 @@
     <g class="fade-slide">
       <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.7s" fill="freeze"/>
       <animateTransform attributeName="transform" type="translate" values="0,-8;0,0" dur="0.4s" begin="1.7s" fill="freeze"/>
-      <rect x="90" y="158" width="400" height="54" rx="8" class="bg-card border-default" stroke-width="1" filter="url(#shadow)"/>
-      <rect x="90" y="158" width="4" height="54" rx="2" class="brand-light brand"/>
-      <text x="108" y="178" font-size="12" font-weight="700" class="text-default">Neural LMs</text>
-      <text x="108" y="196" font-size="10" class="text-muted">Word2Vec, LSTMs, GRUs — dense reps, sequential, limited context</text>
-      <rect x="430" y="162" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
-      <text x="453" y="175" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2013–2017</text>
+      <rect x="90" y="153" width="400" height="64" rx="8" class="bg-card border-default" stroke-width="1"/>
+      <rect x="90" y="153" width="4" height="64" rx="2" class="brand-light brand"/>
+      <text x="108" y="173" font-size="12" font-weight="700" class="text-default">Neural LMs</text>
+      <text x="108" y="191" font-size="10" class="text-muted">Word2Vec, LSTMs, GRUs — dense reps, sequential, limited context</text>
+      <rect x="430" y="157" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="170" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2013–2017</text>
     </g>
   </g>
 
   <!-- ERA 3: Transformers -->
   <g>
-    <circle cx="60" cy="285" r="11" fill="#ffffff" class="bg-card brand-border" stroke-width="2.5">
-      <animate attributeName="r" values="0;11" dur="0.35s" begin="2.1s" fill="freeze"/>
+    <circle cx="60" cy="285" r="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" class="bg-card border-default">
+      <animate attributeName="r" values="0;10" dur="0.35s" begin="2.1s" fill="freeze"/>
     </circle>
-    <circle cx="60" cy="285" r="4" class="brand" opacity="0">
+    <circle cx="60" cy="285" r="3" fill="#94a3b8" class="text-muted" opacity="0">
       <animate attributeName="opacity" values="0;1" dur="0.2s" begin="2.45s" fill="freeze"/>
-    </circle>
-    <circle cx="60" cy="285" r="16" fill="none" class="brand-border" stroke-width="1" opacity="0">
-      <animate attributeName="opacity" values="0;0.5;0" dur="2s" begin="2.5s" repeatCount="indefinite"/>
-      <animate attributeName="r" values="11;20" dur="2s" begin="2.5s" repeatCount="indefinite"/>
     </circle>
     <g class="fade-slide">
       <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.6s" fill="freeze"/>
       <animateTransform attributeName="transform" type="translate" values="0,-8;0,0" dur="0.4s" begin="2.6s" fill="freeze"/>
-      <rect x="90" y="258" width="400" height="62" rx="8" class="bg-card brand-border" stroke-width="1"/>
-      <rect x="90" y="258" width="4" height="62" rx="2" class="brand"/>
-      <text x="108" y="278" font-size="12" font-weight="700" class="brand" fill="#c34113">Transformers</text>
-      <text x="108" y="296" font-size="10" class="text-muted">"Attention Is All You Need" — parallelizable, attends to all positions</text>
-      <text x="108" y="311" font-size="10" class="text-muted">Foundation of every modern LLM</text>
-      <rect x="430" y="262" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
-      <text x="453" y="275" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2017</text>
+      <rect x="90" y="253" width="400" height="64" rx="8" class="bg-card border-default" stroke-width="1"/>
+      <rect x="90" y="253" width="4" height="64" rx="2" class="brand-light brand"/>
+      <text x="108" y="273" font-size="12" font-weight="700" class="text-default">Transformers</text>
+      <text x="108" y="291" font-size="10" class="text-muted">"Attention Is All You Need" — parallelizable, attends to all positions</text>
+      <text x="108" y="307" font-size="10" class="text-muted">Foundation of every modern LLM</text>
+      <rect x="430" y="257" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="270" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2017</text>
     </g>
   </g>
 
   <!-- ERA 4: Scaling Era -->
   <g>
-    <circle cx="60" cy="395" r="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" class="bg-card border-default">
+    <circle cx="60" cy="385" r="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" class="bg-card border-default">
       <animate attributeName="r" values="0;10" dur="0.35s" begin="3s" fill="freeze"/>
     </circle>
-    <circle cx="60" cy="395" r="3" fill="#94a3b8" class="text-muted" opacity="0">
+    <circle cx="60" cy="385" r="3" fill="#94a3b8" class="text-muted" opacity="0">
       <animate attributeName="opacity" values="0;1" dur="0.2s" begin="3.35s" fill="freeze"/>
     </circle>
     <g class="fade-slide">
       <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.5s" fill="freeze"/>
       <animateTransform attributeName="transform" type="translate" values="0,-8;0,0" dur="0.4s" begin="3.5s" fill="freeze"/>
-      <rect x="90" y="368" width="400" height="54" rx="8" class="bg-card border-default" stroke-width="1"/>
-      <rect x="90" y="368" width="4" height="54" rx="2" class="brand-light brand"/>
-      <text x="108" y="388" font-size="12" font-weight="700" class="text-default">Scaling Era</text>
-      <text x="108" y="406" font-size="10" class="text-muted">GPT-3 (175B), PaLM (540B) — scaling laws, CoT, few-shot, emergence</text>
-      <rect x="430" y="372" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
-      <text x="453" y="385" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2020+</text>
+      <rect x="90" y="353" width="400" height="64" rx="8" class="bg-card border-default" stroke-width="1"/>
+      <rect x="90" y="353" width="4" height="64" rx="2" class="brand-light brand"/>
+      <text x="108" y="373" font-size="12" font-weight="700" class="text-default">Scaling Era</text>
+      <text x="108" y="391" font-size="10" class="text-muted">GPT-3 (175B), PaLM (540B) — scaling laws, CoT, few-shot, emergence</text>
+      <rect x="430" y="357" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="370" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2020+</text>
     </g>
   </g>
 
   <!-- ERA 5: Post-Training Era -->
   <g>
-    <circle cx="60" cy="500" r="11" fill="#ffffff" class="bg-card brand-border" stroke-width="2.5">
-      <animate attributeName="r" values="0;11" dur="0.35s" begin="3.9s" fill="freeze"/>
+    <circle cx="60" cy="485" r="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" class="bg-card border-default">
+      <animate attributeName="r" values="0;10" dur="0.35s" begin="3.9s" fill="freeze"/>
     </circle>
-    <circle cx="60" cy="500" r="4" class="brand" opacity="0">
+    <circle cx="60" cy="485" r="3" fill="#94a3b8" class="text-muted" opacity="0">
       <animate attributeName="opacity" values="0;1" dur="0.2s" begin="4.25s" fill="freeze"/>
-    </circle>
-    <circle cx="60" cy="500" r="16" fill="none" class="brand-border" stroke-width="1" opacity="0">
-      <animate attributeName="r" values="11;19;11" dur="2.5s" begin="4.3s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2.5s" begin="4.3s" repeatCount="indefinite"/>
     </circle>
     <g class="fade-slide">
       <animate attributeName="opacity" values="0;1" dur="0.4s" begin="4.4s" fill="freeze"/>
       <animateTransform attributeName="transform" type="translate" values="0,-8;0,0" dur="0.4s" begin="4.4s" fill="freeze"/>
-      <rect x="90" y="472" width="400" height="66" rx="8" class="bg-card brand-border" stroke-width="1"/>
-      <rect x="90" y="472" width="4" height="66" rx="2" class="brand"/>
-      <text x="108" y="492" font-size="12" font-weight="700" class="text-default">Post-Training Era</text>
-      <text x="108" y="510" font-size="10" class="text-muted">SFT, RLHF, DPO, Constitutional AI — aligned assistants</text>
-      <text x="108" y="526" font-size="10" class="text-muted">MoE (Mixtral, GPT-4), Multimodal (GPT-4V, Gemini, Claude 3)</text>
-      <rect x="430" y="476" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
-      <text x="453" y="489" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2023+</text>
+      <rect x="90" y="453" width="400" height="64" rx="8" class="bg-card border-default" stroke-width="1"/>
+      <rect x="90" y="453" width="4" height="64" rx="2" class="brand-light brand"/>
+      <text x="108" y="473" font-size="12" font-weight="700" class="text-default">Post-Training Era</text>
+      <text x="108" y="491" font-size="10" class="text-muted">SFT, RLHF, DPO, Constitutional AI — aligned assistants</text>
+      <text x="108" y="507" font-size="10" class="text-muted">MoE (Mixtral, GPT-4), Multimodal (GPT-4V, Gemini, Claude 3)</text>
+      <rect x="430" y="457" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="470" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2023+</text>
     </g>
   </g>
-
-  <defs>
-    <filter id="shadow">
-      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#c34113" flood-opacity="0.08"/>
-    </filter>
-  </defs>
 </svg>
