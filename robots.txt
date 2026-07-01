@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kallolchakraborty.github.io/quick-bytes/sitemap.xml

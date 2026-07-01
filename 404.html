@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>404 — Page Not Found | Quick Bytes</title>
+  <meta name="description" content="Page not found." />
+  <meta name="robots" content="noindex, follow" />
+  <meta name="theme-color" content="#14B8A6" />
+  <meta name="theme-color" content="#2DD4BF" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" href="css/tailwind.css" as="style" />
+  <script src="js/theme.js"></script>
+  <link href="css/tailwind.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" /></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" /></noscript>
+</head>
+<body class="font-sans min-h-screen flex flex-col" style="background-color:var(--bg-default);color:var(--text-default);">
+  <header class="glass-nav sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5 transition-all" style="color:var(--text-default);" onmouseover="this.style.color='#14b8a6'" onmouseout="this.style.color=''">
+        <img src="assets/logo.svg" alt="Quick Bytes" class="w-8 h-8" />
+        <span class="text-base font-semibold">Quick Bytes</span>
+      </a>
+    </div>
+  </header>
+  <main class="flex-grow flex items-center justify-center px-6 py-24">
+    <div class="max-w-md text-center">
+      <div class="text-8xl font-bold text-brand-500/20 select-none mb-4">404</div>
+      <h1 class="text-2xl font-bold mb-3">Page not found</h1>
+      <p class="theme-text-muted mb-8 leading-relaxed">This page doesn't exist or has been moved. Try searching for what you need.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="index.html" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg transition-colors">Go Home</a>
+        <a href="docs.html" class="px-5 py-2.5 border-2 theme-border hover:border-brand-500 rounded-lg font-semibold transition-colors" style="color:var(--text-default);">Browse Docs</a>
+      </div>
+    </div>
+  </main>
+  <footer class="border-t py-8" style="border-color:var(--border-default);background-color:var(--bg-default);">
+    <div class="max-w-7xl mx-auto px-6 flex justify-center text-sm" style="color:var(--text-muted);">
+      &copy; 2026 Kallol Chakraborty
+    </div>
+  </footer>
+</body>
+</html>

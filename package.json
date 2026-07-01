@@ -1,0 +1,13 @@
+{
+  "name": "quick-bytes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Software engineering quick references — from fundamentals to staff+.",
+  "scripts": {
+    "dev": "tailwindcss -i css/main.css -o css/tailwind.css --watch",
+    "build": "tailwindcss -i css/main.css -o css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
