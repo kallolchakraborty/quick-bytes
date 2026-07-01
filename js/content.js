@@ -47,7 +47,7 @@ LLMs are not "intelligent" in the human sense — they are statistical pattern m
               title: 'Detailed Architecture',
               content: `The modern LLM is built on the **Transformer** architecture. Below is the complete architecture end-to-end, from raw text to output.
 
-<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" width="900" height="1100" class="w-full my-8 rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
+<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" width="900" height="1160" class="w-full my-8 rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
 
 ### 1. Tokenization
 
