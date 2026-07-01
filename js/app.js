@@ -207,6 +207,36 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+function loadBookmarks() {
+  try { return JSON.parse(localStorage.getItem('qb-bookmarks') || '[]'); } catch(e) { return []; }
+}
+
+function updateBookmarksSidebar() {
+  var container = document.getElementById('sidebar-bookmarks');
+  if (!container) return;
+  var list = loadBookmarks();
+  if (!list.length) { container.innerHTML = ''; return; }
+  var html = '<div class="px-3 py-3 border-b theme-border">';
+  html += '<div class="flex items-center justify-between text-xs font-bold theme-text mb-1.5">';
+  html += '<span>Bookmarked</span>';
+  html += '<span class="text-brand-500 text-[10px]">' + list.length + '</span>';
+  html += '</div><div class="space-y-0.5">';
+  var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
+  list.forEach(function(id) {
+    var found = null;
+    phases.forEach(function(p) {
+      (p.guides || []).forEach(function(g) {
+        if (g.id === id) found = g;
+      });
+    });
+    if (found) {
+      html += '<a href="docs.html#' + id + '" class="block text-xs theme-text-muted hover:text-brand-500 py-0.5 truncate transition-colors">' + found.title + '</a>';
+    }
+  });
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
 // Docs-specific logic
 function initDocs() {
   var currentGuide = null;
@@ -268,13 +298,31 @@ function initDocs() {
       history.pushState(null, '', '#' + guideId);
     }
 
+    // Calculate reading time
+    var totalWords = 0;
+    if (found.guide.sections) {
+      found.guide.sections.forEach(function(s) {
+        if (s.content) totalWords += s.content.split(/\s+/).filter(Boolean).length;
+      });
+    }
+    var readTime = Math.max(1, Math.round(totalWords / 200));
+
+    // Check bookmark state
+    var bookmarks = loadBookmarks();
+    var isBookmarked = bookmarks.indexOf(guideId) > -1;
+
     // Build content HTML
     var html = '';
     html += '<div class="content-section" data-guide-id="' + found.guide.id + '">';
     html += '<h1>' + found.guide.title + '</h1>';
-    html += '<div class="flex items-center gap-2 text-xs theme-text-muted mb-6">';
+    html += '<div class="flex flex-wrap items-center gap-2 text-xs theme-text-muted mb-6">';
     html += '<span class="px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 font-medium">' + found.phase.title + '</span>';
     html += '<span class="px-2 py-0.5 rounded-full theme-bg-subtle theme-border border font-medium">' + found.phase.level + '</span>';
+    html += '<span class="flex items-center gap-1 px-2 py-0.5 rounded-full theme-bg-subtle theme-border border">';
+    html += '<span class="material-symbols-outlined text-[12px]">schedule</span> ' + readTime + ' min read</span>';
+    html += '<button onclick="toggleBookmark(\'' + guideId + '\')" class="flex items-center gap-1 px-2 py-0.5 rounded-full theme-bg-subtle theme-border border hover:text-brand-500 transition-colors" aria-label="Bookmark this guide">';
+    html += '<span class="material-symbols-outlined text-[14px]">' + (isBookmarked ? 'bookmark' : 'bookmark_border') + '</span>';
+    html += '</button>';
     html += '</div>';
 
     if (found.guide.description) {
@@ -295,18 +343,18 @@ function initDocs() {
       html += '</div>';
     }
 
-    html += '</div>';
-    content.innerHTML = html;
-
-    // Right outline
-    updateOutline(found.guide, found.phase);
-
     // Progress checkbox
     html += '<div class="mt-8 pt-6 border-t theme-border flex items-center gap-3">';
     html += '<input type="checkbox" id="progress-check" ' + (progressData[found.guide.id] ? 'checked' : '') +
       ' class="w-4 h-4 rounded border-2 theme-border text-brand-500 focus:ring-brand-500 cursor-pointer" onchange="toggleProgress(\'' + found.guide.id + '\')">';
     html += '<label for="progress-check" class="text-sm theme-text-muted cursor-pointer select-none">Mark as completed</label>';
     html += '</div>';
+
+    html += '</div>';
+    content.innerHTML = html;
+
+    // Right outline
+    updateOutline(found.guide, found.phase);
 
     // Add copy buttons to code blocks
     document.querySelectorAll('.content-section pre').forEach(function(pre) {
@@ -338,6 +386,7 @@ function initDocs() {
     });
 
     updateProgress();
+    updateBookmarksSidebar();
     scrollToHash();
   }
 
@@ -411,6 +460,16 @@ function initDocs() {
   }
 
   updateProgress();
+}
+
+function toggleBookmark(guideId) {
+  var list = loadBookmarks();
+  var idx = list.indexOf(guideId);
+  if (idx > -1) { list.splice(idx, 1); } else { list.push(guideId); }
+  localStorage.setItem('qb-bookmarks', JSON.stringify(list));
+  var icon = document.querySelector('.content-section button[onclick*="' + guideId + '"] .material-symbols-outlined');
+  if (icon) icon.textContent = idx > -1 ? 'bookmark_border' : 'bookmark';
+  updateBookmarksSidebar();
 }
 
 function toggleProgress(guideId) {

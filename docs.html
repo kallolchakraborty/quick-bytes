@@ -126,6 +126,7 @@
           </div>
           <div id="sidebar-progress-stats" class="text-[10px] theme-text-muted mt-1 font-medium">0 of 0 topics completed</div>
         </div>
+        <div id="sidebar-bookmarks"></div>
         <div id="sidebar-phases"></div>
       </nav>
     </aside>
@@ -201,7 +202,10 @@
         });
       });
       phasesContainer.innerHTML = html;
-      if (typeof initDocs === 'function') initDocs();
+      if (typeof initDocs === 'function') {
+        initDocs();
+        if (typeof updateBookmarksSidebar === 'function') updateBookmarksSidebar();
+      }
     })();
   </script>
 </body>
