@@ -524,13 +524,5 @@ Need seq2seq (translation, summarization)?
           ]
         }],
     },
-
-    {
-      id: 'system-design',
-      title: 'System Design',
-      level: 'L4/L5',
-      description: 'Distributed systems, databases, caching, APIs, and design trade-offs.',
-      guides: [],
-    },
   ],
 };

@@ -98,8 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
           var titleMatch = guide.title.toLowerCase().includes(query);
           var descMatch = (guide.description || '').toLowerCase().includes(query);
           var phaseMatch = phase.title.toLowerCase().includes(query);
-          if (titleMatch || descMatch || phaseMatch) {
-            matches.push({ phase: phase, guide: guide });
+          var sectionMatch = null;
+          if (guide.sections) {
+            guide.sections.forEach(function(s) {
+              if (s.title.toLowerCase().includes(query) ||
+                  (s.content && s.content.toLowerCase().includes(query))) {
+                sectionMatch = s;
+              }
+            });
+          }
+          if (titleMatch || descMatch || phaseMatch || sectionMatch) {
+            matches.push({ phase: phase, guide: guide, section: sectionMatch });
           }
         });
       });
@@ -109,9 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       var html = '<div class="p-2 space-y-0.5">';
       matches.forEach(function(m) {
-        html += '<a href="docs.html#' + m.guide.id + '" class="block px-3 py-2 rounded-lg hover:theme-bg-subtle transition-colors" onclick="closeSearch()">' +
+        var href = 'docs.html#' + m.guide.id;
+        if (m.section) href = 'docs.html#' + m.section.id;
+        html += '<a href="' + href + '" class="block px-3 py-2 rounded-lg hover:theme-bg-subtle transition-colors" onclick="closeSearch()">' +
           '<div class="text-sm font-medium theme-text">' + m.guide.title + '</div>' +
-          '<div class="text-xs theme-text-muted mt-0.5">' + m.phase.title + ' (' + m.phase.level + ')</div>' +
+          '<div class="text-xs theme-text-muted mt-0.5">' + m.phase.title + ' (' + m.phase.level + ')' +
+          (m.section ? ' &middot; ' + m.section.title : '') +
+          '</div>' +
         '</a>';
       });
       html += '</div>';
