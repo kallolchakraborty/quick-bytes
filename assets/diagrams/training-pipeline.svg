@@ -3,16 +3,16 @@
   <defs>
     <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f0fdfa"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
     </linearGradient>
     <filter id="shadow">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0d9488" flood-opacity="0.15"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.15"/>
     </filter>
     <marker id="arrowDown" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L5,10 L10,0" fill="#0D9488"/>
+      <path d="M0,0 L5,10 L10,0" fill="#C34113"/>
     </marker>
     <marker id="arrowRight" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0,0 L10,5 L0,10" fill="#14B8A6"/>
+      <path d="M0,0 L10,5 L0,10" fill="#E95420"/>
     </marker>
   </defs>
 
@@ -20,23 +20,23 @@
   <rect width="900" height="800" fill="none" />
 
   <!-- Title -->
-  <text x="450" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#0D9488">LLM Training Pipeline</text>
-  <line x1="300" y1="45" x2="600" y2="45" stroke="#14B8A6" stroke-width="1" opacity="0.3"/>
+  <text x="450" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#C34113">LLM Training Pipeline</text>
+  <line x1="300" y1="45" x2="600" y2="45" stroke="#E95420" stroke-width="1" opacity="0.3"/>
 
   <!-- ==================== STAGE 1: PRETRAINING ==================== -->
 
   <!-- Phase label bar -->
-  <rect x="50" y="60" width="800" height="36" rx="8" fill="#ccfbf1" stroke="#14B8A6" stroke-width="1"/>
-  <text x="70" y="83" font-size="14" font-weight="700" fill="#0D9488">Stage 1: Self-Supervised Pretraining</text>
+  <rect x="50" y="60" width="800" height="36" rx="8" fill="#fbd1bd" stroke="#E95420" stroke-width="1"/>
+  <text x="70" y="83" font-size="14" font-weight="700" fill="#C34113">Stage 1: Self-Supervised Pretraining</text>
   <text x="700" y="83" font-size="11" fill="#64748b">~90% of compute</text>
 
   <!-- Data -->
-  <rect x="80" y="108" width="200" height="50" rx="8" fill="url(#boxGrad)" stroke="#0D9488" stroke-width="2" filter="url(#shadow)"/>
-  <text x="180" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#0D9488">Internet-Scale Data</text>
+  <rect x="80" y="108" width="200" height="50" rx="8" fill="url(#boxGrad)" stroke="#C34113" stroke-width="2" filter="url(#shadow)"/>
+  <text x="180" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#C34113">Internet-Scale Data</text>
   <text x="180" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">Trillions of tokens (CommonCrawl, Books, Code...)</text>
 
   <!-- Arrow -->
-  <line x1="280" y1="133" x2="330" y2="133" stroke="#14B8A6" stroke-width="2" marker-end="url(#arrowRight)"/>
+  <line x1="280" y1="133" x2="330" y2="133" stroke="#E95420" stroke-width="2" marker-end="url(#arrowRight)"/>
 
   <!-- Filtering -->
   <rect x="335" y="108" width="200" height="50" rx="8" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
@@ -44,25 +44,25 @@
   <text x="435" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">Deduplication, Filtering, Tokenization</text>
 
   <!-- Arrow -->
-  <line x1="535" y1="133" x2="585" y2="133" stroke="#14B8A6" stroke-width="2" marker-end="url(#arrowRight)"/>
+  <line x1="535" y1="133" x2="585" y2="133" stroke="#E95420" stroke-width="2" marker-end="url(#arrowRight)"/>
 
   <!-- Model -->
-  <rect x="590" y="104" width="220" height="58" rx="10" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="700" y="126" text-anchor="middle" font-size="13" font-weight="700" fill="#0D9488">Transformer Training</text>
+  <rect x="590" y="104" width="220" height="58" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="700" y="126" text-anchor="middle" font-size="13" font-weight="700" fill="#C34113">Transformer Training</text>
   <text x="700" y="144" text-anchor="middle" font-size="9" fill="#94a3b8">Next-Token Prediction (autoregressive)</text>
   <text x="700" y="156" text-anchor="middle" font-size="9" fill="#94a3b8">Cross-Entropy Loss</text>
 
   <!-- Animated loss pulse -->
-  <circle cy="133" r="6" fill="#14B8A6" opacity="0.6">
+  <circle cy="133" r="6" fill="#E95420" opacity="0.6">
     <animate attributeName="cx" values="180;700" dur="4s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0;1;1;0" dur="4s" repeatCount="indefinite"/>
     <animate attributeName="r" values="3;6;3" dur="4s" repeatCount="indefinite"/>
   </circle>
-  <circle cy="133" r="4" fill="#0D9488" opacity="0.5">
+  <circle cy="133" r="4" fill="#C34113" opacity="0.5">
     <animate attributeName="cx" values="180;700" dur="4s" begin="0.5s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0;0.8;0.8;0" dur="4s" begin="0.5s" repeatCount="indefinite"/>
   </circle>
-  <circle cy="133" r="4" fill="#0D9488" opacity="0.5">
+  <circle cy="133" r="4" fill="#C34113" opacity="0.5">
     <animate attributeName="cx" values="180;700" dur="4s" begin="1s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0;0.8;0.8;0" dur="4s" begin="1s" repeatCount="indefinite"/>
   </circle>
@@ -76,21 +76,21 @@
   </g>
 
   <!-- Arrow down to Stage 2 -->
-  <line x1="450" y1="238" x2="450" y2="280" stroke="#0D9488" stroke-width="2.5" marker-end="url(#arrowDown)"/>
+  <line x1="450" y1="238" x2="450" y2="280" stroke="#C34113" stroke-width="2.5" marker-end="url(#arrowDown)"/>
 
   <!-- ==================== STAGE 2: SFT ==================== -->
 
-  <rect x="50" y="290" width="800" height="36" rx="8" fill="#ccfbf1" stroke="#14B8A6" stroke-width="1"/>
-  <text x="70" y="313" font-size="14" font-weight="700" fill="#0D9488">Stage 2: Supervised Fine-Tuning (SFT)</text>
+  <rect x="50" y="290" width="800" height="36" rx="8" fill="#fbd1bd" stroke="#E95420" stroke-width="1"/>
+  <text x="70" y="313" font-size="14" font-weight="700" fill="#C34113">Stage 2: Supervised Fine-Tuning (SFT)</text>
   <text x="700" y="313" font-size="11" fill="#64748b">~5% of compute</text>
 
   <!-- Data -->
-  <rect x="80" y="340" width="200" height="50" rx="8" fill="url(#boxGrad)" stroke="#0D9488" stroke-width="2" filter="url(#shadow)"/>
-  <text x="180" y="360" text-anchor="middle" font-size="13" font-weight="700" fill="#0D9488">Quality Demonstrations</text>
+  <rect x="80" y="340" width="200" height="50" rx="8" fill="url(#boxGrad)" stroke="#C34113" stroke-width="2" filter="url(#shadow)"/>
+  <text x="180" y="360" text-anchor="middle" font-size="13" font-weight="700" fill="#C34113">Quality Demonstrations</text>
   <text x="180" y="378" text-anchor="middle" font-size="9" fill="#94a3b8">Curated (Q, A) pairs — {question, answer}</text>
 
   <!-- Arrow -->
-  <line x1="280" y1="365" x2="330" y2="365" stroke="#14B8A6" stroke-width="2" marker-end="url(#arrowRight)"/>
+  <line x1="280" y1="365" x2="330" y2="365" stroke="#E95420" stroke-width="2" marker-end="url(#arrowRight)"/>
 
   <!-- Format -->
   <rect x="335" y="340" width="200" height="50" rx="8" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
@@ -98,29 +98,29 @@
   <text x="435" y="378" text-anchor="middle" font-size="9" fill="#94a3b8">{"role": "user/assistant", "content": ...}</text>
 
   <!-- Arrow -->
-  <line x1="535" y1="365" x2="585" y2="365" stroke="#14B8A6" stroke-width="2" marker-end="url(#arrowRight)"/>
+  <line x1="535" y1="365" x2="585" y2="365" stroke="#E95420" stroke-width="2" marker-end="url(#arrowRight)"/>
 
   <!-- Fine-tune -->
-  <rect x="590" y="336" width="220" height="58" rx="10" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="700" y="358" text-anchor="middle" font-size="13" font-weight="700" fill="#0D9488">Supervised Fine-Tuning</text>
+  <rect x="590" y="336" width="220" height="58" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="700" y="358" text-anchor="middle" font-size="13" font-weight="700" fill="#C34113">Supervised Fine-Tuning</text>
   <text x="700" y="376" text-anchor="middle" font-size="9" fill="#94a3b8">Cross-Entropy on target tokens</text>
   <text x="700" y="388" text-anchor="middle" font-size="9" fill="#94a3b8">1–3 epochs, small LR</text>
 
   <!-- Animated fine-tuning -->
   <g>
-    <rect x="600" y="345" width="3" height="10" rx="1" fill="#14B8A6" opacity="0.6">
+    <rect x="600" y="345" width="3" height="10" rx="1" fill="#E95420" opacity="0.6">
       <animate attributeName="height" values="10;3;10" dur="1s" repeatCount="indefinite"/>
     </rect>
-    <rect x="608" y="348" width="3" height="7" rx="1" fill="#0D9488" opacity="0.5">
+    <rect x="608" y="348" width="3" height="7" rx="1" fill="#C34113" opacity="0.5">
       <animate attributeName="height" values="7;2;7" dur="1s" begin="0.15s" repeatCount="indefinite"/>
     </rect>
-    <rect x="616" y="346" width="3" height="9" rx="1" fill="#14B8A6" opacity="0.6">
+    <rect x="616" y="346" width="3" height="9" rx="1" fill="#E95420" opacity="0.6">
       <animate attributeName="height" values="9;4;9" dur="1s" begin="0.3s" repeatCount="indefinite"/>
     </rect>
-    <rect x="624" y="344" width="3" height="11" rx="1" fill="#0D9488" opacity="0.5">
+    <rect x="624" y="344" width="3" height="11" rx="1" fill="#C34113" opacity="0.5">
       <animate attributeName="height" values="11;3;11" dur="1s" begin="0.45s" repeatCount="indefinite"/>
     </rect>
-    <rect x="632" y="347" width="3" height="8" rx="1" fill="#14B8A6" opacity="0.6">
+    <rect x="632" y="347" width="3" height="8" rx="1" fill="#E95420" opacity="0.6">
       <animate attributeName="height" values="8;2;8" dur="1s" begin="0.6s" repeatCount="indefinite"/>
     </rect>
   </g>
@@ -132,19 +132,19 @@
   </g>
 
   <!-- Arrow down to Stage 3 -->
-  <line x1="450" y1="450" x2="450" y2="490" stroke="#0D9488" stroke-width="2.5" marker-end="url(#arrowDown)"/>
+  <line x1="450" y1="450" x2="450" y2="490" stroke="#C34113" stroke-width="2.5" marker-end="url(#arrowDown)"/>
 
   <!-- ==================== STAGE 3: RLHF ==================== -->
 
-  <rect x="50" y="498" width="800" height="36" rx="8" fill="#ccfbf1" stroke="#14B8A6" stroke-width="1"/>
-  <text x="70" y="521" font-size="14" font-weight="700" fill="#0D9488">Stage 3: RLHF (Reinforcement Learning from Human Feedback)</text>
+  <rect x="50" y="498" width="800" height="36" rx="8" fill="#fbd1bd" stroke="#E95420" stroke-width="1"/>
+  <text x="70" y="521" font-size="14" font-weight="700" fill="#C34113">Stage 3: RLHF (Reinforcement Learning from Human Feedback)</text>
   <text x="700" y="521" font-size="11" fill="#64748b">~5% of compute</text>
 
   <!-- Three columns -->
   <!-- Step A -->
-  <rect x="80" y="550" width="230" height="130" rx="10" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <rect x="80" y="550" width="230" height="30" rx="10" fill="#14B8A6"/>
-  <rect x="80" y="570" width="230" height="10" fill="#14B8A6"/>
+  <rect x="80" y="550" width="230" height="130" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="80" y="550" width="230" height="30" rx="10" fill="#E95420"/>
+  <rect x="80" y="570" width="230" height="10" fill="#E95420"/>
   <text x="100" y="570" font-size="12" font-weight="700" fill="#ffffff">Step A: Reward Model Training</text>
   <text x="95" y="600" font-size="10" fill="#475569">Train a RM on human preference data:</text>
   <text x="95" y="616" font-size="10" fill="#64748b">response_A ≻ response_B (pairwise)</text>
@@ -153,12 +153,12 @@
   <text x="95" y="672" font-size="9" fill="#94a3b8">(RM replaces final unembedding head)</text>
 
   <!-- Arrow sideways -->
-  <line x1="310" y1="615" x2="340" y2="615" stroke="#14B8A6" stroke-width="2" marker-end="url(#arrowRight)"/>
+  <line x1="310" y1="615" x2="340" y2="615" stroke="#E95420" stroke-width="2" marker-end="url(#arrowRight)"/>
 
   <!-- Step B -->
-  <rect x="345" y="550" width="230" height="130" rx="10" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <rect x="345" y="550" width="230" height="30" rx="10" fill="#14B8A6"/>
-  <rect x="345" y="570" width="230" height="10" fill="#14B8A6"/>
+  <rect x="345" y="550" width="230" height="130" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="345" y="550" width="230" height="30" rx="10" fill="#E95420"/>
+  <rect x="345" y="570" width="230" height="10" fill="#E95420"/>
   <text x="365" y="570" font-size="12" font-weight="700" fill="#ffffff">Step B: Policy Optimization</text>
   <text x="360" y="600" font-size="10" fill="#475569">PPO / REINFORCE variants:</text>
   <text x="360" y="616" font-size="10" fill="#64748b">−E[log π_θ(y|x) · r(x,y)]</text>
@@ -167,12 +167,12 @@
   <text x="360" y="672" font-size="10" fill="#64748b">score → update (iterative)</text>
 
   <!-- Arrow sideways -->
-  <line x1="575" y1="615" x2="605" y2="615" stroke="#14B8A6" stroke-width="2" marker-end="url(#arrowRight)"/>
+  <line x1="575" y1="615" x2="605" y2="615" stroke="#E95420" stroke-width="2" marker-end="url(#arrowRight)"/>
 
   <!-- Step C -->
-  <rect x="610" y="550" width="230" height="130" rx="10" fill="url(#boxGrad)" stroke="#0D9488" stroke-width="2.5" filter="url(#shadow)"/>
-  <rect x="610" y="550" width="230" height="30" rx="10" fill="#0D9488"/>
-  <rect x="610" y="570" width="230" height="10" fill="#0D9488"/>
+  <rect x="610" y="550" width="230" height="130" rx="10" fill="url(#boxGrad)" stroke="#C34113" stroke-width="2.5" filter="url(#shadow)"/>
+  <rect x="610" y="550" width="230" height="30" rx="10" fill="#C34113"/>
+  <rect x="610" y="570" width="230" height="10" fill="#C34113"/>
   <text x="630" y="570" font-size="12" font-weight="700" fill="#ffffff">Step C: Final Model</text>
   <text x="625" y="600" font-size="10" fill="#475569">Aligned LLM that:</text>
   <text x="625" y="616" font-size="10" fill="#64748b">✓ Follows instructions reliably</text>
@@ -182,7 +182,7 @@
   <text x="625" y="682" font-size="10" fill="#64748b">   pretraining</text>
 
   <!-- Animated reward signal -->
-  <path d="M460,685 L460,710 L240,710 L240,685" fill="none" stroke="#14B8A6" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.6">
+  <path d="M460,685 L460,710 L240,710 L240,685" fill="none" stroke="#E95420" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.6">
     <animate attributeName="stroke-dashoffset" values="0;-16" dur="1.5s" repeatCount="indefinite"/>
   </path>
   <text x="350" y="725" text-anchor="middle" font-size="10" fill="#94a3b8">Reward signal feeds back to policy</text>

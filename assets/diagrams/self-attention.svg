@@ -3,22 +3,22 @@
   <defs>
     <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f0fdfa"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
     </linearGradient>
     <filter id="shadow">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0d9488" flood-opacity="0.12"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.12"/>
     </filter>
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L10,5 L0,10" fill="#14B8A6"/>
+      <path d="M0,0 L10,5 L0,10" fill="#E95420"/>
     </marker>
     <marker id="arrowDark" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L10,5 L0,10" fill="#0D9488"/>
+      <path d="M0,0 L10,5 L0,10" fill="#C34113"/>
     </marker>
     <!-- Gradient for attention heat map -->
     <linearGradient id="heatGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#ccfbf1"/>
-      <stop offset="50%" stop-color="#14B8A6"/>
-      <stop offset="100%" stop-color="#0f766e"/>
+      <stop offset="0%" stop-color="#fbd1bd"/>
+      <stop offset="50%" stop-color="#E95420"/>
+      <stop offset="100%" stop-color="#9a330e"/>
     </linearGradient>
   </defs>
 
@@ -26,8 +26,8 @@
   <rect width="900" height="750" fill="none"/>
 
   <!-- Title -->
-  <text x="450" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#0D9488">Self-Attention Mechanism</text>
-  <line x1="300" y1="45" x2="600" y2="45" stroke="#14B8A6" stroke-width="1" opacity="0.3"/>
+  <text x="450" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#C34113">Self-Attention Mechanism</text>
+  <line x1="300" y1="45" x2="600" y2="45" stroke="#E95420" stroke-width="1" opacity="0.3"/>
 
   <!-- ==================== LEFT SIDE: COMPUTATION ==================== -->
 
@@ -39,68 +39,68 @@
   <text x="200" y="102" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">Input X</text>
 
   <!-- Split arrows -->
-  <line x1="200" y1="114" x2="105" y2="150" stroke="#14B8A6" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="200" y1="114" x2="200" y2="150" stroke="#0D9488" stroke-width="1.5" marker-end="url(#arrowDark)"/>
-  <line x1="200" y1="114" x2="295" y2="150" stroke="#14B8A6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="200" y1="114" x2="105" y2="150" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="200" y1="114" x2="200" y2="150" stroke="#C34113" stroke-width="1.5" marker-end="url(#arrowDark)"/>
+  <line x1="200" y1="114" x2="295" y2="150" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Q -->
-  <rect x="60" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="105" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#0D9488">Q</text>
+  <rect x="60" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="105" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#C34113">Q</text>
   <text x="105" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Query</text>
 
   <!-- K -->
-  <rect x="155" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="200" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#0D9488">K</text>
+  <rect x="155" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="200" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#C34113">K</text>
   <text x="200" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Key</text>
 
   <!-- V -->
-  <rect x="250" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="295" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#0D9488">V</text>
+  <rect x="250" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="295" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#C34113">V</text>
   <text x="295" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Value</text>
 
   <!-- Formula -->
   <text x="200" y="225" text-anchor="middle" font-size="11" fill="#64748b">Q = XW_Q &amp;nbsp; K = XW_K &amp;nbsp; V = XW_V</text>
 
   <!-- Arrow down to MatMul -->
-  <line x1="105" y1="191" x2="105" y2="250" stroke="#14B8A6" stroke-width="1" marker-end="url(#arrow)"/>
-  <line x1="200" y1="191" x2="200" y2="250" stroke="#14B8A6" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="105" y1="191" x2="105" y2="250" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="200" y1="191" x2="200" y2="250" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
 
   <!-- MatMul: Q × K^T -->
-  <rect x="90" y="255" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="200" y="272" text-anchor="middle" font-size="12" font-weight="600" fill="#0D9488">Q × K^T</text>
+  <rect x="90" y="255" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="200" y="272" text-anchor="middle" font-size="12" font-weight="600" fill="#C34113">Q × K^T</text>
   <text x="200" y="288" text-anchor="middle" font-size="10" fill="#94a3b8">Attention Scores (dot product)</text>
 
   <!-- Arrow -->
-  <line x1="200" y1="295" x2="200" y2="320" stroke="#14B8A6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="200" y1="295" x2="200" y2="320" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Scale -->
   <rect x="130" y="325" width="140" height="32" rx="6" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
   <text x="200" y="345" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">÷ √d_k</text>
 
   <!-- Arrow -->
-  <line x1="200" y1="357" x2="200" y2="382" stroke="#14B8A6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="200" y1="357" x2="200" y2="382" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Softmax -->
-  <rect x="130" y="387" width="140" height="36" rx="8" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="200" y="409" text-anchor="middle" font-size="12" font-weight="700" fill="#0D9488">Softmax</text>
+  <rect x="130" y="387" width="140" height="36" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="200" y="409" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Softmax</text>
   <text x="200" y="425" text-anchor="middle" font-size="9" fill="#94a3b8">Attention Weights</text>
 
   <!-- Arrow -->
-  <line x1="200" y1="423" x2="200" y2="448" stroke="#14B8A6" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="200" y1="423" x2="200" y2="448" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
   <!-- V arrow coming from right -->
-  <line x1="295" y1="191" x2="330" y2="360" stroke="#14B8A6" stroke-width="1"/>
-  <line x1="330" y1="360" x2="310" y2="460" stroke="#14B8A6" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="295" y1="191" x2="330" y2="360" stroke="#E95420" stroke-width="1"/>
+  <line x1="330" y1="360" x2="310" y2="460" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
 
   <!-- MatMul: weights × V -->
-  <rect x="90" y="455" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="2" filter="url(#shadow)"/>
-  <text x="200" y="472" text-anchor="middle" font-size="12" font-weight="600" fill="#0D9488">Attention × V</text>
+  <rect x="90" y="455" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <text x="200" y="472" text-anchor="middle" font-size="12" font-weight="600" fill="#C34113">Attention × V</text>
   <text x="200" y="488" text-anchor="middle" font-size="10" fill="#94a3b8">Weighted Sum of Values</text>
 
   <!-- Arrow -->
-  <line x1="200" y1="495" x2="200" y2="525" stroke="#0D9488" stroke-width="2" marker-end="url(#arrowDark)"/>
+  <line x1="200" y1="495" x2="200" y2="525" stroke="#C34113" stroke-width="2" marker-end="url(#arrowDark)"/>
 
   <!-- Output -->
-  <rect x="130" y="530" width="140" height="36" rx="8" fill="#14B8A6" filter="url(#shadow)"/>
+  <rect x="130" y="530" width="140" height="36" rx="8" fill="#E95420" filter="url(#shadow)"/>
   <text x="200" y="553" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Context Vector</text>
 
   <!-- Formula -->
@@ -122,32 +122,32 @@
     <g opacity="0">
       <animate attributeName="opacity" values="0;1" dur="1.5s" begin="0.5s" fill="freeze"/>
       <!-- Grid cells -->
-      <rect x="0" y="5" width="22" height="22" rx="3" fill="#0f766e" opacity="0.9"/>
-      <rect x="26" y="5" width="22" height="22" rx="3" fill="#14B8A6" opacity="0.6"/>
-      <rect x="52" y="5" width="22" height="22" rx="3" fill="#ccfbf1" opacity="0.2"/>
-      <rect x="78" y="5" width="22" height="22" rx="3" fill="#ccfbf1" opacity="0.2"/>
+      <rect x="0" y="5" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
+      <rect x="26" y="5" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
+      <rect x="52" y="5" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
+      <rect x="78" y="5" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
 
-      <rect x="0" y="27" width="22" height="22" rx="3" fill="#14B8A6" opacity="0.7"/>
-      <rect x="26" y="27" width="22" height="22" rx="3" fill="#0f766e" opacity="0.9"/>
-      <rect x="52" y="27" width="22" height="22" rx="3" fill="#14B8A6" opacity="0.5"/>
-      <rect x="78" y="27" width="22" height="22" rx="3" fill="#ccfbf1" opacity="0.3"/>
+      <rect x="0" y="27" width="22" height="22" rx="3" fill="#E95420" opacity="0.7"/>
+      <rect x="26" y="27" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
+      <rect x="52" y="27" width="22" height="22" rx="3" fill="#E95420" opacity="0.5"/>
+      <rect x="78" y="27" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
 
-      <rect x="0" y="49" width="22" height="22" rx="3" fill="#ccfbf1" opacity="0.3"/>
-      <rect x="26" y="49" width="22" height="22" rx="3" fill="#14B8A6" opacity="0.5"/>
-      <rect x="52" y="49" width="22" height="22" rx="3" fill="#0f766e" opacity="0.9"/>
-      <rect x="78" y="49" width="22" height="22" rx="3" fill="#14B8A6" opacity="0.6"/>
+      <rect x="0" y="49" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
+      <rect x="26" y="49" width="22" height="22" rx="3" fill="#E95420" opacity="0.5"/>
+      <rect x="52" y="49" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
+      <rect x="78" y="49" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
 
-      <rect x="0" y="71" width="22" height="22" rx="3" fill="#ccfbf1" opacity="0.2"/>
-      <rect x="26" y="71" width="22" height="22" rx="3" fill="#ccfbf1" opacity="0.3"/>
-      <rect x="52" y="71" width="22" height="22" rx="3" fill="#14B8A6" opacity="0.6"/>
-      <rect x="78" y="71" width="22" height="22" rx="3" fill="#0f766e" opacity="0.9"/>
+      <rect x="0" y="71" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
+      <rect x="26" y="71" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
+      <rect x="52" y="71" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
+      <rect x="78" y="71" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
     </g>
 
     <!-- Legend for heat map -->
     <g transform="translate(0, 105)">
-      <rect x="0" y="0" width="10" height="10" rx="2" fill="#0f766e"/>
+      <rect x="0" y="0" width="10" height="10" rx="2" fill="#9a330e"/>
       <text x="14" y="9" font-size="8" fill="#94a3b8">High attention</text>
-      <rect x="85" y="0" width="10" height="10" rx="2" fill="#ccfbf1"/>
+      <rect x="85" y="0" width="10" height="10" rx="2" fill="#fbd1bd"/>
       <text x="99" y="9" font-size="8" fill="#94a3b8">Low attention</text>
     </g>
   </g>
@@ -158,51 +158,51 @@
     <text x="0" y="18" font-size="10" fill="#94a3b8">Multiple parallel attention heads</text>
 
     <!-- Head 1 -->
-    <rect x="0" y="30" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="1" filter="url(#shadow)">
+    <rect x="0" y="30" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1" filter="url(#shadow)">
       <animate attributeName="stroke-width" values="1;2;1" dur="3s" repeatCount="indefinite"/>
     </rect>
-    <text x="65" y="50" text-anchor="middle" font-size="11" font-weight="600" fill="#0D9488">Head 1</text>
+    <text x="65" y="50" text-anchor="middle" font-size="11" font-weight="600" fill="#C34113">Head 1</text>
     <text x="65" y="66" text-anchor="middle" font-size="9" fill="#94a3b8">Syntax patterns</text>
-    <circle cx="10" cy="40" r="4" fill="#14B8A6" opacity="0.5">
+    <circle cx="10" cy="40" r="4" fill="#E95420" opacity="0.5">
       <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Head 2 -->
-    <rect x="140" y="30" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="1" filter="url(#shadow)">
+    <rect x="140" y="30" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1" filter="url(#shadow)">
       <animate attributeName="stroke-width" values="1;2;1" dur="3s" begin="0.75s" repeatCount="indefinite"/>
     </rect>
-    <text x="205" y="50" text-anchor="middle" font-size="11" font-weight="600" fill="#0D9488">Head 2</text>
+    <text x="205" y="50" text-anchor="middle" font-size="11" font-weight="600" fill="#C34113">Head 2</text>
     <text x="205" y="66" text-anchor="middle" font-size="9" fill="#94a3b8">Semantic relations</text>
-    <circle cx="150" cy="40" r="4" fill="#0D9488" opacity="0.5">
+    <circle cx="150" cy="40" r="4" fill="#C34113" opacity="0.5">
       <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" begin="0.5s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Head 3 -->
-    <rect x="0" y="95" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="1" filter="url(#shadow)">
+    <rect x="0" y="95" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1" filter="url(#shadow)">
       <animate attributeName="stroke-width" values="1;2;1" dur="3s" begin="1.5s" repeatCount="indefinite"/>
     </rect>
-    <text x="65" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#0D9488">Head 3</text>
+    <text x="65" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#C34113">Head 3</text>
     <text x="65" y="131" text-anchor="middle" font-size="9" fill="#94a3b8">Position proximity</text>
-    <circle cx="10" cy="105" r="4" fill="#14B8A6" opacity="0.5">
+    <circle cx="10" cy="105" r="4" fill="#E95420" opacity="0.5">
       <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" begin="1s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Head 4 -->
-    <rect x="140" y="95" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#14B8A6" stroke-width="1" filter="url(#shadow)">
+    <rect x="140" y="95" width="130" height="55" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1" filter="url(#shadow)">
       <animate attributeName="stroke-width" values="1;2;1" dur="3s" begin="2.25s" repeatCount="indefinite"/>
     </rect>
-    <text x="205" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#0D9488">Head h</text>
+    <text x="205" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#C34113">Head h</text>
     <text x="205" y="131" text-anchor="middle" font-size="9" fill="#94a3b8">Coreference</text>
-    <circle cx="150" cy="105" r="4" fill="#0D9488" opacity="0.5">
+    <circle cx="150" cy="105" r="4" fill="#C34113" opacity="0.5">
       <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" begin="1.5s" repeatCount="indefinite"/>
     </circle>
 
     <!-- Concat arrow -->
-    <line x1="100" y1="153" x2="130" y2="178" stroke="#14B8A6" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="205" y1="153" x2="175" y2="178" stroke="#14B8A6" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="100" y1="153" x2="130" y2="178" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="205" y1="153" x2="175" y2="178" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
     <!-- Concat -->
-    <rect x="115" y="180" width="90" height="30" rx="6" fill="#14B8A6" filter="url(#shadow)"/>
+    <rect x="115" y="180" width="90" height="30" rx="6" fill="#E95420" filter="url(#shadow)"/>
     <text x="160" y="199" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">Concat + W_O</text>
 
     <text x="160" y="235" text-anchor="middle" font-size="10" fill="#64748b">MultiHead = Concat(head₁, ..., head_h) · W_O</text>

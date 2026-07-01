@@ -6,36 +6,36 @@
     .text-default { fill: #0f172a; }
     .text-muted { fill: #64748b; }
     .border-default { stroke: #e2e8f0; }
-    .brand { fill: #14b8a6; }
-    .brand-border { stroke: #14b8a6; }
-    .brand-hover { fill: #0d9488; }
-    .brand-light { fill: #ccfbf1; }
-    .brand-dark { fill: #0d9488; }
+    .brand { fill: #e95420; }
+    .brand-border { stroke: #e95420; }
+    .brand-hover { fill: #c34113; }
+    .brand-light { fill: #fbd1bd; }
+    .brand-dark { fill: #c34113; }
 
     @media (prefers-color-scheme: dark) {
       .bg-card { fill: #1e293b; }
       .bg-subtle { fill: #0f172a; }
-      .text-default { fill: #f1f5f9; }
+      .text-default { fill: #e8e8e8; }
       .text-muted { fill: #94a3b8; }
       .border-default { stroke: #334155; }
-      .brand { fill: #2dd4bf; }
-      .brand-border { stroke: #2dd4bf; }
-      .brand-hover { fill: #5eead4; }
-      .brand-light { fill: #134e4a; }
-      .brand-dark { fill: #14b8a6; }
+      .brand { fill: #f5a389; }
+      .brand-border { stroke: #f5a389; }
+      .brand-hover { fill: #e95420; }
+      .brand-light { fill: #471706; }
+      .brand-dark { fill: #e95420; }
     }
     .fade-slide { opacity: 0; transform: translateY(-8px); }
   </style>
 
   <rect width="520" height="640" fill="none"/>
 
-  <text x="260" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#0d9488" class="brand-dark">LLM Evolution Timeline</text>
+  <text x="260" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#c34113" class="brand-dark">LLM Evolution Timeline</text>
 
   <!-- Vertical line -->
   <line x1="60" y1="56" x2="60" y2="590" stroke="#e2e8f0" stroke-width="2" class="border-default"/>
 
   <!-- Animated pulse -->
-  <circle cx="60" r="5" fill="#14b8a6" opacity="0.4" class="brand">
+  <circle cx="60" r="5" fill="#e95420" opacity="0.4" class="brand">
     <animate attributeName="cy" values="56;590" dur="8s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="0;0.6;0.6;0" dur="8s" repeatCount="indefinite"/>
     <animate attributeName="r" values="3;6;3" dur="8s" repeatCount="indefinite"/>
@@ -98,7 +98,7 @@
       <animateTransform attributeName="transform" type="translate" values="0,-8;0,0" dur="0.4s" begin="2.6s" fill="freeze"/>
       <rect x="90" y="258" width="400" height="62" rx="8" class="bg-card brand-border" stroke-width="1"/>
       <rect x="90" y="258" width="4" height="62" rx="2" class="brand"/>
-      <text x="108" y="278" font-size="12" font-weight="700" class="brand" fill="#0d9488">Transformers</text>
+      <text x="108" y="278" font-size="12" font-weight="700" class="brand" fill="#c34113">Transformers</text>
       <text x="108" y="296" font-size="10" class="text-muted">"Attention Is All You Need" — parallelizable, attends to all positions</text>
       <text x="108" y="311" font-size="10" class="text-muted">Foundation of every modern LLM</text>
       <rect x="430" y="262" width="46" height="18" rx="4" class="bg-subtle border-default" stroke-width="0.5"/>
@@ -153,7 +153,7 @@
 
   <defs>
     <filter id="shadow">
-      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0d9488" flood-opacity="0.08"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#c34113" flood-opacity="0.08"/>
     </filter>
   </defs>
 </svg>
