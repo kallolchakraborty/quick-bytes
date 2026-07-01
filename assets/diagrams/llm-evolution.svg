@@ -56,8 +56,8 @@
       <rect x="90" y="58" width="4" height="54" rx="2" class="brand-light brand"/>
       <text x="108" y="78" font-size="12" font-weight="700" class="text-default">Statistical LMs</text>
       <text x="108" y="96" font-size="10" class="text-muted">n-gram models, Markov chains — sparse, no generalization</text>
-      <rect x="430" y="62" width="46" height="18" rx="4" class="bg-subtle border-default" stroke-width="0.5"/>
-      <text x="453" y="75" text-anchor="middle" font-size="9" font-weight="600" class="text-muted">pre-2013</text>
+      <rect x="430" y="62" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="75" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">pre-2013</text>
     </g>
   </g>
 
@@ -76,8 +76,8 @@
       <rect x="90" y="158" width="4" height="54" rx="2" class="brand-light brand"/>
       <text x="108" y="178" font-size="12" font-weight="700" class="text-default">Neural LMs</text>
       <text x="108" y="196" font-size="10" class="text-muted">Word2Vec, LSTMs, GRUs — dense reps, sequential, limited context</text>
-      <rect x="430" y="162" width="46" height="18" rx="4" class="bg-subtle border-default" stroke-width="0.5"/>
-      <text x="453" y="175" text-anchor="middle" font-size="9" font-weight="600" class="text-muted">2013–2017</text>
+      <rect x="430" y="162" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="175" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2013–2017</text>
     </g>
   </g>
 
@@ -101,8 +101,8 @@
       <text x="108" y="278" font-size="12" font-weight="700" class="brand" fill="#c34113">Transformers</text>
       <text x="108" y="296" font-size="10" class="text-muted">"Attention Is All You Need" — parallelizable, attends to all positions</text>
       <text x="108" y="311" font-size="10" class="text-muted">Foundation of every modern LLM</text>
-      <rect x="430" y="262" width="46" height="18" rx="4" class="bg-subtle border-default" stroke-width="0.5"/>
-      <text x="453" y="275" text-anchor="middle" font-size="9" font-weight="600" class="text-muted">2017</text>
+      <rect x="430" y="262" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="275" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2017</text>
     </g>
   </g>
 
@@ -121,8 +121,8 @@
       <rect x="90" y="368" width="4" height="54" rx="2" class="brand-light brand"/>
       <text x="108" y="388" font-size="12" font-weight="700" class="text-default">Scaling Era</text>
       <text x="108" y="406" font-size="10" class="text-muted">GPT-3 (175B), PaLM (540B) — scaling laws, CoT, few-shot, emergence</text>
-      <rect x="430" y="372" width="46" height="18" rx="4" class="bg-subtle border-default" stroke-width="0.5"/>
-      <text x="453" y="385" text-anchor="middle" font-size="9" font-weight="600" class="text-muted">2020+</text>
+      <rect x="430" y="372" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="385" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2020+</text>
     </g>
   </g>
 
@@ -146,8 +146,8 @@
       <text x="108" y="492" font-size="12" font-weight="700" class="text-default">Post-Training Era</text>
       <text x="108" y="510" font-size="10" class="text-muted">SFT, RLHF, DPO, Constitutional AI — aligned assistants</text>
       <text x="108" y="526" font-size="10" class="text-muted">MoE (Mixtral, GPT-4), Multimodal (GPT-4V, Gemini, Claude 3)</text>
-      <rect x="430" y="476" width="46" height="18" rx="4" class="bg-subtle border-default" stroke-width="0.5"/>
-      <text x="453" y="489" text-anchor="middle" font-size="9" font-weight="600" class="text-muted">2023+</text>
+      <rect x="430" y="476" width="46" height="18" rx="4" class="brand-light" stroke="none"/>
+      <text x="453" y="489" text-anchor="middle" font-size="9" font-weight="600" class="brand-dark">2023+</text>
     </g>
   </g>
 
