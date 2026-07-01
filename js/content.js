@@ -31,7 +31,7 @@ const QUICK_BYTES = {
 
 **Evolution**
 
-<object data="assets/diagrams/llm-evolution.svg" type="image/svg+xml" class="w-full my-8 rounded-xl shadow-lg" aria-label="LLM Evolution Timeline"></object>
+<object data="assets/diagrams/llm-evolution.svg" type="image/svg+xml" width="520" height="640" class="w-full my-8 rounded-xl shadow-lg" aria-label="LLM Evolution Timeline"></object>
 
 **Key Properties**
 
@@ -47,7 +47,7 @@ LLMs are not "intelligent" in the human sense — they are statistical pattern m
               title: 'Detailed Architecture',
               content: `The modern LLM is built on the **Transformer** architecture. Below is the complete architecture end-to-end, from raw text to output.
 
-<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" class="w-full my-8 rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
+<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" width="900" height="1100" class="w-full my-8 rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
 
 ### 1. Tokenization
 
@@ -73,7 +73,7 @@ Each token is mapped to a dense vector via a learned embedding matrix \`E ∈ �
 
 The core innovation. Each token "attends" to every other token, computing contextualized representations.
 
-<object data="assets/diagrams/self-attention.svg" type="image/svg+xml" class="w-full my-8 rounded-xl shadow-lg" aria-label="Self-Attention Mechanism"></object>
+<object data="assets/diagrams/self-attention.svg" type="image/svg+xml" width="900" height="750" class="w-full my-8 rounded-xl shadow-lg" aria-label="Self-Attention Mechanism"></object>
 
 **QKV Computation:**
 - Input X ∈ ℝ^(n×d) is linearly projected to three matrices:
@@ -135,7 +135,7 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 
 ### 7. Training Pipeline
 
-<object data="assets/diagrams/training-pipeline.svg" type="image/svg+xml" class="w-full my-8 rounded-xl shadow-lg" aria-label="LLM Training Pipeline"></object>
+<object data="assets/diagrams/training-pipeline.svg" type="image/svg+xml" width="900" height="800" class="w-full my-8 rounded-xl shadow-lg" aria-label="LLM Training Pipeline"></object>
 
 1. **Pretraining:** Next-token prediction (causal LM) or masked LM on web-scale corpora (CommonCrawl, The Pile, C4, GitHub). Loss = cross-entropy over vocabulary.
 2. **Instruction Tuning (SFT):** Fine-tune on (instruction, response) pairs to align with human intent. Teaches format following, helpfulness.

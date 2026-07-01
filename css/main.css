@@ -210,9 +210,10 @@ body {
 .content-section object {
   display: block;
   width: 100%;
+  height: auto;
+  max-width: 100%;
   border-radius: 0.5rem;
   margin: 1.5rem 0;
-  overflow: hidden;
 }
 
 .content-section .table-wrapper {
