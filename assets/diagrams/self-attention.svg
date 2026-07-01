@@ -35,7 +35,9 @@
   <text x="200" y="70" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">QKV Computation</text>
 
   <!-- Input -->
-  <rect x="150" y="82" width="100" height="32" rx="6" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="150" y="82" width="100" height="32" rx="6" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="3s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="102" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">Input X</text>
 
   <!-- Split arrows -->
@@ -44,19 +46,40 @@
   <line x1="200" y1="114" x2="295" y2="150" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Q -->
-  <rect x="60" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="60" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+    <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2.5s" begin="0s" repeatCount="indefinite"/>
+  </rect>
   <text x="105" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#C34113">Q</text>
   <text x="105" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Query</text>
+  <circle r="3" fill="#E95420" opacity="0">
+    <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.5s" begin="0s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="150;173;191;191;255" dur="2.5s" begin="0s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="105;105;105;105;105" dur="2.5s" begin="0s" repeatCount="indefinite"/>
+  </circle>
 
   <!-- K -->
-  <rect x="155" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="155" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+    <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2.5s" begin="0.3s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#C34113">K</text>
   <text x="200" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Key</text>
+  <circle r="3" fill="#C34113" opacity="0">
+    <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.5s" begin="0.3s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="150;173;191;191;255" dur="2.5s" begin="0.3s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="200;200;200;200;200" dur="2.5s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
 
   <!-- V -->
-  <rect x="250" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="250" y="155" width="90" height="36" rx="6" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+    <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2.5s" begin="0.6s" repeatCount="indefinite"/>
+  </rect>
   <text x="295" y="177" text-anchor="middle" font-size="14" font-weight="700" fill="#C34113">V</text>
   <text x="295" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Value</text>
+  <circle r="3" fill="#E95420" opacity="0">
+    <animate attributeName="opacity" values="0;0.8;0;0.8;0" dur="3s" begin="0.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="150;173;191;191;191;360;360;460" dur="3s" begin="0.6s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="295;295;295;295;295;295;330;310" dur="3s" begin="0.6s" repeatCount="indefinite"/>
+  </circle>
 
   <!-- Formula -->
   <text x="200" y="225" text-anchor="middle" font-size="11" fill="#64748b">Q = XW_Q &amp;nbsp; K = XW_K &amp;nbsp; V = XW_V</text>
@@ -65,8 +88,17 @@
   <line x1="105" y1="191" x2="105" y2="250" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
   <line x1="200" y1="191" x2="200" y2="250" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
 
+  <!-- Pipeline animated particle -->
+  <circle r="3" fill="#E95420" opacity="0">
+    <animate attributeName="opacity" values="0;0.9;0.9;0;0" dur="3.5s" begin="0.8s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="255;287;295;295;325;357;387;423;455;455;495;530" dur="3.5s" begin="0.8s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="200;200;200;200;200;200;200;200;200;200;200;200" dur="3.5s" begin="0.8s" repeatCount="indefinite"/>
+  </circle>
+
   <!-- MatMul: Q × K^T -->
-  <rect x="90" y="255" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="90" y="255" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+    <animate attributeName="opacity" values="0.85;1;0.85" dur="2s" begin="0s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="272" text-anchor="middle" font-size="12" font-weight="600" fill="#C34113">Q × K^T</text>
   <text x="200" y="288" text-anchor="middle" font-size="10" fill="#94a3b8">Attention Scores (dot product)</text>
 
@@ -74,14 +106,18 @@
   <line x1="200" y1="295" x2="200" y2="320" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Scale -->
-  <rect x="130" y="325" width="140" height="32" rx="6" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="130" y="325" width="140" height="32" rx="6" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5" filter="url(#shadow)">
+    <animate attributeName="opacity" values="0.85;1;0.85" dur="2s" begin="0.4s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="345" text-anchor="middle" font-size="12" font-weight="500" fill="#475569">÷ √d_k</text>
 
   <!-- Arrow -->
   <line x1="200" y1="357" x2="200" y2="382" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Softmax -->
-  <rect x="130" y="387" width="140" height="36" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="130" y="387" width="140" height="36" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+    <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="2s" begin="0.8s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="409" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Softmax</text>
   <text x="200" y="425" text-anchor="middle" font-size="9" fill="#94a3b8">Attention Weights</text>
 
@@ -92,7 +128,9 @@
   <line x1="330" y1="360" x2="310" y2="460" stroke="#E95420" stroke-width="1" marker-end="url(#arrow)"/>
 
   <!-- MatMul: weights × V -->
-  <rect x="90" y="455" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="90" y="455" width="220" height="40" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+    <animate attributeName="opacity" values="0.85;1;0.85" dur="2s" begin="1.2s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="472" text-anchor="middle" font-size="12" font-weight="600" fill="#C34113">Attention × V</text>
   <text x="200" y="488" text-anchor="middle" font-size="10" fill="#94a3b8">Weighted Sum of Values</text>
 
@@ -100,7 +138,9 @@
   <line x1="200" y1="495" x2="200" y2="525" stroke="#C34113" stroke-width="2" marker-end="url(#arrowDark)"/>
 
   <!-- Output -->
-  <rect x="130" y="530" width="140" height="36" rx="8" fill="#E95420" filter="url(#shadow)"/>
+  <rect x="130" y="530" width="140" height="36" rx="8" fill="#E95420" filter="url(#shadow)">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="1.5s" begin="1.6s" repeatCount="indefinite"/>
+  </rect>
   <text x="200" y="553" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Context Vector</text>
 
   <!-- Formula -->
