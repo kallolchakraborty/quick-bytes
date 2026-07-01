@@ -114,18 +114,18 @@
 
   <div class="max-w-7xl mx-auto px-6 w-full flex-grow flex flex-col lg:flex-row gap-8 py-8 relative">
     <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden" aria-hidden="true"></div>
-    <aside id="left-sidebar" class="lg:w-56 lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] overflow-y-auto shrink-0 border-b lg:border-b-0 theme-border pb-4 lg:pb-0 pr-0 lg:pr-5 fixed inset-y-0 left-0 z-40 w-64 transform -translate-x-full transition-transform duration-200 lg:translate-x-0 lg:static lg:inset-auto lg:z-auto lg:w-56 lg:border-b-0 theme-bg">
-      <nav aria-label="Documentation navigation" class="sidebar-sections">
-        <div id="sidebar-progress-container" class="px-3 py-3.5 mb-2 border-b theme-border">
-          <div class="flex items-center justify-between text-xs font-bold theme-text mb-1.5">
-            <span>Study Progress</span>
-            <span id="sidebar-progress-text" class="text-brand-500">0%</span>
+    <aside id="left-sidebar" class="lg:w-56 lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] overflow-y-auto shrink-0 border-b lg:border-b-0 theme-border pb-4 lg:pb-0 pr-0 lg:pr-3 fixed inset-y-0 left-0 z-40 w-64 transform -translate-x-full transition-transform duration-200 lg:translate-x-0 lg:static lg:inset-auto lg:z-auto lg:w-56 lg:border-b-0 theme-bg">
+      <nav aria-label="Documentation navigation">
+        <div id="sidebar-progress-compact">
+          <div class="progress-header">
+            <span>Progress</span>
+            <span id="sidebar-progress-text">0%</span>
           </div>
-          <div class="w-full rounded-full h-1.5 overflow-hidden theme-bg-subtle">
-            <div id="sidebar-progress-bar" class="bg-brand-500 h-full rounded-full transition-all duration-500" style="width:0%;"></div>
+          <div class="progress-track">
+            <div id="sidebar-progress-bar" class="progress-fill" style="width:0%"></div>
           </div>
-          <div id="sidebar-progress-stats" class="text-[10px] theme-text-muted mt-1 font-medium">0 of 0 topics completed</div>
         </div>
+        <div class="sidebar-divider"></div>
         <div id="sidebar-bookmarks"></div>
         <div id="sidebar-phases"></div>
       </nav>
@@ -191,14 +191,11 @@
       var phases = QUICK_BYTES.phases || [];
       var html = '';
       phases.forEach(function(phase, idx) {
-        html += '<div class="px-2 py-3' + (idx > 0 ? ' border-t theme-border mt-2' : '') + '">';
-        html += '<div class="text-[10px] font-bold text-brand-500 uppercase tracking-wider mb-2">Phase ' + (idx + 1) + ': ' + phase.title + '</div>';
-        html += '<div class="text-[9px] theme-text-muted uppercase tracking-wider mb-2 pl-0.5">' + phase.level + '</div>';
-        html += '</div>';
+        if (idx > 0) html += '<div class="sidebar-divider"></div>';
+        html += '<div class="sidebar-section-header">' + phase.title + '</div>';
+        html += '<div class="sidebar-level">' + phase.level + '</div>';
         (phase.guides || []).forEach(function(guide) {
-          html += '<div class="sidebar-section">';
           html += '<a href="#' + guide.id + '" class="sidebar-link">' + guide.title + '</a>';
-          html += '</div>';
         });
       });
       phasesContainer.innerHTML = html;

@@ -229,11 +229,8 @@ function updateBookmarksSidebar() {
   if (!container) return;
   var list = loadBookmarks();
   if (!list.length) { container.innerHTML = ''; return; }
-  var html = '<div class="px-3 py-3 border-b theme-border">';
-  html += '<div class="flex items-center justify-between text-xs font-bold theme-text mb-1.5">';
-  html += '<span>Bookmarked</span>';
-  html += '<span class="text-brand-500 text-[10px]">' + list.length + '</span>';
-  html += '</div><div class="space-y-0.5">';
+  var html = '<div class="sidebar-section-header">Bookmarks</div>';
+  html += '<div class="space-y-0.5">';
   var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
   list.forEach(function(id) {
     var found = null;
@@ -243,10 +240,13 @@ function updateBookmarksSidebar() {
       });
     });
     if (found) {
-      html += '<a href="docs.html#' + id + '" class="block text-xs theme-text-muted hover:text-brand-500 py-0.5 truncate transition-colors">' + found.title + '</a>';
+      html += '<div class="sidebar-bookmark-item">';
+      html += '<span class="material-symbols-outlined icon">bookmark</span>';
+      html += '<a href="docs.html#' + id + '">' + found.title + '</a>';
+      html += '</div>';
     }
   });
-  html += '</div></div>';
+  html += '</div>';
   container.innerHTML = html;
 }
 
@@ -279,10 +279,8 @@ function initDocs() {
     var pct = total ? Math.round((completed / total) * 100) : 0;
     var bar = document.getElementById('sidebar-progress-bar');
     var text = document.getElementById('sidebar-progress-text');
-    var stats = document.getElementById('sidebar-progress-stats');
     if (bar) bar.style.width = pct + '%';
-    if (text) text.textContent = pct + '%';
-    if (stats) stats.textContent = completed + ' of ' + total + ' topics completed';
+    if (text) text.textContent = completed + '/' + total + ' · ' + pct + '%';
   }
 
   function loadGuide(guideId) {
@@ -505,10 +503,8 @@ function toggleProgress(guideId) {
   var pct = total ? Math.round((completed / total) * 100) : 0;
   var bar = document.getElementById('sidebar-progress-bar');
   var text = document.getElementById('sidebar-progress-text');
-  var stats = document.getElementById('sidebar-progress-stats');
   if (bar) bar.style.width = pct + '%';
-  if (text) text.textContent = pct + '%';
-  if (stats) stats.textContent = completed + ' of ' + total + ' topics completed';
+  if (text) text.textContent = completed + '/' + total + ' · ' + pct + '%';
 }
 
 // Close search function for inline onclick
