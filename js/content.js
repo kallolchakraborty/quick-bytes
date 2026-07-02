@@ -909,6 +909,97 @@ Useful for complex tasks that benefit from intermediate representations. Each st
 - [ ] Output guardrail catches PII, toxic content, format violations
 - [ ] Rollback procedure documented and tested
 - [ ] Cost budget alerts configured`
+            },
+            {
+              id: 'staff-plus-perspective',
+              title: "Staff+ Engineer's Perspective",
+              content: `Prompt engineering is not just about crafting better instructions — it is a strategic discipline. This section covers how Staff+ AI engineers think about prompt engineering at the organizational and architectural level.
+
+#### Prompt vs. Alternatives — Decision Framework
+
+The first question a Staff+ engineer asks is not "how do I prompt this?" but "should I be prompting at all?" The decision tree considers four options:
+
+| Approach | Best for | Cost | Quality ceiling | Iteration speed |
+|----------|----------|------|----------------|-----------------|
+| **Prompt engineering** | Prototyping, simple tasks, frequent changes | ~$0/token (cheapest) | Model-imposed | Instant |
+| **RAG (retrieval)** | Knowledge-heavy, dynamic context | Embedding storage + prompt | Higher (can inject facts) | Hours |
+| **Fine-tuning (LoRA)** | Style, format, domain adaptation | Training + inference | Highest for narrow tasks | Days |
+| **Model swap** | Capability gap, new modality | No change (just API call) | Highest overall | Hours |
+
+**Guidelines:**
+- **Prototype with prompting** — validate the task is solvable before investing in fine-tuning or RAG.
+- **Add RAG when the prompt needs facts the model doesn't know** — but measure retrieval precision first; bad retrieval is worse than no retrieval.
+- **Fine-tune when the model can't follow the format or style** — no amount of few-shot prompting fixes a model that refuses to output valid JSON.
+- **Switch models when the base capability isn't there** — if GPT-4 can't reason about your domain, no prompt will fix it; try Claude or a specialized model.
+
+#### Scaling Prompt Engineering Across an Org
+
+At Staff+ level, you don't write prompts — you build systems that let your org write good prompts.
+
+**Prompt libraries as internal packages:** Treat prompts like shared modules. Each prompt has a version, owner, unit test suite, and documented metric. Teams import prompts from the library rather than writing from scratch. This prevents fragmentation (12 teams with 12 slightly different summarization prompts).
+
+**Style guides and conventions:** Standardize on:
+- Chat template format (system/user/assistant role conventions)
+- Output format specification style (JSON schema vs. plain text instructions)
+- Error handling patterns (what the model should say when it cannot answer)
+- Temperature and token limit conventions per task type
+
+**PR review for prompts:** A prompt diff should be reviewable like a code diff. Each prompt change shows:
+- Before/after of the system message and exemplars
+- Diff on the regression suite (which metrics changed and by how much)
+- Justification for the change (what task failure motivated it)
+
+**Prompt debt:** Like technical debt, prompt debt accumulates when quick iterations leave behind messy, untested prompts. Symptoms: exemplars that no longer match recent training data, redundant instructions accumulated over months, fragile prompts that break when the base model is updated. Schedule regular prompt audits to clean debt.
+
+#### Staff+ Anti-Patterns
+
+The most experienced engineers make these mistakes when they stop measuring:
+
+1. **Over-engineering:** A 50-shot CoT prompt with self-consistency when a simple 3-shot prompt scores within 1% of the same accuracy. Cost difference: 50× more tokens for no gain. Fix: benchmark the simplest approach first, add complexity only when you can measure the improvement.
+
+2. **Premature optimization:** Building semantic caching (weeks of work) before basic evaluation (hours of work). The cache doesn't help if the prompt itself is wrong. Fix: establish baseline metrics before optimizing latency or cost.
+
+3. **Cargo culting techniques:** Adopting ReAct, Tree-of-Thought, or DSPy because "that's what the papers use" without measuring whether they help your specific task. Each technique adds cost and complexity. Fix: run A/B tests before committing to any advanced technique.
+
+4. **Ignoring the base model:** Spending weeks optimizing a prompt for GPT-4 when switching to Claude-3 or Gemini would fix the issue in one afternoon. Different models have different strengths, failure modes, and quirks. Fix: when stuck, try the same prompt on a different model before adding more complexity.
+
+5. **Evaluation blindness:** Optimizing for one metric while silently regressing others. For example, optimizing for factual accuracy might make responses more terse and less helpful, degrading user satisfaction. Fix: always monitor a basket of metrics, not just the optimization target.
+
+6. **Prompt drift neglect:** The prompt works today but stops working next month because the base model received an update. Model providers update their models frequently, and prompts that relied on specific behaviors may silently break. Fix: automated regression tests that run daily and alert on metric drops.
+
+#### ROI Thinking
+
+Prompt engineering is an investment of engineering time. Staff+ engineers evaluate the return:
+
+| Investment | Effort | Typical ROI | When to do it |
+|------------|--------|-------------|---------------|
+| Basic prompt (1 hour) | Very low | High for simple tasks | Every task initially |
+| Few-shot collection (1 day) | Low | Medium | When zero-shot is 80%+ but not 95% |
+| Regression test suite (1 week) | Medium | High for maintained prompts | Before any prompt goes to production |
+| DSPy compilation (2 weeks) | High | Medium for complex tasks | When manual optimization plateaus |
+| Semantic cache (2-4 weeks) | High | High for high-volume, repetitive queries | After basic eval is solid and volume > 100K queries/month |
+| Fine-tuning (2-6 weeks) | Very high | Highest for style/format | When prompt engineering hits the model's inherent quality ceiling |
+
+**The "prompt engineer" role debate:** At Staff+ level, the debate is not whether prompt engineering is "real engineering" — it is whether it should be a specialist role or a skill every engineer learns. The industry consensus is moving toward the latter: prompt engineering is becoming a baseline competency like debugging SQL or writing tests. The Staff+ role is to build the tooling, libraries, and education that make good prompting accessible to every engineer on the team.
+
+#### Org Impact & Career Growth
+
+**Where prompt engineering fits in ML orgs:** In well-structured ML orgs, prompt engineering bridges product engineering (understanding the user need) and ML engineering (model capabilities, infrastructure). It is not a separate silo — it is the interface between the two.
+
+| Model | Ownership model | Works for |
+|-------|----------------|----------|
+| **Center of Excellence** | A small team of prompt specialists builds libraries and tools consumed by product teams | Larger orgs (100+ engineers), high-stakes prompts |
+| **Embedded expertise** | Prompt-capable engineers sit within each product team | Mid-size orgs, diverse use cases |
+| **Self-service + guardrails** | Every engineer writes prompts, a platform team provides guardrails | Smaller teams, standardized use cases |
+
+**Career progression for prompt-capable engineers:**
+1. Learn prompting fundamentals and tooling.
+2. Build eval frameworks and automate regression testing.
+3. Design prompt libraries and style guides.
+4. Architect multi-prompt systems (routing, chaining, agents).
+5. Drive org-level strategy: when to build, buy, or fine-tune.
+
+The Staff+ engineer's ultimate value in prompt engineering is not writing the best prompt — it is building the system and culture where every prompt is well-written, well-tested, and well-monitored.`
             }
           ]
         }],
