@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (m.section) href = 'docs.html#' + m.section.id;
         html += '<a href="' + href + '" class="block px-3 py-2 rounded-lg hover:theme-bg-subtle transition-colors" onclick="closeSearch()">' +
           '<div class="text-sm font-medium theme-text">' + m.guide.title + '</div>' +
-          '<div class="text-xs theme-text-muted mt-0.5">' + m.phase.title + ' (' + m.phase.level + ')' +
+          '<div class="text-xs theme-text-muted mt-0.5">' + m.phase.title +
           (m.section ? ' &middot; ' + m.section.title : '') +
           '</div>' +
         '</a>';
