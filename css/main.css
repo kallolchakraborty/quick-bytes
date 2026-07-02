@@ -307,12 +307,15 @@ body {
   margin: 1.5rem 0;
 }
 
+.content-section .diagram-wrapper {
+  text-align: center;
+  margin: 1.5rem 0;
+}
 .content-section object {
-  display: block;
+  display: inline-block;
   height: auto;
   max-width: 100%;
   border-radius: 0.5rem;
-  margin: 1.5rem auto;
 }
 
 .content-section .table-wrapper {

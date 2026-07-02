@@ -30,7 +30,7 @@ const QUICK_BYTES = {
 
 **Evolution**
 
-<object data="assets/diagrams/llm-evolution.svg" type="image/svg+xml" width="520" height="640" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="LLM Evolution Timeline"></object>
+<object data="assets/diagrams/llm-evolution.svg" type="image/svg+xml" width="520" height="640" class="my-8 rounded-xl shadow-lg" aria-label="LLM Evolution Timeline"></object>
 
 **Key Properties**
 
@@ -46,7 +46,7 @@ LLMs are not "intelligent" in the human sense — they are statistical pattern m
               title: 'Detailed Architecture',
               content: `The modern LLM is built on the **Transformer** architecture. Below is the complete architecture end-to-end, from raw text to output.
 
-<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" width="900" height="1160" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
+<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" width="900" height="1160" class="my-8 rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
 
 ### 1. Tokenization
 
@@ -58,13 +58,13 @@ Raw text is split into tokens — subword units that balance vocabulary size and
 
 Example: "Transformer" → ["Transform", "er"] or ["Trans", "former"] depending on tokenizer.
 
-<object data="assets/diagrams/tokenization.svg" type="image/svg+xml" width="900" height="700" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="BPE Tokenization Process"></object>
+<object data="assets/diagrams/tokenization.svg" type="image/svg+xml" width="900" height="700" class="my-8 rounded-xl shadow-lg" aria-label="BPE Tokenization Process"></object>
 
 ### 2. Embeddings
 
 Each token is mapped to a dense vector via a learned embedding matrix \`E ∈ ℝ^(V×d)\` where V = vocabulary size, d = model dimension (e.g., 4096 for 7B models). These embeddings capture semantic similarity — similar tokens have nearby vectors.
 
-<object data="assets/diagrams/embeddings.svg" type="image/svg+xml" width="900" height="700" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Token &amp; Positional Embeddings"></object>
+<object data="assets/diagrams/embeddings.svg" type="image/svg+xml" width="900" height="700" class="my-8 rounded-xl shadow-lg" aria-label="Token &amp; Positional Embeddings"></object>
 
 **Positional Encoding:** Since self-attention is permutation-invariant, position information must be injected:
 
@@ -76,7 +76,7 @@ Each token is mapped to a dense vector via a learned embedding matrix \`E ∈ �
 
 The core innovation. Each token "attends" to every other token, computing contextualized representations.
 
-<object data="assets/diagrams/self-attention.svg" type="image/svg+xml" width="900" height="750" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Self-Attention Mechanism"></object>
+<object data="assets/diagrams/self-attention.svg" type="image/svg+xml" width="900" height="750" class="my-8 rounded-xl shadow-lg" aria-label="Self-Attention Mechanism"></object>
 
 **QKV Computation:**
 - Input X ∈ ℝ^(n×d) is linearly projected to three matrices:
@@ -110,7 +110,7 @@ Each attention output passes through a two-layer MLP with a non-linear activatio
 - FFN(x) = W_2 · σ(W_1 · x + b_1) + b_2
 - Inner dimension is typically 4× the model dimension (e.g., 4096 → 11008 for LLaMA 7B).
 
-<object data="assets/diagrams/ffn.svg" type="image/svg+xml" width="900" height="700" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Feed-Forward Network Architecture"></object>
+<object data="assets/diagrams/ffn.svg" type="image/svg+xml" width="900" height="700" class="my-8 rounded-xl shadow-lg" aria-label="Feed-Forward Network Architecture"></object>
 
 **Activation Functions:**
 
@@ -126,7 +126,7 @@ Each attention output passes through a two-layer MLP with a non-linear activatio
 - **Post-LN** (applied after sublayer): Used in original Transformer, BERT. Less stable, requires warmup.
 - **RMSNorm:** A simplified LN that omits mean subtraction. y = x / RMS(x) · γ. Used in LLaMA, Mistral. ~5% faster.
 
-<object data="assets/diagrams/norm-residual.svg" type="image/svg+xml" width="900" height="520" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Normalization &amp; Residual Connections"></object>
+<object data="assets/diagrams/norm-residual.svg" type="image/svg+xml" width="900" height="520" class="my-8 rounded-xl shadow-lg" aria-label="Normalization &amp; Residual Connections"></object>
 
 **Residual Connections:** x ← x + Sublayer(x). Enables gradients to flow directly through the network, mitigating vanishing gradients in deep (32–80+ layer) models.
 
@@ -138,13 +138,13 @@ x → RMSNorm → Self-Attention (GQA) → Residual +
   → RMSNorm → FFN (SwiGLU) → Residual +
 \`\`\`
 
-<object data="assets/diagrams/transformer-block.svg" type="image/svg+xml" width="900" height="650" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Full Transformer Decoder Block"></object>
+<object data="assets/diagrams/transformer-block.svg" type="image/svg+xml" width="900" height="650" class="my-8 rounded-xl shadow-lg" aria-label="Full Transformer Decoder Block"></object>
 
 Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT, LLaMA) use **causal masking** — each token can only attend to itself and earlier tokens. Encoder-decoder models (T5) use a cross-attention layer between encoder and decoder.
 
 ### 7. Training Pipeline
 
-<object data="assets/diagrams/training-pipeline.svg" type="image/svg+xml" width="900" height="800" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="LLM Training Pipeline"></object>
+<object data="assets/diagrams/training-pipeline.svg" type="image/svg+xml" width="900" height="800" class="my-8 rounded-xl shadow-lg" aria-label="LLM Training Pipeline"></object>
 
 1. **Pretraining:** Next-token prediction (causal LM) or masked LM on web-scale corpora (CommonCrawl, The Pile, C4, GitHub). Loss = cross-entropy over vocabulary.
 2. **Instruction Tuning (SFT):** Fine-tune on (instruction, response) pairs to align with human intent. Teaches format following, helpfulness.
@@ -159,14 +159,14 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 - **Flash Attention:** Fuses attention computation with tiling, avoiding O(n²) memory writes. 2–4× training and inference speedup on long sequences.
 - **Continuous Batching:** Serves multiple requests in a single forward pass, maximizing GPU utilization. Implemented in vLLM, TGI, TensorRT-LLM.
 
-<object data="assets/diagrams/inference-optimizations.svg" type="image/svg+xml" width="900" height="620" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Inference Optimizations"></object>`
+<object data="assets/diagrams/inference-optimizations.svg" type="image/svg+xml" width="900" height="620" class="my-8 rounded-xl shadow-lg" aria-label="Inference Optimizations"></object>`
             },
             {
               id: 'types-of-llms',
               title: 'Types of LLMs',
                content: `LLMs can be categorized along several axes: architecture, parameter density, accessibility, and modality. The diagram below provides a visual overview of these categories.
 
-<object data="assets/diagrams/types-of-llms.svg" type="image/svg+xml" width="900" height="760" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Types of LLMs"></object>
+<object data="assets/diagrams/types-of-llms.svg" type="image/svg+xml" width="900" height="760" class="my-8 rounded-xl shadow-lg" aria-label="Types of LLMs"></object>
 
 ### 1. By Architecture
 
@@ -498,7 +498,7 @@ Longer context windows enable reasoning over large documents, codebases, and con
 
 #### When to Use Which Model (Decision Framework)
 
-<object data="assets/diagrams/decision-framework.svg" type="image/svg+xml" width="900" height="780" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Model Decision Framework"></object>
+<object data="assets/diagrams/decision-framework.svg" type="image/svg+xml" width="900" height="780" class="my-8 rounded-xl shadow-lg" aria-label="Model Decision Framework"></object>
 
 ### Key Takeaways
 

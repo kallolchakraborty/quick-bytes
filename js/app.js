@@ -403,7 +403,9 @@ function initDocs() {
 
   function renderMarkdown(text) {
     if (typeof marked !== 'undefined') {
-      return marked.parse(text);
+      var html = marked.parse(text);
+      html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1></object></div>');
+      return html;
     }
     return text;
   }
