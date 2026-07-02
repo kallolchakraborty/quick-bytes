@@ -274,6 +274,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Modality** | Text + Vision (GPT-4V, GPT-4o) |
 | **Tokenization** | BPE (tiktoken) |
 
+<object data="assets/diagrams/gpt4-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+
 **Architectural highlights:**
 - MoE enables far more total capacity than a dense model at equivalent inference cost. The router learns to specialize experts to different domains (code, math, poetry, factual knowledge).
 - Grouped-Query Attention for efficient inference.
@@ -294,6 +296,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Context** | 200K tokens (standard) |
 | **Training** | Pretraining → Constitutional AI (SFT + RLHF via AI feedback, not human) |
 | **Modality** | Text + Vision (Claude 3.5 Sonnet) |
+
+<object data="assets/diagrams/claude3-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
 
 **Architectural highlights:**
 - **Constitutional AI:** Model is guided by a written constitution during RLHF, reducing reliance on extensive human labeling. Principles include harmlessness, honesty, and helpfulness.
@@ -316,6 +320,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Training** | Multimodal pretraining → instruction tuning → RLHF |
 | **Infrastructure** | Trained on TPU v5p pods (Google TPUs) |
 
+<object data="assets/diagrams/gemini-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+
 **Architectural highlights:**
 - **Natively multimodal:** Unlike GPT-4V (which bolts a vision encoder onto a text model), Gemini was trained from scratch on interleaved text, image, audio, and video. This enables cross-modal reasoning that separate encoders may miss.
 - **Ultra-long context:** 1M+ tokens via a combination of Flash Attention, sparse attention patterns, and possibly recurrent memory mechanisms.
@@ -337,6 +343,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Vocabulary** | 128K tokens (BPE, tiktoken-based) |
 | **Training Data** | ~15T tokens (quality-filtered, heavily deduplicated) |
 | **License** | Open-weight (custom commercial license) |
+
+<object data="assets/diagrams/llama3-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
 
 **Architectural highlights:**
 - **Grouped-Query Attention (GQA):** 8 key-value heads per 32 query heads (70B). Reduces KV-cache memory ~4× vs full MHA with minimal quality loss.
@@ -362,6 +370,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Context** | 32K (standard) |
 | **License** | Apache 2.0 (Mistral 7B, Mixtral) |
 
+<object data="assets/diagrams/mistral-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+
 **Architectural innovations:**
 - **Sliding Window Attention (Mistral 7B):** Each token attends to only W surrounding tokens (W=4096) instead of the full sequence. Memory cost is O(n·W) instead of O(n²). For long sequences, this is a dramatic reduction. Information propagates across the window through layered stacking.
 - **Grouped-Query Attention** with efficient KV-cache.
@@ -382,6 +392,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Context** | 512 tokens |
 | **Training** | Masked LM (15% mask) + Next Sentence Prediction |
 | **Vocabulary** | 30K (WordPiece) |
+
+<object data="assets/diagrams/bert-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
 
 **Architectural highlights:**
 - **Bidirectional attention:** Unlike decoder models, BERT attends to both left and right context. This gives richer representations per token but makes it non-generative.
@@ -408,6 +420,8 @@ Longer context windows enable reasoning over large documents, codebases, and con
 | **Context** | 512 (encoder) + arbitrary (decoder) |
 | **Training** | Span corruption (mask contiguous spans, predict sequence) |
 | **Vocabulary** | 32K (SentencePiece) |
+
+<object data="assets/diagrams/t5-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
 
 **Architectural highlights:**
 - **Text-to-Text Framework:** Every NLP task is cast as text-to-text — input text, output text. Translation: "translate English to German: Hello" → "Hallo". Classification: "sentiment: This movie is great" → "positive". This unified formulation simplified transfer learning.

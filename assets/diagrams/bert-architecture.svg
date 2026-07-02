@@ -1,0 +1,443 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" width="900" height="680" fill="none">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');
+    text { font-family: 'Ubuntu', sans-serif; }
+  </style>
+  <defs>
+    <linearGradient id="bertGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e95420"/>
+      <stop offset="100%" stop-color="#c34113"/>
+    </linearGradient>
+    <linearGradient id="biGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="mlmGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="nspGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+    <filter id="shadow1">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="680" rx="8" fill="var(--bg-subtle, #f8fafc)" opacity="0.5"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-default, #0f172a)">BERT Architecture</text>
+  <text x="450" y="58" text-anchor="middle" font-size="12" fill="var(--text-muted, #64748b)">Encoder-Only — Bidirectional Attention, MLM, NSP</text>
+
+  <!-- ==================== SECTION LABELS ==================== -->
+  <rect x="30" y="80" width="180" height="22" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+  <text x="50" y="95" font-size="11" font-weight="600" fill="var(--brand-default, #e95420)">INPUT TOKENS</text>
+
+  <rect x="30" y="190" width="220" height="22" rx="4" fill="rgba(5,153,105,0.06)"/>
+  <text x="50" y="205" font-size="11" font-weight="600" fill="#059669">BIDIRECTIONAL ATTENTION</text>
+
+  <rect x="30" y="335" width="220" height="22" rx="4" fill="rgba(37,99,235,0.06)"/>
+  <text x="50" y="350" font-size="11" font-weight="600" fill="#2563eb">MASKED LANGUAGE MODEL</text>
+
+  <rect x="30" y="420" width="220" height="22" rx="4" fill="rgba(124,58,237,0.06)"/>
+  <text x="50" y="435" font-size="11" font-weight="600" fill="#7c3aed">NEXT SENTENCE PREDICTION</text>
+
+  <rect x="30" y="505" width="220" height="22" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+  <text x="50" y="520" font-size="11" font-weight="600" fill="var(--brand-default, #e95420)">CONTEXTUALIZED OUTPUT</text>
+
+  <!-- ==================== INPUT TOKENS ==================== -->
+  <!-- 8 tokens: [CLS] The cat sat on the mat [SEP] -->
+  <!-- w=70, h=48, gap=4, total=588, start=(900-588)/2=156 -->
+  <!-- centers: 191, 265, 339, 413, 487, 561, 635, 709 -->
+  <g>
+    <!-- [CLS] -->
+    <rect x="156" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="191" y="137" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">[CLS]</text>
+    <text x="191" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Special</text>
+
+    <!-- The -->
+    <rect x="230" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="265" y="137" text-anchor="middle" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">The</text>
+    <text x="265" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Token</text>
+
+    <!-- cat -->
+    <rect x="304" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="339" y="137" text-anchor="middle" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">cat</text>
+    <text x="339" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Token</text>
+
+    <!-- sat -->
+    <rect x="378" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="413" y="137" text-anchor="middle" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">sat</text>
+    <text x="413" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Token</text>
+
+    <!-- on -->
+    <rect x="452" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="487" y="137" text-anchor="middle" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">on</text>
+    <text x="487" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Token</text>
+
+    <!-- the -->
+    <rect x="526" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="561" y="137" text-anchor="middle" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">the</text>
+    <text x="561" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Token</text>
+
+    <!-- mat -->
+    <rect x="600" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="635" y="137" text-anchor="middle" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">mat</text>
+    <text x="635" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Token</text>
+
+    <!-- [SEP] -->
+    <rect x="674" y="110" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="709" y="137" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">[SEP]</text>
+    <text x="709" y="150" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Special</text>
+  </g>
+
+  <!-- Down arrows from tokens to encoder -->
+  <g stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" stroke-linecap="round">
+    <line x1="191" y1="158" x2="191" y2="195"/>
+    <line x1="265" y1="158" x2="265" y2="195"/>
+    <line x1="339" y1="158" x2="339" y2="195"/>
+    <line x1="413" y1="158" x2="413" y2="195"/>
+    <line x1="487" y1="158" x2="487" y2="195"/>
+    <line x1="561" y1="158" x2="561" y2="195"/>
+    <line x1="635" y1="158" x2="635" y2="195"/>
+    <line x1="709" y1="158" x2="709" y2="195"/>
+  </g>
+  <g fill="var(--border-default, #e2e8f0)">
+    <polygon points="191,195 187,187 195,187"/>
+    <polygon points="265,195 261,187 269,187"/>
+    <polygon points="339,195 335,187 343,187"/>
+    <polygon points="413,195 409,187 417,187"/>
+    <polygon points="487,195 483,187 491,187"/>
+    <polygon points="561,195 557,187 565,187"/>
+    <polygon points="635,195 631,187 639,187"/>
+    <polygon points="709,195 705,187 713,187"/>
+  </g>
+
+  <!-- ==================== ENCODER + ATTENTION MATRIX ==================== -->
+  <!-- Encoder box -->
+  <rect x="55" y="200" width="790" height="120" rx="10" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5" filter="url(#shadow1)"/>
+
+  <!-- Encoder stack label -->
+  <text x="450" y="220" text-anchor="middle" font-size="12" font-weight="600" fill="#059669">×12 BERT Encoder Layers (Full Bidirectional Self-Attention)</text>
+
+  <!-- Bidirectional Attention Matrix — 6×6 full matrix (ALL cells active) -->
+  <!-- Cell: 20×20, gap: 3 → 23 per cell. 6×23 = 138. Start x=235, y=230 -->
+  <g>
+    <!-- Column labels -->
+    <g font-size="8" text-anchor="middle" fill="var(--text-muted, #64748b)">
+      <text x="245" y="226">t₁</text>
+      <text x="268" y="226">t₂</text>
+      <text x="291" y="226">t₃</text>
+      <text x="314" y="226">t₄</text>
+      <text x="337" y="226">t₅</text>
+      <text x="360" y="226">t₆</text>
+    </g>
+    <!-- Row labels -->
+    <g font-size="8" text-anchor="end" fill="var(--text-muted, #64748b)">
+      <text x="231" y="243">t₁</text>
+      <text x="231" y="266">t₂</text>
+      <text x="231" y="289">t₃</text>
+      <text x="231" y="312">t₄</text>
+      <text x="231" y="335">t₅</text>
+      <text x="231" y="358">t₆</text>
+    </g>
+    <!-- ALL cells filled — full matrix (bidirectional, NOT causal) -->
+    <!-- Row 1 -->
+    <rect x="235" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="258" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="281" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="304" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="327" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="350" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <!-- Row 2 -->
+    <rect x="235" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="258" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="281" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="304" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="327" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="350" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <!-- Row 3 -->
+    <rect x="235" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="258" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="281" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="304" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="327" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="350" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <!-- Row 4 -->
+    <rect x="235" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="258" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="281" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="304" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="327" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="350" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <!-- Row 5 -->
+    <rect x="235" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="258" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="281" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="304" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="327" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+    <rect x="350" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.08)"/>
+
+    <!-- Animated diagonal sweep — highlights moving along diagonal showing full bidirectional access -->
+    <rect x="235" y="232" width="20" height="20" rx="3" fill="rgba(5,153,105,0.25)" stroke="#059669" stroke-width="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="3.6s" begin="0s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="258" y="255" width="20" height="20" rx="3" fill="rgba(5,153,105,0.25)" stroke="#059669" stroke-width="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="3.6s" begin="0.6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="281" y="278" width="20" height="20" rx="3" fill="rgba(5,153,105,0.25)" stroke="#059669" stroke-width="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="3.6s" begin="1.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="304" y="301" width="20" height="20" rx="3" fill="rgba(5,153,105,0.25)" stroke="#059669" stroke-width="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="3.6s" begin="1.8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="327" y="324" width="20" height="20" rx="3" fill="rgba(5,153,105,0.25)" stroke="#059669" stroke-width="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="3.6s" begin="2.4s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Animated column sweep — shows each column lighting up (each token attending to all) -->
+    <rect x="235" y="232" width="20" height="112" rx="3" fill="rgba(5,153,105,0.12)" stroke="#059669" stroke-width="1">
+      <animate attributeName="opacity" values="0;0.6;0" dur="3.6s" begin="0s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="258" y="232" width="20" height="112" rx="3" fill="rgba(5,153,105,0.12)" stroke="#059669" stroke-width="1">
+      <animate attributeName="opacity" values="0;0.6;0" dur="3.6s" begin="0.6s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="281" y="232" width="20" height="112" rx="3" fill="rgba(5,153,105,0.12)" stroke="#059669" stroke-width="1">
+      <animate attributeName="opacity" values="0;0.6;0" dur="3.6s" begin="1.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="304" y="232" width="20" height="112" rx="3" fill="rgba(5,153,105,0.12)" stroke="#059669" stroke-width="1">
+      <animate attributeName="opacity" values="0;0.6;0" dur="3.6s" begin="1.8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="327" y="232" width="20" height="112" rx="3" fill="rgba(5,153,105,0.12)" stroke="#059669" stroke-width="1">
+      <animate attributeName="opacity" values="0;0.6;0" dur="3.6s" begin="2.4s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- "ALL tokens attend to ALL tokens" callout -->
+  <rect x="410" y="245" width="180" height="18" rx="9" fill="rgba(5,153,105,0.06)"/>
+  <text x="500" y="258" text-anchor="middle" font-size="9" font-weight="500" fill="#059669">Every token ↔ Every token</text>
+
+  <!-- Encoder details -->
+  <rect x="410" y="270" width="180" height="40" rx="6" fill="rgba(5,153,105,0.04)" stroke="#059669" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="420" y="284" font-size="8" fill="var(--text-muted, #64748b)">Multi-Head Self-Attention</text>
+  <text x="420" y="297" font-size="8" fill="var(--text-muted, #64748b)">+ Add &amp; Norm + FFN + Add &amp; Norm</text>
+
+  <!-- ==================== MLM TRAINING ==================== -->
+  <!-- Down arrows to MLM -->
+  <g stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" stroke-linecap="round">
+    <line x1="265" y1="320" x2="265" y2="350"/>
+    <line x1="339" y1="320" x2="339" y2="350"/>
+    <line x1="487" y1="320" x2="487" y2="350"/>
+    <line x1="561" y1="320" x2="561" y2="350"/>
+  </g>
+  <g fill="var(--border-default, #e2e8f0)">
+    <polygon points="265,350 261,342 269,342"/>
+    <polygon points="339,350 335,342 343,342"/>
+    <polygon points="487,350 483,342 491,342"/>
+    <polygon points="561,350 557,342 565,342"/>
+  </g>
+
+  <!-- MLM box -->
+  <rect x="55" y="355" width="385" height="55" rx="8" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow1)"/>
+
+  <!-- MLM tokens inside box -->
+  <g>
+    <text x="75" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">The</text>
+    <text x="110" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">cat</text>
+
+    <!-- [MASK] 1 -->
+    <rect x="135" y="365" width="55" height="18" rx="4" fill="rgba(37,99,235,0.08)" stroke="#2563eb" stroke-width="1.5">
+      <animate attributeName="stroke-opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="162" y="378" text-anchor="middle" font-size="9" font-weight="600" fill="#2563eb">[MASK]</text>
+    <text x="162" y="392" text-anchor="middle" font-size="7" fill="#60a5fa">Predict</text>
+
+    <text x="200" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">on</text>
+    <text x="225" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">the</text>
+
+    <!-- [MASK] 2 -->
+    <rect x="255" y="365" width="55" height="18" rx="4" fill="rgba(37,99,235,0.08)" stroke="#2563eb" stroke-width="1.5">
+      <animate attributeName="stroke-opacity" values="1;0.4;1" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="282" y="378" text-anchor="middle" font-size="9" font-weight="600" fill="#2563eb">[MASK]</text>
+    <text x="282" y="392" text-anchor="middle" font-size="7" fill="#60a5fa">Predict</text>
+
+    <text x="320" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">[SEP]</text>
+  </g>
+
+  <!-- Bidirectional context arrows for MLM -->
+  <g stroke="#059669" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.6">
+    <!-- Context arrows feeding into first [MASK] -->
+    <path d="M80 380 Q125 360 162 380"/>
+    <path d="M115 380 Q140 360 162 380"/>
+    <path d="M205 380 Q185 360 162 380"/>
+    <path d="M230 380 Q200 360 162 380"/>
+  </g>
+  <g stroke="#059669" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.6">
+    <!-- Context arrows feeding into second [MASK] -->
+    <path d="M80 395 Q170 385 282 395"/>
+    <path d="M115 395 Q200 385 282 395"/>
+    <path d="M205 395 Q240 385 282 395"/>
+    <path d="M230 395 Q250 385 282 395"/>
+  </g>
+
+  <!-- MLM loss arrow -->
+  <path d="M162 400 L162 415" stroke="#2563eb" stroke-width="1" stroke-dasharray="3 2" opacity="0.8"/>
+  <polygon points="162,415 159,410 165,410" fill="#2563eb"/>
+  <rect x="135" y="418" width="54" height="16" rx="4" fill="rgba(37,99,235,0.06)"/>
+  <text x="162" y="430" text-anchor="middle" font-size="7" font-weight="500" fill="#2563eb">MLM Loss</text>
+
+  <!-- ==================== NSP TRAINING ==================== -->
+  <!-- Down arrows to NSP -->
+  <g stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" stroke-linecap="round">
+    <line x1="413" y1="320" x2="413" y2="350"/>
+    <line x1="635" y1="320" x2="635" y2="350"/>
+    <line x1="709" y1="320" x2="709" y2="350"/>
+  </g>
+  <g fill="var(--border-default, #e2e8f0)">
+    <polygon points="413,350 409,342 417,342"/>
+    <polygon points="635,350 631,342 639,342"/>
+    <polygon points="709,350 705,342 713,342"/>
+  </g>
+
+  <!-- NSP box -->
+  <rect x="460" y="355" width="385" height="55" rx="8" fill="var(--bg-default, #ffffff)" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow1)"/>
+
+  <!-- NSP sentences inside box -->
+  <g>
+    <text x="475" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">The cat sat on the mat</text>
+    <rect x="610" y="368" width="40" height="16" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+    <text x="630" y="380" text-anchor="middle" font-size="8" font-weight="600" fill="#7c3aed">[SEP]</text>
+    <text x="660" y="378" font-size="10" font-weight="500" fill="var(--text-default, #0f172a)">It was comfortable</text>
+    <rect x="770" y="368" width="40" height="16" rx="4" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1"/>
+    <text x="790" y="380" text-anchor="middle" font-size="8" font-weight="600" fill="#7c3aed">[SEP]</text>
+  </g>
+
+  <!-- NSP classification -->
+  <g>
+    <!-- [CLS] → classification arrow -->
+    <path d="M475 410 L475 435" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2"/>
+    <polygon points="475,435 472,430 478,430" fill="#7c3aed"/>
+
+    <!-- Binary classification box -->
+    <rect x="440" y="440" width="120" height="36" rx="8" fill="rgba(124,58,237,0.06)" stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow1)">
+      <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <text x="500" y="457" text-anchor="middle" font-size="9" font-weight="600" fill="#6d28d9">NSP Classifier</text>
+    <text x="500" y="470" text-anchor="middle" font-size="8" fill="#7c3aed">IsNext / NotNext</text>
+  </g>
+
+  <!-- NSP loss arrow -->
+  <path d="M560 458 L585 458" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 2"/>
+  <polygon points="585,458 580,455 580,461" fill="#7c3aed"/>
+  <rect x="588" y="449" width="50" height="16" rx="4" fill="rgba(124,58,237,0.06)"/>
+  <text x="613" y="460" text-anchor="middle" font-size="7" fill="#7c3aed">NSP Loss</text>
+
+  <!-- ==================== OUTPUT EMBEDDINGS ==================== -->
+  <!-- Down arrows from encoder/MLM/NSP to output -->
+  <g stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" stroke-linecap="round">
+    <line x1="191" y1="505" x2="191" y2="535"/>
+    <line x1="265" y1="505" x2="265" y2="535"/>
+    <line x1="339" y1="505" x2="339" y2="535"/>
+    <line x1="413" y1="505" x2="413" y2="535"/>
+    <line x1="487" y1="505" x2="487" y2="535"/>
+    <line x1="561" y1="505" x2="561" y2="535"/>
+    <line x1="635" y1="505" x2="635" y2="535"/>
+    <line x1="709" y1="505" x2="709" y2="535"/>
+  </g>
+  <g fill="var(--border-default, #e2e8f0)">
+    <polygon points="191,535 187,527 195,527"/>
+    <polygon points="265,535 261,527 269,527"/>
+    <polygon points="339,535 335,527 343,527"/>
+    <polygon points="413,535 409,527 417,527"/>
+    <polygon points="487,535 483,527 491,527"/>
+    <polygon points="561,535 557,527 565,527"/>
+    <polygon points="635,535 631,527 639,527"/>
+    <polygon points="709,535 705,527 713,527"/>
+  </g>
+
+  <!-- Output embedding boxes -->
+  <g>
+    <!-- [CLS] output — highlighted -->
+    <rect x="156" y="540" width="70" height="48" rx="6" fill="rgba(233,84,32,0.06)" stroke="var(--brand-default, #e95420)" stroke-width="2" filter="url(#shadow1)">
+      <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <text x="191" y="567" text-anchor="middle" font-size="10" font-weight="700" fill="var(--brand-default, #e95420)">C</text>
+    <text x="191" y="580" text-anchor="middle" font-size="8" fill="var(--brand-default, #e95420)">[CLS] Emb.</text>
+
+    <!-- Token outputs -->
+    <rect x="230" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="265" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋The</text>
+    <text x="265" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+
+    <rect x="304" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="339" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋cat</text>
+    <text x="339" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+
+    <rect x="378" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="413" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋sat</text>
+    <text x="413" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+
+    <rect x="452" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="487" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋on</text>
+    <text x="487" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+
+    <rect x="526" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="561" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋the</text>
+    <text x="561" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+
+    <rect x="600" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="635" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋mat</text>
+    <text x="635" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+
+    <rect x="674" y="540" width="70" height="48" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <text x="709" y="563" text-anchor="middle" font-size="9" fill="var(--text-default, #0f172a)">E₋[SEP]</text>
+    <text x="709" y="580" text-anchor="middle" font-size="7" fill="var(--text-muted, #64748b)">Token</text>
+  </g>
+
+  <!-- ==================== BOTTOM PANELS ==================== -->
+
+  <!-- Panel 1: Fine-tuning paradigm -->
+  <rect x="40" y="605" width="260" height="60" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+  <rect x="40" y="605" width="260" height="20" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+  <text x="170" y="619" text-anchor="middle" font-size="10" font-weight="600" fill="var(--brand-default, #e95420)">Fine-Tuning Paradigm</text>
+  <text x="50" y="640" font-size="8" fill="var(--text-muted, #64748b)">Pre-train (MLM + NSP)</text>
+  <text x="50" y="654" font-size="8" fill="var(--text-muted, #64748b)">→ Fine-tune on task-specific data</text>
+  <!-- Animated arrow -->
+  <g>
+    <line x1="175" y1="634" x2="175" y2="648" stroke="#e95420" stroke-width="1" opacity="0.6">
+      <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <polygon points="175,648 172,643 178,643" fill="#e95420" opacity="0.6"/>
+  </g>
+  <!-- Task heads -->
+  <rect x="185" y="635" width="105" height="24" rx="4" fill="rgba(233,84,32,0.04)" stroke="#e95420" stroke-width="0.5"/>
+  <text x="237" y="646" text-anchor="middle" font-size="7" fill="#e95420">Classification / NER / QA</text>
+
+  <!-- Panel 2: Model sizes -->
+  <rect x="320" y="605" width="260" height="60" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+  <rect x="320" y="605" width="260" height="20" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+  <text x="450" y="619" text-anchor="middle" font-size="10" font-weight="600" fill="var(--brand-default, #e95420)">Model Variants</text>
+  <rect x="335" y="632" width="105" height="24" rx="4" fill="rgba(233,84,32,0.04)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+  <text x="387" y="649" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-default, #0f172a)">BERT-base: 110M</text>
+  <rect x="460" y="632" width="105" height="24" rx="4" fill="rgba(233,84,32,0.04)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+  <text x="512" y="649" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-default, #0f172a)">BERT-large: 340M</text>
+
+  <!-- Panel 3: Notes -->
+  <rect x="600" y="605" width="260" height="60" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)"/>
+  <rect x="600" y="605" width="260" height="20" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+  <text x="730" y="619" text-anchor="middle" font-size="10" font-weight="600" fill="var(--brand-default, #e95420)">Key Details</text>
+  <text x="610" y="640" font-size="8" fill="var(--text-muted, #64748b)">• 512 token context limit</text>
+  <text x="610" y="654" font-size="8" fill="var(--text-muted, #64748b)">• WordPiece tokenization (30K vocab)</text>
+
+  <!-- Training objective callouts -->
+  <rect x="300" y="84" width="155" height="20" rx="10" fill="rgba(5,153,105,0.06)"/>
+  <text x="377" y="98" text-anchor="middle" font-size="9" font-weight="500" fill="#059669">Full bidirectional context</text>
+</svg>

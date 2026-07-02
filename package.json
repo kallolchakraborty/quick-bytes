@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "marked": "^18.0.5"
   }
 }

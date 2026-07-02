@@ -11,7 +11,7 @@ function injectThemeIntoSVG(obj) {
     var isDark = document.documentElement.classList.contains('dark');
     var root = doc.documentElement;
     if (isDark) {
-      root.style.setProperty('--bg-default', '#000000');
+      root.style.setProperty('--bg-default', '#1a1a1a');
       root.style.setProperty('--bg-subtle', '#111111');
       root.style.setProperty('--text-default', '#e8e8e8');
       root.style.setProperty('--text-muted', '#94a3b8');
