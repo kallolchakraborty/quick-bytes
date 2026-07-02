@@ -237,6 +237,57 @@ document.addEventListener('DOMContentLoaded', function() {
   if (shareClose) shareClose.addEventListener('click', closeShare);
   if (shareBackdrop) shareBackdrop.addEventListener('click', closeShare);
 
+  // Diagram fullscreen modal
+  var diagramModal = document.getElementById('diagram-modal');
+  var diagramClose = document.getElementById('diagram-modal-close');
+  var diagramContent = document.getElementById('diagram-modal-content');
+
+  function openDiagram(src) {
+    if (!diagramModal || !diagramContent) return;
+    diagramContent.innerHTML = '';
+    var obj = document.createElement('object');
+    obj.type = 'image/svg+xml';
+    obj.data = src;
+    obj.setAttribute('aria-label', 'Diagram fullscreen view');
+    diagramContent.appendChild(obj);
+    diagramModal.classList.remove('hidden');
+    diagramModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDiagram() {
+    if (!diagramModal) return;
+    diagramModal.classList.add('hidden');
+    diagramModal.classList.remove('flex');
+    document.body.style.overflow = '';
+    setTimeout(function() { if (diagramContent) diagramContent.innerHTML = ''; }, 200);
+  }
+
+  if (diagramClose) diagramClose.addEventListener('click', closeDiagram);
+  if (diagramModal) {
+    diagramModal.addEventListener('click', function(e) {
+      if (e.target === diagramModal) closeDiagram();
+    });
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && diagramModal && !diagramModal.classList.contains('hidden')) {
+      closeDiagram();
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.diagram-expand-btn');
+    if (!btn) return;
+    e.preventDefault();
+    var wrapper = btn.closest('.diagram-wrapper');
+    if (!wrapper) return;
+    var obj = wrapper.querySelector('object');
+    if (!obj) return;
+    var src = obj.getAttribute('data');
+    if (src) openDiagram(src);
+  });
+
   var copyLinkBtn = document.getElementById('copy-link-btn');
   if (copyLinkBtn) {
     copyLinkBtn.addEventListener('click', function() {
@@ -480,7 +531,7 @@ function initDocs() {
     try {
       var html = marked.parse(text);
       html = sanitizeHtml(html);
-      html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1 loading="lazy"></object></div>');
+      html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1 loading="lazy"></object><button class="diagram-expand-btn" aria-label="View fullscreen"><span class="material-symbols-outlined">fullscreen</span><span>View fullscreen</span></button></div>');
       _mdCache[text] = html;
       return html;
     } catch(e) {
