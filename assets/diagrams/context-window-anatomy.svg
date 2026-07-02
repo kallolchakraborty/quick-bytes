@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');
+    :root {
+      --bg-subtle: #f8fafc;
+      --bg-default: #ffffff;
+      --text-default: #0f172a;
+      --text-muted: #64748b;
+      --border-default: #e2e8f0;
+      --brand-default: #e95420;
+      --brand-light: rgba(233,84,32,0.06);
+    }
+  </style>
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="var(--brand-default, #e95420)"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="520" fill="none"/>
+
+  <!-- Title -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.2s" fill="freeze"/>
+    <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-default, #0f172a)">Context Window Anatomy</text>
+    <text x="450" y="48" text-anchor="middle" font-size="11" fill="var(--text-muted, #64748b)">How tokens flow through a model's context window</text>
+    <line x1="250" y1="55" x2="650" y2="55" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- Context Window Background -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.5s" fill="freeze"/>
+    <rect x="40" y="90" width="820" height="180" rx="12" fill="var(--bg-default, #ffffff)" stroke="var(--brand-default, #e95420)" stroke-width="2" filter="url(#shadow)"/>
+    <text x="450" y="78" text-anchor="middle" font-size="12" font-weight="600" fill="var(--brand-default, #e95420)">CONTEXT WINDOW</text>
+  </g>
+
+  <!-- Token Row: Prompt Tokens -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="0.8s" fill="freeze"/>
+    <!-- Token boxes in sequence -->
+    <rect x="60" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="92" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="124" y="120" width="32" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="160" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="192" y="120" width="36" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="232" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="264" y="120" width="30" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="298" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="330" y="120" width="34" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="368" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <!-- Ellipsis -->
+    <circle cx="420" cy="136" r="2" fill="var(--text-muted, #64748b)"/>
+    <circle cx="430" cy="136" r="2" fill="var(--text-muted, #64748b)"/>
+    <circle cx="440" cy="136" r="2" fill="var(--text-muted, #64748b)"/>
+    <!-- A few more tokens after ellipsis -->
+    <rect x="456" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="488" y="120" width="32" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <rect x="524" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#2563eb" stroke-width="1.5"/>
+    <!-- Prompt tokens label -->
+    <text x="270" y="112" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="600">PROMPT TOKENS (input)</text>
+  </g>
+
+  <!-- Position Indices -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.0s" fill="freeze"/>
+    <text x="74" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">0</text>
+    <text x="106" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">1</text>
+    <text x="140" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">2</text>
+    <text x="174" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">3</text>
+    <text x="210" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">4</text>
+    <text x="246" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">5</text>
+    <text x="279" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">6</text>
+    <text x="312" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">7</text>
+    <text x="347" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">8</text>
+    <text x="382" y="168" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">9</text>
+  </g>
+
+  <!-- Attention Range Arc -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.3s" fill="freeze"/>
+    <path d="M74,200 Q270,230 556,200" fill="none" stroke="var(--brand-default, #e95420)" stroke-width="1.5" stroke-dasharray="4,3">
+      <animate attributeName="stroke-dashoffset" values="100;0" dur="1s" begin="1.3s" fill="freeze"/>
+    </path>
+    <text x="315" y="230" text-anchor="middle" font-size="9" fill="var(--brand-default, #e95420)" font-weight="600">ATTENTION RANGE (all tokens attend to all)</text>
+  </g>
+
+  <!-- Response tokens (right side) -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.2s" fill="freeze"/>
+    <rect x="570" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="602" y="120" width="32" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="638" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="670" y="120" width="36" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="710" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="742" y="120" width="30" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="776" y="120" width="28" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <rect x="808" y="120" width="34" height="32" rx="3" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="1.5"/>
+    <text x="690" y="112" text-anchor="middle" font-size="9" fill="#059669" font-weight="600">RESPONSE TOKENS (output)</text>
+  </g>
+
+  <!-- Separator between prompt and response -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.2s" begin="1.1s" fill="freeze"/>
+    <line x1="556" y1="116" x2="556" y2="158" stroke="var(--border-default, #e2e8f0)" stroke-width="2" stroke-dasharray="5,3"/>
+  </g>
+
+  <!-- Bottom Section: Position Encoding Detail -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.5s" fill="freeze"/>
+    <rect x="40" y="260" width="820" height="80" rx="8" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <text x="60" y="284" font-size="12" font-weight="600" fill="var(--text-default, #0f172a)">Position Encoding</text>
+    <text x="60" y="304" font-size="10" fill="var(--text-muted, #64748b)">Each token position is encoded via RoPE (rotary) or ALiBi (bias) so the model knows where tokens are in the sequence.</text>
+    <text x="60" y="322" font-size="10" fill="var(--text-muted, #64748b)">Without positional information, attention is permutation-invariant — the model would see "A B C" same as "C B A".</text>
+  </g>
+
+  <!-- KV Cache Callout -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.8s" fill="freeze"/>
+    <rect x="40" y="355" width="400" height="60" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="60" y="377" font-size="11" font-weight="600" fill="var(--text-default, #0f172a)">KV Cache</text>
+    <text x="60" y="395" font-size="10" fill="var(--text-muted, #64748b)">Stores Key/Value matrices for all previous tokens.</text>
+    <text x="60" y="409" font-size="10" fill="var(--text-muted, #64748b)">Size: O(n layers × d_model × seq_len × 2).</text>
+
+    <rect x="460" y="355" width="400" height="60" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="480" y="377" font-size="11" font-weight="600" fill="var(--text-default, #0f172a)">Context Length Limits</text>
+    <text x="480" y="395" font-size="10" fill="var(--text-muted, #64748b)">Full attention is O(n²) compute + O(n) memory per layer.</text>
+    <text x="480" y="409" font-size="10" fill="var(--text-muted, #64748b)">Flash Attention reduces memory from O(n²) to O(n).</text>
+  </g>
+
+  <!-- Bottom Annotation: Context Length Bar -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2.0s" fill="freeze"/>
+    <line x1="60" y1="448" x2="808" y2="448" stroke="var(--brand-default, #e95420)" stroke-width="2"/>
+    <polygon points="60,444 60,452 66,448" fill="var(--brand-default, #e95420)"/>
+    <polygon points="808,444 802,448 808,452" fill="var(--brand-default, #e95420)"/>
+    <text x="434" y="464" text-anchor="middle" font-size="11" font-weight="600" fill="var(--brand-default, #e95420)">MAXIMUM CONTEXT LENGTH (e.g., 128K tokens)</text>
+    <!-- Sub-labels -->
+    <line x1="180" y1="448" x2="180" y2="456" stroke="var(--text-muted, #64748b)" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="180" y="474" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">4K</text>
+    <line x1="350" y1="448" x2="350" y2="456" stroke="var(--text-muted, #64748b)" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="350" y="474" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">32K</text>
+    <line x1="600" y1="448" x2="600" y2="456" stroke="var(--text-muted, #64748b)" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="600" y="474" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">128K</text>
+  </g>
+
+  <!-- Token Count Tooltip -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.2s" fill="freeze"/>
+    <rect x="620" y="260" width="220" height="50" rx="6" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <text x="730" y="280" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Token count is model-specific</text>
+    <text x="730" y="296" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">~0.75 words per token (English)</text>
+  </g>
+</svg>

@@ -8,8 +8,8 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 2,
-    phases: 1,
+    guides: 3,
+    phases: 2,
     platform: 'Engineering',
   },
   phases: [
@@ -1000,6 +1000,482 @@ Prompt engineering is an investment of engineering time. Staff+ engineers evalua
 5. Drive org-level strategy: when to build, buy, or fine-tune.
 
 The Staff+ engineer's ultimate value in prompt engineering is not writing the best prompt — it is building the system and culture where every prompt is well-written, well-tested, and well-monitored.`
+            }
+          ]
+        }],
+    },
+    {
+      id: 'advanced',
+      title: 'Advanced Topics',
+      level: 'Advanced',
+      icon: '<span class="material-symbols-outlined text-\\[18px\\]">neurology</span>',
+      description: 'Deep dives into specialized AI/ML topics for experienced engineers.',
+      guides: [
+        {
+          id: 'context-windows',
+          title: 'Context Windows',
+          content: `Context windows define how many tokens a model can process in a single inference pass. This guide covers the architecture, optimization, evaluation, and production management of context windows from a Staff+ engineer's perspective.
+
+<object data="assets/diagrams/context-window-anatomy.svg" type="image/svg+xml" width="900" height="520" class="rounded-xl shadow-lg" aria-label="Context Window Anatomy"></object>
+
+Key concepts:
+- **Context length:** The maximum number of tokens (input + output) the model can process in one forward pass.
+- **Token:** A unit of text (~0.75 words for English). Different tokenizers produce different counts.
+- **KV Cache:** Stores Key/Value matrices for all previous tokens, enabling efficient autoregressive generation.
+- **Position Encoding:** Injects positional information into token representations so the model knows token order.`,
+          sections: [
+            {
+              id: 'what-is-a-context-window',
+              title: 'What Is a Context Window',
+              content: `A context window is the span of tokens a model can attend to when generating a response. It includes both the input (prompt) and the output (completion).
+
+**How it works:**
+
+1. **Tokenization:** Input text is split into tokens by a tokenizer (BPE, WordPiece, SentencePiece).
+2. **Embedding:** Each token is mapped to a dense vector (embedding dimension d_model).
+3. **Position Encoding:** Positional information is added (RoPE, ALiBi) so the model knows where each token sits in the sequence.
+4. **Attention:** The model computes attention scores between every pair of tokens within the context window. Only tokens within the window can attend to each other.
+5. **Generation:** New tokens are generated one at a time, appended to the context, and the process repeats until an EOS token or max length.
+
+**Context vs. Max Tokens:**
+
+| Parameter | Description | Example (GPT-4) |
+|-----------|-------------|-----------------|
+| Max input tokens | Max prompt length you can send | 128K |
+| Max output tokens | Max tokens the model can generate | 4,096 |
+| Max context length | input + output combined | 128K |
+| Effective context | What the model actually uses well | ~64K-96K |
+
+**Why context windows matter:**
+- Longer context = more information per query = fewer round-trips.
+- But attention is O(n²) in compute and O(n) in memory per layer — longer contexts cost more.
+- Not all context is equal: models have difficulty using information in the middle of long contexts (see Lost in the Middle).`
+            },
+            {
+              id: 'evolution-of-context-length',
+              title: 'Evolution of Context Length',
+              content: `Context lengths have grown from 512 tokens (GPT-1, 2018) to 2 million tokens (Gemini 1.5 Pro, 2024). This growth is driven by architectural innovations and hardware improvements.
+
+**Timeline of context length milestones:**
+
+| Model | Year | Claimed Context | Effective Context | Key Innovation |
+|-------|------|----------------|-------------------|----------------|
+| GPT-1 | 2018 | 512 | 512 | First large-scale transformer |
+| BERT | 2019 | 512 | 512 | Bidirectional attention |
+| GPT-3 | 2020 | 2,048 | 2,048 | Scaling laws, in-context learning |
+| GPT-3.5 | 2022 | 4,096 | 4,096 | RLHF alignment |
+| GPT-4 | 2023 | 8,192 / 32K | ~8K-16K | MoE, RLHF |
+| Claude 2 | 2023 | 100K | ~32K | First 100K context |
+| Mistral 7B | 2023 | 8K (extendable) | 8K | Sliding window attention |
+| Gemini 1.5 Pro | 2024 | 1,000K (2M) | ~500K-1M | MoE + Ultra structure |
+| GPT-4 Turbo | 2024 | 128K | ~64K-96K | Flash Attention |
+| Claude 3 | 2024 | 200K | ~150K | Constitutional AI |
+| Llama 3 | 2024 | 8K / 128K | ~8K-64K | GQA + RoPE |
+| DeepSeek-V2 | 2024 | 128K | ~128K | MLA (Multi-head Latent Attention) |
+
+**Key drivers of context growth:**
+
+- **Flash Attention (2022):** Tiled attention computation on SRAM eliminated O(n²) memory bottleneck. 2-4× speedup. Enabled 128K+ training and inference.
+- **ALiBi / RoPE:** Positional encodings that extrapolate beyond training length better than absolute/sinusoidal encodings.
+- **HBM bandwidth improvements:** A100 (2TB/s) → H100 (3.35TB/s) → B200 (8TB/s) enabled larger KV caches.
+- **Ring attention / sequence parallelism:** Splits the sequence across GPUs, enabling arbitrary-length training.
+- **Sparse attention patterns:** Sliding window (Mistral), dilated (Longformer), global+local (GPT-4) reduce the effective O(n²) cost.
+
+**When context is real vs. marketing:** A model's claimed context length is a hardware/architectural limit, not a guarantee of effective usage. Many models degrade significantly before hitting the claimed limit. Always evaluate effective context with domain-specific tasks — not just needle-in-a-haystack.`
+            },
+            {
+              id: 'architecture-of-long-context',
+              title: 'Architecture of Long Context',
+              content: `Context window length is fundamentally limited by the attention mechanism's O(n²) complexity. Different architectures address this with different attention patterns.
+
+<object data="assets/diagrams/attention-patterns.svg" type="image/svg+xml" width="900" height="580" class="rounded-xl shadow-lg" aria-label="Attention Patterns for Long Context"></object>
+
+**Full Attention (original Transformer):**
+- Every token attends to every other token.
+- O(n²) compute and memory. For n=128K: ~16B attention cells per layer, ~32GB in FP16.
+- Used by: original Transformer, GPT-3, most models under 8K context.
+
+**Sliding Window Attention:**
+- Each token only attends to W nearby tokens (W = 4K-32K).
+- O(n·W) cost. Much cheaper for long sequences.
+- Weakness: tokens cannot directly attend to distant information.
+- Used by: Mistral, Mamba, LongGPT.
+
+**Sparse / Dilated Attention:**
+- Every nth token attends to every nth token. Reduces density by factor d².
+- O(n²/d²) cost. Preserves some long-range dependencies.
+- Used by: Longformer, BigBird, Sparse Transformers.
+
+**Global + Sliding Window (hybrid):**
+- Designated "global" tokens (e.g., [CLS], task tokens) attend to all positions.
+- All other tokens use a sliding window.
+- Captures both global and local context efficiently.
+- Used by: GPT-4, Gemini, Longformer.
+
+**Flash Attention (v1/v2/v3):**
+- Not an approximation — it's an exact attention implementation that tiles the computation onto on-chip SRAM.
+- Avoids materializing the full O(n²) attention matrix in HBM.
+- v2: Non-exponentiated attention + causal masking optimization.
+- v3: Async prefetch, warp specialization. Another ~1.5× speedup over v2.
+
+**Ring / Distributed Attention:**
+- Splits the sequence across multiple GPUs in a ring topology.
+- Each GPU computes attention for its segment, communicates with neighbors.
+- Enables arbitrary-length contexts (1M+) by adding more GPUs.
+- Used by: internal Google systems, research models with 1M+ context.`
+            },
+            {
+              id: 'positional-encodings',
+              title: 'Positional Encodings & Length Generalization',
+              content: `Transformers are permutation-invariant — without positional information, "A B C" and "C B A" produce identical representations. Positional encodings inject sequence order information.
+
+**Major positional encoding approaches:**
+
+| Encoding | How it works | Extrapolation | Fine-tuning stability | Inference cost |
+|----------|-------------|---------------|----------------------|----------------|
+| **Sinusoidal** (Vaswani et al.) | Fixed sine/cosine waves per position | Poor (position-bound) | Good | None |
+| **Learned** (BERT, GPT-2) | Learned embedding per position | None (max training length) | Good | None (cached) |
+| **RoPE** (Rotary, LLaMA, GPT-4) | Rotates query/key vectors by position-dependent angle | Excellent (extrapolates 2-8×) | Good | 2 matrix multiplies per layer |
+| **ALiBi** (Mistral, BLOOM) | Linear bias added to attention scores, proportional to distance | Excellent (extrapolates 8-16×) | Moderate | None |
+| **NoPE** (No Position, some MuP models) | No explicit position; model learns implicitly | Excellent | Unknown | None |
+| **xPos** (Extended RoPE) | RoPE with exponential decay for better long-range | Excellent | Good | Same as RoPE |
+| **CoPE** (Contextual Position, 2024) | Positions determined by context, not absolute index | Theoretically unlimited | Good | Higher (dynamic computation) |
+
+**Length generalization (extending beyond training length):**
+
+When you need a model to handle longer contexts than it was trained on:
+
+- **Position Interpolation (PI):** Stretch RoPE frequencies to cover longer sequences. Linear scaling: interpolate position indices. Works for 2-8× extension with minimal fine-tuning.
+- **YaRN (Yet another RoPE extensioN):** Temperature-tuned NTK-aware scaling. Better than PI at extreme extensions (8-32×). Used in many open models.
+- **NTK-aware scaling:** Uses Neural Tangent Kernel theory to progressively scale different RoPE dimensions differently. High frequencies are less interpolated, preserving local resolution.
+- **LogN scaling:** Logarithmic scaling of attention logits for very long sequences. Prevents attention entropy collapse.
+- **CLEX (Context Length EXtrapolation):** Length-extrapolatable position encoding via continuous dynamics. Extends to arbitrary lengths without fine-tuning.
+
+**Practical advice for Staff+:**
+- RoPE + YaRN is currently the best combination for length generalization in open models.
+- ALiBi is simpler and works well for sliding-window models but doesn't scale as well as RoPE + PI/YaRN for full attention.
+- Always validate extrapolation with your specific task — benchmark scores don't always translate to production performance.
+- Fine-tuning for longer context (YaRN + ~1000 steps) is almost always better than at-inference extrapolation alone.`
+            },
+            {
+              id: 'lost-in-the-middle',
+              title: 'The Lost in the Middle Problem',
+              content: `The **"lost in the middle"** problem was formalized by Liu et al. (2023): when models are given documents (or facts) in a long context, they reliably recall information at the beginning and end of the context, but perform significantly worse on information in the middle ~20% of the context window.
+
+<object data="assets/diagrams/lost-in-the-middle.svg" type="image/svg+xml" width="900" height="480" class="rounded-xl shadow-lg" aria-label="Lost in the Middle"></object>
+
+**Why it happens:**
+1. **Attention dilution:** Middle tokens have less distinct attention patterns — they get averaged out by the surrounding context.
+2. **Position bias:** The model's position encoding gives more weight to tokens at the extremes.
+3. **Softmax saturation:** In long sequences, attention logits saturate, making it harder for middle tokens to stand out.
+
+**Key empirical findings:**
+- Performance typically drops ~20% for the middle quadrant of the context window.
+- The effect is consistent across model families (GPT-4, Claude, Llama) and scales with context length.
+- Multi-needle tasks (finding multiple facts) amplify the effect — the second needle is harder to find than the first.
+
+**Mitigation strategies:**
+
+1. **Re-order strategically:** Put the most important information at the beginning (strongest recall) or end (recency effect). Document ordering matters — re-rank before prompting.
+2. **Structured formatting:** Delimit sections with XML tags or markdown headers. Models attend better to clearly bounded sections.
+3. **Query-focused retrieval:** Instead of feeding the entire document, retrieve only relevant chunks and place them at the beginning.
+4. **Hierarchical summarization:** Summarize long documents first, then include the summary and only the most relevant full sections.
+5. **Multi-pass / scratchpad:** Ask the model to scan the document first ("read the document and find relevant information"), then answer based on its notes.
+6. **Conscious prompting:** Explicitly tell the model "the information may be anywhere in the text, scan carefully" — reduces but does not eliminate the effect.
+
+**Measuring lost-in-the-middle for your use case:**
+- Create a test set with documents of varying lengths (10K, 50K, 100K tokens).
+- Insert critical information at different positions (5%, 25%, 50%, 75%, 95%).
+- Measure recall at each position. Plot the U-curve.
+- If the drop is >15%, implement mitigation strategies and re-test.`
+            },
+            {
+              id: 'multi-modal-and-agentic-context',
+              title: 'Multi-Modal & Agentic Context',
+              content: `Context windows increasingly extend beyond text. Multi-modal models (Gemini, GPT-4V) tokenize images, audio, and video, consuming context tokens at different rates.
+
+**Token budgets by modality:**
+
+| Modality | How it's tokenized | Tokens per unit | Example: 200K context |
+|----------|-------------------|-----------------|----------------------|
+| Text | BPE/WordPiece tokenizer | ~1.33 tokens/word | ~150K words |
+| Image (single) | ViT patches (16×16) | 256 tokens | ~780 images |
+| Audio (1 min) | Spectrogram patches | ~12,000 tokens | ~17 minutes |
+| Video (1 min) | Frame sampling | ~72,000 tokens (1fps) | ~3 minutes |
+
+**Agentic context management:**
+
+In agent loops, context accumulates with each turn: planning → tool call → observation → next step. Without management, context fills rapidly.
+
+| Strategy | How it works | Trade-off |
+|----------|-------------|-----------|
+| **Sliding window** | Keep only the last N turns | Loses long-term agent memory |
+| **Summarization** | Periodically summarize old turns into a single text | Summary quality degrades with accumulation |
+| **Importance scoring** | Score each turn's importance; evict low-scoring | Requires a scoring model — adds complexity |
+| **Memory retrieval** | Store full history externally; retrieve relevant turns on demand | Separate retrieval infrastructure |
+| **Conversation compression** | Use LLMLingua or similar to compress old turns | Compression loss, extra inference pass |
+
+**Production agent memory recommendations:**
+1. Use a short sliding window (5-10 most recent turns) for local coherence.
+2. Periodically summarize older turns into a condensed history (every 5-10 turns or when context exceeds 50% of the window).
+3. Store session-level summaries in a vector database for cross-session retrieval.
+4. Reset agent context at logical boundaries (task completion, error recovery, user-initiated reset).
+5. Monitor token consumption per agent step — set alerts when an agent exceeds 80% of context in a single turn.`
+            },
+            {
+              id: 'memory-systems',
+              title: 'Memory Architectures',
+              content: `Think of context as part of a broader memory hierarchy. A Staff+ engineer designs systems across three tiers, not just the context window.
+
+<object data="assets/diagrams/context-memory-systems.svg" type="image/svg+xml" width="900" height="550" class="rounded-xl shadow-lg" aria-label="Memory Architecture for LLM Systems"></object>
+
+**Three-tier memory framework:**
+
+| Tier | What it stores | Access speed | Persistence | Update cost | Capacity |
+|------|---------------|-------------|-------------|-------------|----------|
+| **Working Memory** | Current context, KV cache | ~10μs (GPU SRAM) | Volatile (per inference) | Instant | ~16K-128K tokens |
+| **Semantic Memory** | Embeddings, documents, knowledge graph | ~10-100ms (retrieval) | Persistent (days-months) | Low (index update) | Millions of documents |
+| **Skill Memory** | Model weights, LoRA adapters | ~1-10ms (weight load) | Permanent (months-years) | High (hours-days training) | 7B-70B parameters |
+
+**How the tiers interact:**
+
+1. **Working Memory → Semantic Memory:** When the context window runs low, relevant information is fetched from the vector database and loaded into working memory.
+2. **Semantic Memory → Skill Memory:** When the retrieval quality plateaus or the model can't follow the required format, fine-tuning embeds the knowledge/skill into model weights.
+3. **Skill Memory → Working Memory:** At inference, the model weights (including any active LoRA adapters) are loaded into GPU memory and process the tokens in working memory.
+
+**Key principles for Staff+:**
+- **Only working memory is visible to the model at inference.** Semantic and skill memory must be loaded into working memory before they influence generation.
+- **The bottleneck is almost always working memory capacity.** Optimize for fitting the most useful information into the context window before expanding the window.
+- **Promote frequently used knowledge downstream.** If a fact is retrieved >100 times from semantic memory, consider fine-tuning it into skill memory.
+- **Demote stale knowledge upstream.** If a fine-tuned skill becomes outdated, revert to retrieval-based semantic memory until retraining is feasible.
+- **Design for the weakest tier.** If your working memory is 8K, don't optimize for 200K context — optimize for making 8K work well.`
+            },
+            {
+              id: 'optimizing-context-usage',
+              title: 'Optimizing Context Usage',
+              content: `Given context windows are finite and attention is costly, optimization is about fitting maximum relevant information within your budget.
+
+<object data="assets/diagrams/context-optimization-workflow.svg" type="image/svg+xml" width="900" height="550" class="rounded-xl shadow-lg" aria-label="Context Optimization Workflow"></object>
+
+**Chunking strategies:**
+
+| Strategy | Approach | Best for |
+|----------|---------|----------|
+| **Semantic** | Split at paragraph/section boundaries | Documents with natural structure (reports, articles, code) |
+| **Fixed-size** | N tokens with token overlap (10-20%) | Uniform documents, simple retrieval |
+| **Recursive** | Split by multiple delimiters (paragraph → sentence → word) | Mixed-format documents |
+| **Late chunking** | Embed larger context and extract token-level representations | Retrieval quality (SOTA for RAG) |
+
+**Context compression techniques:**
+
+- **LLMLingua:** Uses a small LM to score token perplexity; removes low-perplexity tokens. 2-5× compression with minimal accuracy loss. Best for general-purpose compression.
+- **Selective Context:** Information-theoretic approach — removes tokens with lowest mutual information relative to the query. Better for query-specific compression.
+- **ICAE (Input Compression via AutoEncoding):** Trains an encoder/decoder pair to compress context into a small number of soft tokens. Highest compression ratio (10-20×) but requires training.
+- **AutoCompressor:** Extends ICAE with iterative compression. Can compress entire documents into a single summary vector.
+
+**Token budget allocation for RAG (rule of thumb):**
+
+For a model with 128K context:
+- Reserve 10% for output (12.8K tokens)
+- Reserve 10% for system + user prompt (12.8K tokens)
+- Reserve 5% for few-shot examples (6.4K tokens)
+- Available for retrieved context: ~96K tokens
+- At 512 tokens per chunk: ~192 chunks
+- At 1024 tokens per chunk: ~96 chunks
+
+**Practical workflow:**
+1. Chunk documents (semantic preferred) into ~512-1024 token pieces.
+2. Embed and index chunks.
+3. On query: Retrieve top-20 chunks (dense + sparse hybrid search).
+4. Rerank top-20 to top-5 using a cross-encoder.
+5. Optionally compress each chunk with LLMLingua (2× compression).
+6. Assemble prompt: system + user + examples + compressed chunks.
+7. If prompt exceeds budget, iterate: reduce chunks, increase compression, or fall back to hierarchical summarization.`
+            },
+            {
+              id: 'evaluation-and-benchmarks',
+              title: 'Evaluation & Benchmarks',
+              content: `Evaluating long-context models requires more than simple accuracy. Different benchmarks measure different capabilities, and many popular benchmarks have significant limitations.
+
+**Key long-context benchmarks:**
+
+| Benchmark | What it measures | Format | Strengths | Limitations |
+|-----------|-----------------|--------|-----------|-------------|
+| **Needle-in-a-Haystack** | Single fact retrieval from long context | Insert one fact at various positions; ask for it | Simple, interpretable, widely adopted | Single fact only; no reasoning required; easy to game |
+| **Multi-Needle** | Multi-fact retrieval | Insert 2-5 facts at different positions | More realistic; tests capacity | Still retrieval-only |
+| **RULER** | Retrieval, multi-hop, aggregation, QA | Several subtasks with controlled distractor injection | Comprehensive; includes reasoning | Complex to run; many subtasks |
+| **LongBench** | 21 tasks across 6 categories (QA, summarization, code, etc.) | Diverse real-world tasks | Covers many use cases; standardized | English-only; some datasets are short |
+| **HELMET (HELM)** | Long-context version of HELM | 4 categories: retrieval, QA, summarization, reasoning | Rigorous methodology | Limited model coverage |
+| **L-Eval** | Cloze + QA + summarization on long documents (up to 200K) | 18 datasets | Long documents; multiple task types | Focus on full-document tasks |
+| **SCROLLS** | Long-document understanding | 7 datasets (NarrativeQA, QMSum, etc.) | Real-world long texts | Short context by modern standards (~32K max) |
+
+**What Staff+ engineers should look for:**
+
+1. **Effective context length:** At what point does performance degrade by >10% from the baseline? This is the model's "real" context limit.
+2. **Recency vs. primacy bias:** Does the model favor the beginning or the end of the context? Some models have a strong recency bias (Claude), others primacy bias (GPT-4).
+3. **Distraction robustness:** How much does irrelevant information hurt performance? Put a fact at position 25% and add 50% irrelevant text. Does the model still find it?
+4. **Multi-needle performance:** Can the model find and use 2-5 separate facts distributed throughout the context?
+5. **Reasoning over context:** Can the model combine information from different parts of the context (multi-hop)?
+
+**Production evaluation checklist:**
+- Create a test set that mirrors your actual use case (domain-specific documents, real queries).
+- Test at multiple context fill levels (25%, 50%, 75%, 95%).
+- Measure both accuracy and latency — longer contexts increase latency by 1.5-3× even with Flash Attention.
+- Track effective context usage in production — how much context is your application actually using vs. the model's theoretical limit?
+- Re-evaluate when the model provider updates the underlying model — context performance can change without warning.`
+            },
+            {
+              id: 'production-best-practices',
+              title: 'Production Best Practices',
+              content: `Operating long-context models in production requires careful management of cost, latency, and reliability.
+
+**1. Cost Management**
+
+The attention mechanism's O(n²) cost means longer contexts are disproportionately more expensive:
+
+| Context length | Relative compute cost | Typical use case |
+|---------------|----------------------|-----------------|
+| 4K | 1× | Simple Q&A, short summarization |
+| 8K | 2-3× | Document summarization, chat |
+| 32K | 8-16× | Report analysis, code review |
+| 128K | 50-100× | Full document analysis, long-form generation |
+| 1M | 500-2000× | Video analysis, codebase analysis |
+
+**Cost optimization strategies:**
+- **Model routing:** Use a cheap/fast model (8K context) for simple queries. Route to expensive/long model only when needed.
+- **Prompt caching:** Some providers offer prompt caching (prefix caching) — repeated system prompts and shared context are cached, reducing cost by 50-80% for high-repetition scenarios.
+- **Semantic caching:** Cache responses for identical or near-identical queries (embedding similarity >0.95). Works well for classification, extraction, and formatting tasks.
+- **KV cache sizing:** Monitor KV cache memory usage. At 128K context with 32 layers and 4096 hidden dim, the KV cache is approximately 128K × 2 × 32 × 4096 × 2 bytes ≈ 67GB per sequence.
+
+**2. Latency**
+
+| Factor | Impact on latency |
+|--------|------------------|
+| Input length (prompt) | O(n²) for prefill (attention computation over n tokens) |
+| Output length (generation) | O(n) per token (local attention to KV cache plus new token) |
+| Batch size | Each sequence has its own KV cache — larger batches need more GPU memory |
+| Flash Attention | 2-4× faster than vanilla attention for long sequences |
+
+**3. Monitoring**
+
+Track these metrics per deployment:
+- **Context fill rate:** What percentage of the context window is actually used (median, p95)?
+- **Cost per query:** (input_tokens × input_price + output_tokens × output_price) / number_of_queries
+- **Latency p50/p99:** Prefill time + generation time per query
+- **Token waste:** How many tokens are sent but never attended to? (e.g., irrelevant chunks, repeated content)
+- **Effective context utilization:** Percentage of context tokens that are actually useful for generation (hard to measure directly, but can estimate via ablation)
+
+**4. Model Routing Decision Tree**
+
+```
+Query received
+  ├─ Context needed < 4K AND simple task → Route to fast/cheap model (Mistral 7B, GPT-4o-mini)
+  ├─ Context needed < 32K AND moderate complexity → Route to mid model (GPT-4, Claude 3 Sonnet)
+  ├─ Context needed > 32K AND full document required → Route to long-context model (Claude 3 Opus, Gemini 1.5 Pro)
+  └─ Context needed > 128K OR multi-modal → Route to Gemini 1.5 Pro / GPT-4V
+```
+
+**5. When to pay for long context vs. when 8K suffices:**
+
+- **Pay for 200K when:** You need to analyze full documents (legal contracts, research papers, codebases), maintain long conversation history, or process multi-modal inputs (images, audio, video).
+- **Use 8K when:** Simple summarization, short Q&A, classification, formatting, extraction from single paragraphs.
+- **Use 32K as default:** Most enterprise tasks (report analysis, code review, meeting notes) fit in 32K. It's the sweet spot for cost/quality.`
+            },
+            {
+              id: 'security-and-privacy',
+              title: 'Security & Privacy',
+              content: `Longer context windows introduce new security and privacy considerations. More data per query means more data is sent to model providers and potentially stored in KV caches.
+
+**Data leakage risks:**
+
+| Risk | Description | Severity |
+|------|-------------|----------|
+| **Context injection** | Malicious content inserted into the context window (e.g., in a retrieved document) can override system instructions | Critical |
+| **Payload splitting** | An attacker spreads malicious instructions across multiple context positions, evading simple input filters | High |
+| **PII exposure** | Longer contexts include more user data, PII, and proprietary information | High |
+| **KV cache inspection** | If KV cache is shared (multi-tenant), one user's cached context could leak to another | Medium (depends on architecture) |
+| **Training data regurgitation** | Models may reproduce training data present in long contexts | Low |
+| **Context window jailbreaking** | Attackers exploit the full context to bypass alignment by distributing the attack across the entire window | Medium |
+
+**Mitigation strategies:**
+
+1. **Input guardrail:** Run a fast classifier (BERT-based, regex) on the assembled prompt before sending to the LLM. Check for injection patterns, PII, and toxicity in every chunk, not just the user query.
+
+2. **Output guardrail:** Scan the model's response for PII (credit cards, SSNs, API keys), toxic content, and format violations before returning to the user.
+
+3. **Context window scanning:** For long contexts, scan in chunks rather than as a single pass. A 200K token context may exceed the input guardrail's own context window.
+
+4. **PII redaction before retrieval:** Strip or mask PII from documents before embedding and storage. Use regex + NER model for high-recall PII detection.
+
+5. **Selective context inclusion:** Instead of including all retrieved chunks, use a relevance threshold. Chunks below the threshold are not included, reducing the attack surface.
+
+6. **On-device context handling:** For sensitive applications, process context locally where possible. Use local embedding models for retrieval and only send the minimal necessary context to the cloud LLM.
+
+**Production checklist for security:**
+- [ ] Input guardrail on every prompt (injection, PII, toxicity)
+- [ ] Output guardrail on every response (PII, toxicity, format)
+- [ ] Context window scanning for >32K prompts
+- [ ] PII redaction pipeline before document ingestion
+- [ ] Relevance threshold (min 0.5 cosine similarity) for context inclusion
+- [ ] KV cache isolation (single-tenant deployment) for sensitive data
+- [ ] Data retention policy for cached prompts and responses
+- [ ] Regular red-teaming of context injection scenarios (see Prompt Engineering guide for methodology)`
+            },
+            {
+              id: 'staff-plus-perspective',
+              title: "Staff+ Engineer's Perspective",
+              content: `Context windows are the new memory hierarchy. Just as systems architects optimize L1/L2/L3 caches, Staff+ AI engineers optimize working/semantic/skill memory. This section covers the strategic thinking that separates a prompt-writer from a system architect.
+
+#### Decision Framework: Should You Use Long Context?
+
+The first question is not "how do I fit more into the context?" but "should I be using long context at all?"
+
+| Scenario | Recommended approach | Rationale |
+|----------|---------------------|-----------|
+| Single document, one-time analysis | Long context (full document) | No retrieval infrastructure needed |
+| Recurring queries over many documents | RAG + short context | Cheaper per query, better scaling, fresh data |
+| Need precise formatting/style | Fine-tune + short context | Context cannot teach style as well as weights |
+| Real-time / streaming | Short context + incremental processing | Long context latency is too high for real-time |
+| Cross-session memory | Semantic memory + short context | Long context doesn't persist between sessions |
+
+**When NOT to use long context:**
+1. **The answer is a single sentence** — don't pay 128K prices for a classification task that 512 tokens can handle.
+2. **You're doing it for every query** — if 90% of your queries need <4K context, route them to a cheap model.
+3. **The data is better stored in a structured DB** — don't dump your entire database into context when SQL was designed for this.
+4. **You haven't evaluated effective context** — if your model only uses 32K of its 128K context, you're overpaying by 4×.
+
+#### Staff+ Anti-Patterns
+
+1. **Filling context just because it fits:** "I have 128K of context, so I'll put 128K of information." This ignores the lost-in-the-middle problem. More context ≠ better answers. Often, 32K of well-chosen context outperforms 128K of everything.
+
+2. **Ignoring effective context length:** A model claims 200K context, but your evaluation shows it starts degrading at 64K. Treating the claimed limit as the usable limit leads to unreliable production behavior.
+
+3. **Over-indexing on needle-in-a-haystack:** This benchmark tests single-fact retrieval — the easiest long-context task. Models that score 99% on needle may still fail at multi-hop reasoning, aggregation, or distraction robustness. Evaluate on your actual task, not a simplified proxy.
+
+4. **Using long context as a substitute for retrieval:** Throwing every document into the context window scales poorly. For N queries over M documents, RAG costs O(N × M × chunk_cost) for ingestion + O(N × retrieval_cost). Long context costs O(N × M_total_tokens). For N=1000 and M=100, RAG is 50-100× cheaper.
+
+5. **Caching everything without expiration:** KV caches and prompt caches are great, but stale context leads to stale answers. Always include an expiration or revalidation mechanism.
+
+#### Building Org Capability
+
+**Context-aware system design reviews:** When reviewing a system that uses LLMs, always ask:
+- What is the effective context utilization rate?
+- Where does the context data come from? How fresh is it?
+- What happens when the context exceeds the budget?
+- Is there a fallback strategy if context performance degrades?
+
+**Cost attribution dashboards:** Track cost per query segmented by context length bucket (<4K, 4-8K, 8-32K, 32-128K, 128K+). This reveals which teams/features are driving context-related costs and where optimization would have the most impact.
+
+**The Staff+ mental model:** The context window is the working memory of an LLM system. Like CPU caches, it is expensive, limited, and should be treated as a scarce resource to be managed, not a dumpster to be filled. The best Staff+ engineers are not those who can use the longest context — they are those who can get the best results with the shortest context.
+
+**Key metrics a Staff+ engineer tracks:**
+- Effective context utilization ratio (used / claimed)
+- Cost per effective token (total cost / effective tokens used)
+- Context waste ratio (tokens sent that don't contribute to the output)
+- Retrieval precision at different context fill levels
+- Latency p99 as a function of context length
+
+**Final advice:** Context windows are getting longer every year (2M tokens today, likely 10M+ in 2 years). But the principles remain the same: fit the right information into the available space, measure what actually works, and build systems that degrade gracefully when the context budget runs out.`
             }
           ]
         }],

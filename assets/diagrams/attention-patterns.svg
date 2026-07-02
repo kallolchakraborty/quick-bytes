@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" width="900" height="580" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');
+    :root {
+      --bg-subtle: #f8fafc;
+      --bg-default: #ffffff;
+      --text-default: #0f172a;
+      --text-muted: #64748b;
+      --border-default: #e2e8f0;
+      --brand-default: #e95420;
+      --brand-light: rgba(233,84,32,0.06);
+      --brand-medium: rgba(233,84,32,0.15);
+    }
+  </style>
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="580" fill="none"/>
+
+  <!-- Title -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.2s" fill="freeze"/>
+    <text x="450" y="28" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-default, #0f172a)">Attention Patterns for Long Context</text>
+    <line x1="250" y1="35" x2="650" y2="35" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- ==================== FULL ATTENTION (top-left) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.5s" fill="freeze"/>
+    <rect x="20" y="48" width="210" height="22" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="125" y="63" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand-default, #e95420)">FULL ATTENTION</text>
+
+    <rect x="40" y="80" width="170" height="155" rx="2" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <path d="M40,235 L40,80 L210,235 Z" fill="var(--brand-medium, rgba(233,84,32,0.15))" stroke="var(--brand-default, #e95420)" stroke-width="0.5"/>
+    <line x1="40" y1="80" x2="40" y2="235" stroke="var(--border-default, #e2e8f0)" stroke-width="0.5"/>
+    <line x1="40" y1="235" x2="210" y2="235" stroke="var(--border-default, #e2e8f0)" stroke-width="0.5"/>
+    <line x1="40" y1="80" x2="210" y2="235" stroke="var(--border-default, #e2e8f0)" stroke-width="0.5"/>
+
+    <text x="125" y="256" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Every token → every other</text>
+    <text x="125" y="270" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">O(n²) cost</text>
+    <text x="125" y="286" text-anchor="middle" font-size="9" fill="#059669" font-weight="600">Max quality, highest cost</text>
+  </g>
+
+  <!-- ==================== SLIDING WINDOW (top-right) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.7s" fill="freeze"/>
+    <rect x="240" y="48" width="210" height="22" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="345" y="63" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand-default, #e95420)">SLIDING WINDOW</text>
+
+    <rect x="260" y="80" width="170" height="155" rx="2" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <!-- Banded diagonal -->
+    <g stroke="var(--brand-default, #e95420)" stroke-width="2" opacity="0.5">
+      <line x1="270" y1="230" x2="295" y2="235"/>
+      <line x1="280" y1="220" x2="330" y2="235"/>
+      <line x1="290" y1="210" x2="365" y2="235"/>
+      <line x1="300" y1="200" x2="400" y2="235"/>
+      <line x1="310" y1="190" x2="420" y2="235"/>
+      <line x1="320" y1="180" x2="430" y2="225"/>
+      <line x1="330" y1="170" x2="430" y2="215"/>
+      <line x1="340" y1="160" x2="430" y2="205"/>
+      <line x1="350" y1="150" x2="430" y2="195"/>
+      <line x1="360" y1="140" x2="430" y2="185"/>
+      <line x1="370" y1="130" x2="430" y2="175"/>
+      <line x1="380" y1="120" x2="430" y2="165"/>
+      <line x1="390" y1="110" x2="430" y2="155"/>
+      <line x1="400" y1="100" x2="430" y2="145"/>
+      <line x1="410" y1="90" x2="430" y2="135"/>
+    </g>
+
+    <text x="345" y="256" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Token → nearby tokens only</text>
+    <text x="345" y="270" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">O(n·w) where w = window</text>
+    <text x="345" y="286" text-anchor="middle" font-size="9" fill="#059669" font-weight="600">Mistral, Mamba, LongGPT</text>
+  </g>
+
+  <!-- ==================== SPARSE / DILATED (bottom-left) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.9s" fill="freeze"/>
+    <rect x="20" y="310" width="210" height="22" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="125" y="325" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand-default, #e95420)">SPARSE / DILATED</text>
+
+    <rect x="40" y="342" width="170" height="155" rx="2" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <g fill="var(--brand-default, #e95420)" opacity="0.4">
+      <animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/>
+      <circle cx="50" cy="352" r="2"/><circle cx="85" cy="387" r="2"/><circle cx="120" cy="422" r="2"/>
+      <circle cx="155" cy="352" r="2"/><circle cx="190" cy="387" r="2"/><circle cx="70" cy="422" r="2"/>
+      <circle cx="105" cy="352" r="2"/><circle cx="140" cy="387" r="2"/><circle cx="175" cy="422" r="2"/>
+      <circle cx="50" cy="387" r="2"/><circle cx="85" cy="422" r="2"/><circle cx="120" cy="352" r="2"/>
+      <circle cx="155" cy="387" r="2"/><circle cx="190" cy="422" r="2"/><circle cx="70" cy="352" r="2"/>
+      <circle cx="105" cy="387" r="2"/><circle cx="140" cy="422" r="2"/><circle cx="175" cy="352" r="2"/>
+      <circle cx="50" cy="422" r="2"/><circle cx="85" cy="352" r="2"/><circle cx="120" cy="387" r="2"/>
+      <circle cx="155" cy="422" r="2"/><circle cx="190" cy="352" r="2"/><circle cx="70" cy="387" r="2"/>
+    </g>
+
+    <text x="125" y="518" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Every nth token → every nth</text>
+    <text x="125" y="532" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">O(n²/d²)</text>
+    <text x="125" y="548" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="600">Longformer, BigBird</text>
+  </g>
+
+  <!-- ==================== GLOBAL + SLIDING (bottom-right) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="1.1s" fill="freeze"/>
+    <rect x="240" y="310" width="210" height="22" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="345" y="325" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand-default, #e95420)">GLOBAL + SLIDING</text>
+
+    <rect x="260" y="342" width="170" height="155" rx="2" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <rect x="260" y="342" width="170" height="25" fill="var(--brand-medium, rgba(233,84,32,0.15))" stroke="var(--brand-default, #e95420)" stroke-width="0.5"/>
+    <text x="345" y="358" text-anchor="middle" font-size="8" fill="var(--text-default, #0f172a)" font-weight="600">GLOBAL</text>
+    <g stroke="var(--brand-default, #e95420)" stroke-width="2" opacity="0.5">
+      <line x1="270" y1="490" x2="295" y2="497"/>
+      <line x1="280" y1="480" x2="330" y2="497"/>
+      <line x1="290" y1="470" x2="365" y2="497"/>
+      <line x1="300" y1="460" x2="400" y2="497"/>
+      <line x1="310" y1="450" x2="420" y2="497"/>
+      <line x1="320" y1="440" x2="430" y2="487"/>
+      <line x1="330" y1="430" x2="430" y2="477"/>
+      <line x1="340" y1="420" x2="430" y2="467"/>
+      <line x1="350" y1="410" x2="430" y2="457"/>
+      <line x1="360" y1="400" x2="430" y2="447"/>
+      <line x1="370" y1="390" x2="430" y2="437"/>
+    </g>
+
+    <text x="345" y="518" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Special tokens → all positions</text>
+    <text x="345" y="532" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Rest: sliding window</text>
+    <text x="345" y="548" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="600">GPT-4, Gemini, Longformer</text>
+  </g>
+
+  <!-- Flash Attention Box -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.3s" fill="freeze"/>
+    <rect x="480" y="48" width="400" height="135" rx="10" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="500" y="70" font-size="13" font-weight="700" fill="var(--brand-default, #e95420)">Flash Attention (v1/v2/v3)</text>
+    <text x="500" y="90" font-size="10" fill="var(--text-default, #0f172a)">Tiles attention onto on-chip SRAM,</text>
+    <text x="500" y="106" font-size="10" fill="var(--text-default, #0f172a)">avoiding O(n²) HBM writes.</text>
+    <text x="500" y="126" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">Exact attention. No approximation.</text>
+    <text x="500" y="144" font-size="10" fill="var(--text-muted, #64748b)">2-4× speedup. Enables 128K+ context.</text>
+    <text x="500" y="160" font-size="10" fill="var(--text-muted, #64748b)">v3: async prefetch + warp specialization.</text>
+    <line x1="430" y1="110" x2="484" y2="110" stroke="var(--border-default, #e2e8f0)" stroke-width="1" stroke-dasharray="4,2"/>
+  </g>
+
+  <!-- Ring Attention Box -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.5s" fill="freeze"/>
+    <rect x="480" y="200" width="400" height="95" rx="10" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="500" y="222" font-size="13" font-weight="700" fill="var(--brand-default, #e95420)">Ring / Distributed Attention</text>
+    <text x="500" y="244" font-size="10" fill="var(--text-default, #0f172a)">Splits sequence across GPUs, computes</text>
+    <text x="500" y="260" font-size="10" fill="var(--text-default, #0f172a)">attention in a ring. Arbitrary length.</text>
+    <text x="500" y="280" font-size="10" fill="var(--text-muted, #64748b)">Used by 1M+ context models.</text>
+    <line x1="430" y1="248" x2="484" y2="248" stroke="var(--border-default, #e2e8f0)" stroke-width="1" stroke-dasharray="4,2"/>
+  </g>
+
+  <!-- Complexity Table Box -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.7s" fill="freeze"/>
+    <rect x="480" y="310" width="400" height="185" rx="10" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <text x="500" y="332" font-size="11" font-weight="600" fill="var(--text-default, #0f172a)">Complexity at 128K tokens</text>
+    <text x="500" y="352" font-size="10" fill="var(--text-muted, #64748b)">Full attention matrix: 128K × 128K ≈ 16B cells</text>
+    <text x="500" y="370" font-size="10" fill="var(--text-muted, #64748b)">In FP16: ~32GB per layer (does not fit on GPU)</text>
+    <text x="500" y="392" font-size="10" fill="var(--text-muted, #64748b)">Flash Attention: 2MB SRAM (fits on-chip)</text>
+    <text x="500" y="410" font-size="10" fill="var(--text-muted, #64748b)">Sliding Window (w=4096): 128K × 4K ≈ 512M cells</text>
+    <text x="500" y="430" font-size="10" fill="var(--text-muted, #64748b)">Ring (8 GPUs): 16K per GPU, O(n²/g) each</text>
+    <text x="500" y="452" font-size="10" fill="#059669" font-weight="600">Architecture choice = quality × cost × latency tradeoff</text>
+    <text x="500" y="470" font-size="10" fill="#059669" font-weight="600">No single best pattern for all use cases.</text>
+  </g>
+</svg>

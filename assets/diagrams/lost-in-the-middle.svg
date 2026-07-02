@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="900" height="480" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');
+    :root {
+      --bg-subtle: #f8fafc;
+      --bg-default: #ffffff;
+      --text-default: #0f172a;
+      --text-muted: #64748b;
+      --border-default: #e2e8f0;
+      --brand-default: #e95420;
+      --brand-light: rgba(233,84,32,0.08);
+      --brand-medium: rgba(233,84,32,0.2);
+    }
+  </style>
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrowAxis" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="var(--text-muted, #64748b)"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="480" fill="none"/>
+
+  <!-- Title -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.2s" fill="freeze"/>
+    <text x="450" y="28" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-default, #0f172a)">The "Lost in the Middle" Problem</text>
+    <text x="450" y="46" text-anchor="middle" font-size="11" fill="var(--text-muted, #64748b)">Empirical finding: models perform best on first/last tokens, worst in the middle ~20%</text>
+    <line x1="180" y1="55" x2="720" y2="55" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- Chart Area -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.6s" fill="freeze"/>
+
+    <!-- Background chart area -->
+    <rect x="80" y="70" width="740" height="300" rx="6" fill="var(--bg-subtle, #f8fafc)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+
+    <!-- Y-axis -->
+    <line x1="80" y1="70" x2="80" y2="370" stroke="var(--text-muted, #64748b)" stroke-width="1.5"/>
+    <line x1="80" y1="370" x2="820" y2="370" stroke="var(--text-muted, #64748b)" stroke-width="1.5"/>
+    <polygon points="820,370 810,366 810,374" fill="var(--text-muted, #64748b)"/>
+
+    <!-- Y-axis labels -->
+    <text x="72" y="373" text-anchor="end" font-size="9" fill="var(--text-muted, #64748b)">0%</text>
+    <text x="72" y="148" text-anchor="end" font-size="9" fill="var(--text-muted, #64748b)">100%</text>
+    <text x="72" y="248" text-anchor="end" font-size="9" fill="var(--text-muted, #64748b)">50%</text>
+    <line x1="76" y1="150" x2="80" y2="150" stroke="var(--text-muted, #64748b)" stroke-width="1"/>
+    <line x1="76" y1="250" x2="80" y2="250" stroke="var(--text-muted, #64748b)" stroke-width="1"/>
+
+    <!-- Y-axis title -->
+    <text x="30" y="220" text-anchor="middle" font-size="11" fill="var(--text-muted, #64748b)" transform="rotate(-90, 30, 220)" font-weight="500">Accuracy / Recall</text>
+
+    <!-- X-axis labels -->
+    <text x="170" y="390" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Beginning</text>
+    <text x="450" y="390" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Position in Document</text>
+    <text x="730" y="390" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">End</text>
+
+    <!-- Grid lines -->
+    <line x1="80" y1="150" x2="820" y2="150" stroke="var(--border-default, #e2e8f0)" stroke-width="0.5" stroke-dasharray="4,3"/>
+    <line x1="80" y1="250" x2="820" y2="250" stroke="var(--border-default, #e2e8f0)" stroke-width="0.5" stroke-dasharray="4,3"/>
+
+    <!-- U-shaped curve -->
+    <!-- High start → drop to middle → rise to end -->
+    <path d="M100,150 C200,150 250,180 300,250 C350,310 400,330 450,330 C500,330 550,310 600,250 C650,180 700,150 800,150" fill="none" stroke="var(--brand-default, #e95420)" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="stroke-dashoffset" values="2000;0" dur="1.5s" begin="1.0s" fill="freeze"/>
+      <animate attributeName="stroke-dasharray" values="2000;2000" dur="0s" begin="0s" fill="freeze"/>
+      <animate attributeName="stroke-dasharray" values="2000;2000" dur="0s" begin="1.0s" fill="freeze"/>
+    </path>
+    <animate attributeName="stroke-dasharray" values="2000;2000" dur="1.5s" begin="1.0s" fill="freeze"/>
+  </g>
+
+  <!-- U-shaped curve: proper approach -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.0s" fill="freeze"/>
+    <path d="M100,150 C200,150 250,180 300,250 C350,310 400,330 450,330 C500,330 550,310 600,250 C650,180 700,150 800,150" fill="none" stroke="var(--brand-default, #e95420)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2000" stroke-dashoffset="2000">
+      <animate attributeName="stroke-dashoffset" values="2000;0" dur="1.5s" begin="1.0s" fill="freeze"/>
+    </path>
+  </g>
+
+  <!-- Middle shaded region -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;0.25" dur="0.5s" begin="2.2s" fill="freeze"/>
+    <rect x="300" y="70" width="300" height="300" fill="var(--brand-medium, rgba(233,84,32,0.2))" rx="2"/>
+    <!-- Label inside shaded region -->
+    <text x="450" y="265" text-anchor="middle" font-size="12" font-weight="700" fill="var(--brand-default, #e95420)">~20% DROP</text>
+    <text x="450" y="282" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Models recall first and last</text>
+    <text x="450" y="298" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">tokens significantly better</text>
+    <text x="450" y="314" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">than middle content</text>
+  </g>
+
+  <!-- Data point callouts -->
+  <!-- Beginning: High -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.5s" fill="freeze"/>
+    <circle cx="140" cy="158" r="5" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="2"/>
+    <line x1="140" y1="158" x2="100" y2="110" stroke="var(--border-default, #e2e8f0)" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="30" y="96" width="120" height="28" rx="4" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <text x="36" y="114" font-size="9" fill="#059669" font-weight="600">95% recall (primacy)</text>
+  </g>
+
+  <!-- Middle: Low -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.7s" fill="freeze"/>
+    <circle cx="450" cy="330" r="5" fill="var(--bg-default, #ffffff)" stroke="var(--brand-default, #e95420)" stroke-width="2"/>
+    <line x1="450" y1="330" x2="450" y2="345" stroke="var(--border-default, #e2e8f0)" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="530" y="346" width="130" height="28" rx="4" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <text x="536" y="364" font-size="9" fill="var(--brand-default, #e95420)" font-weight="600">~72% recall (middle)</text>
+  </g>
+
+  <!-- End: High -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.9s" fill="freeze"/>
+    <circle cx="760" cy="150" r="5" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="2"/>
+    <line x1="760" y1="150" x2="790" y2="115" stroke="var(--border-default, #e2e8f0)" stroke-width="1" stroke-dasharray="3,2"/>
+    <rect x="680" y="98" width="120" height="28" rx="4" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <text x="686" y="116" font-size="9" fill="#059669" font-weight="600">93% recall (recency)</text>
+  </g>
+
+  <!-- Mitigation strategies -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.2s" fill="freeze"/>
+    <rect x="80" y="410" width="740" height="60" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <text x="100" y="430" font-size="11" font-weight="600" fill="var(--text-default, #0f172a)">Mitigation Strategies</text>
+    <text x="100" y="450" font-size="10" fill="var(--text-muted, #64748b)">Re-order: put important content first/last  |  Chunk + re-rank: retrieve and re-rank before prompting  |  Structured: use XML/JSON to delimit sections</text>
+    <text x="100" y="464" font-size="10" fill="var(--text-muted, #64748b)">Hierarchical: summarize long documents before including  |  Multi-pass: query the model twice (scan then answer)</text>
+  </g>
+</svg>

@@ -8,7 +8,7 @@ Concise technical references, software engineering guides, and engineering caree
 
 ## Overview
 
-Quick Bytes is a static documentation site focused on Large Language Models (LLMs). It features **17 animated SVG diagrams** that explain core concepts visually, with all animations implemented as pure SMIL (no JavaScript dependencies).
+Quick Bytes is a static documentation site focused on Large Language Models (LLMs). It features **31 animated SVG diagrams** that explain core concepts visually, with all animations implemented as pure SMIL (no JavaScript dependencies).
 
 The site is a hash-routed single-page application — content is authored in a JavaScript data file (`js/content.js`), rendered via Markdown at runtime, and navigated through a sidebar-driven UI.
 
@@ -16,7 +16,7 @@ The site is a hash-routed single-page application — content is authored in a J
 
 ## Features
 
-- **17 animated SVG diagrams** — tokenization, embeddings, self-attention, transformer architecture, FFN, normalization, training pipeline, encoder-only (BERT), decoder-only (GPT), encoder-decoder (T5), dense vs sparse (MoE) models, decision framework, and more
+- **31 animated SVG diagrams** — tokenization, embeddings, self-attention, transformer architecture, FFN, normalization, training pipeline, encoder-only (BERT), decoder-only (GPT), encoder-decoder (T5), dense vs sparse (MoE) models, decision framework, model architectures (GPT-4, Claude 3, Gemini, LLaMA 3, Mistral, BERT, T5), prompt anatomy, prompt production pipeline, context window anatomy, attention patterns, lost in the middle, memory systems, context optimization workflow, and more
 - **SMIL animations** — all diagram motion uses SVG-native animation (cross-browser, no JS)
 - **Markdown-rendered content** via [marked](https://marked.js.org/) with output sanitization
 - **Syntax highlighting** via [Prism.js](https://prismjs.com/)
@@ -55,6 +55,11 @@ The site is a hash-routed single-page application — content is authored in a J
 | Dense Models | `assets/diagrams/dense-models.svg` | All-neurons-active FFN, full capacity per token |
 | Sparse Models (MoE) | `assets/diagrams/sparse-models-moe.svg` | Router/gate, top-k expert selection, weighted sum |
 | Decision Framework | `assets/diagrams/decision-framework.svg` | When to use which model — 3-column decision tree |
+| Context Window Anatomy | `assets/diagrams/context-window-anatomy.svg` | Token sequence, position indices, attention range, KV cache |
+| Attention Patterns | `assets/diagrams/attention-patterns.svg` | Full vs sliding window vs sparse vs global+sliding attention matrices |
+| Lost in the Middle | `assets/diagrams/lost-in-the-middle.svg` | U-shaped performance curve across document position |
+| Memory Systems | `assets/diagrams/context-memory-systems.svg` | Three-tier memory: working → semantic → skill |
+| Context Optimization | `assets/diagrams/context-optimization-workflow.svg` | End-to-end pipeline: document → chunk → embed → retrieve → rerank → compress → LLM |
 
 All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from Google Fonts, and are embedded via `<object>` tags so external fonts render correctly.
 
@@ -96,7 +101,7 @@ All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from 
 │   └── theme.js                # Dark mode toggle and system preference detection
 ├── assets/
 │   ├── logo.svg                # Animated SMIL logo (hamburger → checkmark with pulse ring)
-│   └── diagrams/               # 17 animated SVG diagrams (see table above)
+│   └── diagrams/               # 31 animated SVG diagrams (see table above)
 ├── tailwind.config.js          # Tailwind config — orange palette, Ubuntu fonts
 ├── package.json                # npm scripts (build)
 ├── .github/workflows/deploy.yml # GitHub Actions deployment
