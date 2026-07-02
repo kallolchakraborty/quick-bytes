@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
       matches.forEach(function(m) {
         var href = 'docs.html#' + m.guide.id;
         if (m.section) href = 'docs.html#' + m.section.id;
-        html += '<a href="' + href + '" class="block px-3 py-2 rounded-lg hover:theme-bg-subtle transition-colors" onclick="closeSearch()">' +
+        html += '<a href="' + href + '" class="search-result-item block px-3 py-2 rounded-lg transition-colors" onclick="closeSearch()">' +
           '<div class="text-sm font-medium theme-text">' + m.guide.title + '</div>' +
           '<div class="text-xs theme-text-muted mt-0.5">' + m.phase.title +
           (m.section ? ' &middot; ' + m.section.title : '') +
@@ -368,6 +368,9 @@ function initDocs() {
     buildOutline();
     initScrollSpy();
 
+    // Add heading anchor links
+    addHeadingAnchors();
+
     // Add copy buttons to code blocks
     document.querySelectorAll('.content-section pre').forEach(function(pre) {
       var btn = document.createElement('button');
@@ -409,6 +412,20 @@ function initDocs() {
       return html;
     }
     return text;
+  }
+
+  function addHeadingAnchors() {
+    var container = document.getElementById('docs-dynamic-content');
+    if (!container) return;
+    container.querySelectorAll('h2[id], h3[id], h4[id]').forEach(function(h) {
+      if (h.querySelector('.heading-anchor')) return;
+      var a = document.createElement('a');
+      a.className = 'heading-anchor';
+      a.href = '#' + h.id;
+      a.setAttribute('aria-label', 'Link to ' + h.textContent);
+      a.textContent = '#';
+      h.appendChild(a);
+    });
   }
 
   function buildOutline() {
@@ -512,8 +529,14 @@ function toggleBookmark(guideId) {
   var idx = list.indexOf(guideId);
   if (idx > -1) { list.splice(idx, 1); } else { list.push(guideId); }
   localStorage.setItem('qb-bookmarks', JSON.stringify(list));
-  var icon = document.querySelector('.content-section button[onclick*="' + guideId + '"] .material-symbols-outlined');
-  if (icon) icon.textContent = idx > -1 ? 'bookmark_border' : 'bookmark';
+  var btn = document.querySelector('.content-section button[onclick*="' + guideId + '"]');
+  var icon = btn && btn.querySelector('.material-symbols-outlined');
+  if (icon) {
+    icon.textContent = idx > -1 ? 'bookmark_border' : 'bookmark';
+    icon.style.transform = 'scale(1.3)';
+    icon.style.transition = 'transform 0.15s ease';
+    setTimeout(function() { icon.style.transform = 'scale(1)'; }, 150);
+  }
   updateBookmarksSidebar();
 }
 
