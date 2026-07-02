@@ -171,6 +171,9 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 ### 1. By Architecture
 
 #### Encoder-Only (BERT-style)
+
+<object data="assets/diagrams/encoder-only-bert.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" loading="lazy"></object>
+
 - **Mechanism:** Bidirectional self-attention — each token attends to all tokens (left and right). Trained via Masked Language Model (MLM): randomly mask 15% of tokens, predict them.
 - **Output:** Contextualized token embeddings (not generative).
 - **Strengths:** Deep bidirectional understanding — best-in-class for classification, named entity recognition, question answering, sentence similarity.
