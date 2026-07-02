@@ -232,7 +232,7 @@
     <animate attributeName="opacity" values="0;1" dur="0.35s" begin="2.45s" fill="freeze"/>
     <rect x="600" y="318" width="280" height="52" rx="6" fill="url(#boxGrad)" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow)"/>
     <text x="610" y="336" font-size="9" font-weight="600" fill="#475569">Question generation / QA</text>
-    <text x="610" y="352" font-size="8" fill="#64748b">Generate Q&A pairs from text</text>
+    <text x="610" y="352" font-size="8" fill="#64748b">Generate Q&amp;A pairs from text</text>
     <rect x="764" y="328" width="106" height="18" rx="9" fill="#7c3aed" opacity="0.1"/>
     <text x="817" y="341" text-anchor="middle" font-size="7" fill="#7c3aed" font-weight="600">T5 / BART</text>
     <rect x="778" y="350" width="78" height="18" rx="9" fill="#7c3aed" opacity="0.06"/>
