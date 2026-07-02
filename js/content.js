@@ -16,7 +16,6 @@ const QUICK_BYTES = {
     {
       id: 'foundations',
       title: 'Core Foundations',
-      level: 'L3',
       description: 'Essential programming concepts, tooling, and debugging skills every engineer should master.',
       guides: [
         {
