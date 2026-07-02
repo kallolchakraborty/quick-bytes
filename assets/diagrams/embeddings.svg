@@ -1,0 +1,337 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');</style>
+  <defs>
+    <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="#E95420"/>
+    </marker>
+    <marker id="arrowDn" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L5,10 L10,0" fill="#E95420"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="700" fill="none"/>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#C34113">Token &amp; Positional Embeddings</text>
+  <line x1="270" y1="40" x2="630" y2="40" stroke="#E95420" stroke-width="1" opacity="0.3"/>
+
+  <!-- ==================== SECTION LABEL ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.3s" fill="freeze"/>
+    <rect x="50" y="60" width="380" height="26" rx="4" fill="#fde8dc"/>
+    <text x="60" y="77" font-size="12" font-weight="700" fill="#C34113">Step 1: Token Embedding Lookup</text>
+  </g>
+
+  <!-- ==================== TOKEN BOXES (LEFT) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.8s" fill="freeze"/>
+
+    <rect x="60" y="105" width="60" height="32" rx="6" fill="#E95420" filter="url(#shadow)">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" begin="1s" repeatCount="indefinite"/>
+    </rect>
+    <text x="90" y="125" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">I</text>
+
+    <rect x="60" y="155" width="60" height="32" rx="6" fill="#c34113" filter="url(#shadow)">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="90" y="175" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">love</text>
+
+    <rect x="60" y="205" width="60" height="32" rx="6" fill="#E95420" filter="url(#shadow)">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" begin="2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="90" y="225" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">AI</text>
+  </g>
+
+  <!-- Token ID labels -->
+  <g opacity="0" font-size="9" fill="#94a3b8">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1s" fill="freeze"/>
+    <text x="90" y="149" text-anchor="middle">ID: 31</text>
+    <text x="90" y="199" text-anchor="middle">ID: 892</text>
+    <text x="90" y="249" text-anchor="middle">ID: 28471</text>
+  </g>
+
+  <!-- Arrows from tokens to embedding vectors -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.2s" fill="freeze"/>
+    <line x1="120" y1="121" x2="175" y2="121" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="120" y1="171" x2="175" y2="171" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="120" y1="221" x2="175" y2="221" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- ==================== EMBEDDING VECTORS ==================== -->
+  <!-- Each vector: 8 dimensions shown as colored bars -->
+
+  <!-- Token "I" embedding -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.5s" fill="freeze"/>
+    <text x="185" y="116" font-size="9" fill="#94a3b8">d=4096</text>
+
+    <rect x="220" y="105" width="20" height="22" rx="2" fill="#E95420" opacity="0.85"/>
+    <rect x="242" y="105" width="20" height="22" rx="2" fill="#f0883e" opacity="0.5"/>
+    <rect x="264" y="105" width="20" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="286" y="105" width="20" height="22" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="308" y="105" width="20" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+    <rect x="330" y="105" width="20" height="22" rx="2" fill="#E95420" opacity="0.75"/>
+    <rect x="352" y="105" width="20" height="22" rx="2" fill="#f0883e" opacity="0.3"/>
+    <rect x="374" y="105" width="20" height="22" rx="2" fill="#E95420" opacity="0.6"/>
+  </g>
+
+  <!-- Token "love" embedding -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.8s" fill="freeze"/>
+
+    <rect x="220" y="155" width="20" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+    <rect x="242" y="155" width="20" height="22" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="264" y="155" width="20" height="22" rx="2" fill="#E95420" opacity="0.6"/>
+    <rect x="286" y="155" width="20" height="22" rx="2" fill="#f0883e" opacity="0.5"/>
+    <rect x="308" y="155" width="20" height="22" rx="2" fill="#E95420" opacity="0.8"/>
+    <rect x="330" y="155" width="20" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="352" y="155" width="20" height="22" rx="2" fill="#E95420" opacity="0.85"/>
+    <rect x="374" y="155" width="20" height="22" rx="2" fill="#f0883e" opacity="0.3"/>
+  </g>
+
+  <!-- Token "AI" embedding -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2.1s" fill="freeze"/>
+
+    <rect x="220" y="205" width="20" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="242" y="205" width="20" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+    <rect x="264" y="205" width="20" height="22" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="286" y="205" width="20" height="22" rx="2" fill="#E95420" opacity="0.55"/>
+    <rect x="308" y="205" width="20" height="22" rx="2" fill="#f0883e" opacity="0.35"/>
+    <rect x="330" y="205" width="20" height="22" rx="2" fill="#E95420" opacity="0.8"/>
+    <rect x="352" y="205" width="20" height="22" rx="2" fill="#E95420" opacity="0.65"/>
+    <rect x="374" y="205" width="20" height="22" rx="2" fill="#f0883e" opacity="0.5"/>
+  </g>
+
+  <!-- Embedding dimension label -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.5s" fill="freeze"/>
+    <rect x="220" y="130" width="174" height="16" rx="3" fill="#fde8dc" opacity="0.5"/>
+    <text x="307" y="141" text-anchor="middle" font-size="9" fill="#c34113">8 of 4096 dimensions shown</text>
+  </g>
+
+  <!-- ==================== EMBEDDING MATRIX VISUAL (RIGHT) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2s" fill="freeze"/>
+
+    <rect x="460" y="85" width="200" height="172" rx="8" fill="url(#boxGrad)" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="560" y="103" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Embedding Matrix E</text>
+
+    <!-- Matrix grid: 5 rows × 4 cols (simplified) -->
+    <rect x="478" y="114" width="30" height="22" rx="2" fill="#E95420" opacity="0.8"/>
+    <rect x="512" y="114" width="30" height="22" rx="2" fill="#f0883e" opacity="0.3"/>
+    <rect x="546" y="114" width="30" height="22" rx="2" fill="#E95420" opacity="0.6"/>
+    <rect x="580" y="114" width="30" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+    <rect x="614" y="114" width="30" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+
+    <rect x="478" y="140" width="30" height="22" rx="2" fill="#f0883e" opacity="0.5"/>
+    <rect x="512" y="140" width="30" height="22" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="546" y="140" width="30" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+    <rect x="580" y="140" width="30" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="614" y="140" width="30" height="22" rx="2" fill="#E95420" opacity="0.6"/>
+
+    <rect x="478" y="166" width="30" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="512" y="166" width="30" height="22" rx="2" fill="#f0883e" opacity="0.3"/>
+    <rect x="546" y="166" width="30" height="22" rx="2" fill="#E95420" opacity="0.8"/>
+    <rect x="580" y="166" width="30" height="22" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="614" y="166" width="30" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+
+    <rect x="478" y="192" width="30" height="22" rx="2" fill="#f0883e" opacity="0.4"/>
+    <rect x="512" y="192" width="30" height="22" rx="2" fill="#E95420" opacity="0.6"/>
+    <rect x="546" y="192" width="30" height="22" rx="2" fill="#f0883e" opacity="0.5"/>
+    <rect x="580" y="192" width="30" height="22" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="614" y="192" width="30" height="22" rx="2" fill="#E95420" opacity="0.8"/>
+
+    <!-- Row highlighting animation -->
+    <rect x="476" y="112" width="170" height="26" rx="3" fill="none" stroke="#E95420" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;1;0;1;0;1;0" dur="6s" begin="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="112;112;138;138;164;164;190;190" dur="6s" begin="2.5s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Dimension labels -->
+    <text x="478" y="228" font-size="8" fill="#94a3b8">d₁</text>
+    <text x="512" y="228" font-size="8" fill="#94a3b8">d₂</text>
+    <text x="546" y="228" font-size="8" fill="#94a3b8">d₃</text>
+    <text x="580" y="228" font-size="8" fill="#94a3b8">d₄</text>
+    <text x="614" y="228" font-size="8" fill="#94a3b8">...</text>
+
+    <text x="479" y="98" font-size="8" fill="#94a3b8">V</text>
+    <text x="614" y="98" font-size="8" fill="#94a3b8">×</text>
+
+    <text x="478" y="242" font-size="9" fill="#64748b">E ∈ ℝ^(V × d)</text>
+  </g>
+
+  <!-- ==================== SECTION DIVIDER ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3s" fill="freeze"/>
+    <line x1="50" y1="280" x2="850" y2="280" stroke="#E95420" stroke-width="1" opacity="0.2"/>
+  </g>
+
+  <!-- ==================== SECTION 2: POSITIONAL ENCODING ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.2s" fill="freeze"/>
+    <rect x="50" y="295" width="380" height="26" rx="4" fill="#fde8dc"/>
+    <text x="60" y="312" font-size="12" font-weight="700" fill="#C34113">Step 2: Add Positional Encoding</text>
+  </g>
+
+  <!-- Label: Position → Position Vector -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.5s" fill="freeze"/>
+    <text x="185" y="340" font-size="10" font-weight="500" fill="#64748b">Position Encoding</text>
+
+    <!-- Position 0 -->
+    <rect x="60" y="352" width="40" height="24" rx="4" fill="#fff" stroke="#c34113" stroke-width="1.5"/>
+    <text x="80" y="368" text-anchor="middle" font-size="11" font-weight="600" fill="#c34113">pos 0</text>
+
+    <line x1="100" y1="364" x2="130" y2="364" stroke="#c34113" stroke-width="1" marker-end="url(#arrow)"/>
+
+    <rect x="135" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.3"/>
+    <rect x="157" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.6"/>
+    <rect x="179" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.4"/>
+    <rect x="201" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.7"/>
+    <rect x="223" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.2"/>
+    <rect x="245" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="267" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.3"/>
+    <rect x="289" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.8"/>
+
+    <!-- Position 1 -->
+    <rect x="60" y="384" width="40" height="24" rx="4" fill="#fff" stroke="#c34113" stroke-width="1.5"/>
+    <text x="80" y="400" text-anchor="middle" font-size="11" font-weight="600" fill="#c34113">pos 1</text>
+
+    <line x1="100" y1="396" x2="130" y2="396" stroke="#c34113" stroke-width="1" marker-end="url(#arrow)"/>
+
+    <rect x="135" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="157" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.3"/>
+    <rect x="179" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.7"/>
+    <rect x="201" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.4"/>
+    <rect x="223" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.6"/>
+    <rect x="245" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.2"/>
+    <rect x="267" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.8"/>
+    <rect x="289" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.3"/>
+
+    <!-- Position 2 -->
+    <rect x="60" y="416" width="40" height="24" rx="4" fill="#fff" stroke="#c34113" stroke-width="1.5"/>
+    <text x="80" y="432" text-anchor="middle" font-size="11" font-weight="600" fill="#c34113">pos 2</text>
+
+    <line x1="100" y1="428" x2="130" y2="428" stroke="#c34113" stroke-width="1" marker-end="url(#arrow)"/>
+
+    <rect x="135" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.4"/>
+    <rect x="157" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.7"/>
+    <rect x="179" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.2"/>
+    <rect x="201" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.6"/>
+    <rect x="223" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.8"/>
+    <rect x="245" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.3"/>
+    <rect x="267" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="289" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.7"/>
+  </g>
+
+  <!-- ==================== ADDITION OPERATION ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="4s" fill="freeze"/>
+    <text x="355" y="370" text-anchor="middle" font-size="18" font-weight="700" fill="#E95420">+</text>
+    <text x="355" y="402" text-anchor="middle" font-size="18" font-weight="700" fill="#E95420">+</text>
+    <text x="355" y="434" text-anchor="middle" font-size="18" font-weight="700" fill="#E95420">+</text>
+
+    <line x1="310" y1="362" x2="375" y2="362" stroke="#E95420" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="310" y1="394" x2="375" y2="394" stroke="#E95420" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="310" y1="426" x2="375" y2="426" stroke="#E95420" stroke-width="1" stroke-dasharray="3,2"/>
+
+    <text x="395" y="346" font-size="10" font-weight="500" fill="#64748b">Final Embedding = Token Emb + Pos Enc</text>
+
+    <!-- Final embedding vectors -->
+    <rect x="395" y="350" width="20" height="24" rx="2" fill="#E95420" opacity="0.85"/>
+    <rect x="417" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.6"/>
+    <rect x="439" y="350" width="20" height="24" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="461" y="350" width="20" height="24" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="483" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.4"/>
+    <rect x="505" y="350" width="20" height="24" rx="2" fill="#E95420" opacity="0.75"/>
+    <rect x="527" y="350" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="549" y="350" width="20" height="24" rx="2" fill="#E95420" opacity="0.6"/>
+
+    <rect x="395" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="417" y="382" width="20" height="24" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="439" y="382" width="20" height="24" rx="2" fill="#E95420" opacity="0.6"/>
+    <rect x="461" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="483" y="382" width="20" height="24" rx="2" fill="#E95420" opacity="0.8"/>
+    <rect x="505" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.7"/>
+    <rect x="527" y="382" width="20" height="24" rx="2" fill="#E95420" opacity="0.85"/>
+    <rect x="549" y="382" width="20" height="24" rx="2" fill="#c34113" opacity="0.3"/>
+
+    <rect x="395" y="414" width="20" height="24" rx="2" fill="#E95420" opacity="0.7"/>
+    <rect x="417" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.5"/>
+    <rect x="439" y="414" width="20" height="24" rx="2" fill="#E95420" opacity="0.9"/>
+    <rect x="461" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.6"/>
+    <rect x="483" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.35"/>
+    <rect x="505" y="414" width="20" height="24" rx="2" fill="#E95420" opacity="0.8"/>
+    <rect x="527" y="414" width="20" height="24" rx="2" fill="#c34113" opacity="0.65"/>
+    <rect x="549" y="414" width="20" height="24" rx="2" fill="#E95420" opacity="0.5"/>
+  </g>
+
+  <!-- Animated glow on final embeddings -->
+  <rect x="395" y="350" width="174" height="88" rx="4" fill="none" stroke="#E95420" stroke-width="2" opacity="0">
+    <animate attributeName="opacity" values="0;0.6;0" dur="2s" begin="4.5s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ==================== PE TYPES ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4.8s" fill="freeze"/>
+
+    <line x1="50" y1="465" x2="850" y2="465" stroke="#E95420" stroke-width="1" opacity="0.2"/>
+    <text x="450" y="490" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">Positional Encoding Variants</text>
+
+    <!-- Sinusoidal -->
+    <rect x="50" y="505" width="250" height="160" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="175" y="525" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Sinusoidal</text>
+    <text x="175" y="543" text-anchor="middle" font-size="9" fill="#64748b">Original Transformer</text>
+
+    <!-- Sine wave -->
+    <path d="M 80,570 Q 95,555 110,570 T 140,570 T 170,570 T 200,570 T 230,570" fill="none" stroke="#E95420" stroke-width="1.5" stroke-dasharray="150" stroke-dashoffset="150">
+      <animate attributeName="stroke-dashoffset" values="150;0" dur="1s" begin="5s" fill="freeze"/>
+    </path>
+    <path d="M 80,585 Q 95,600 110,585 T 140,585 T 170,585 T 200,585 T 230,585" fill="none" stroke="#f0883e" stroke-width="1" stroke-dasharray="150" stroke-dashoffset="150">
+      <animate attributeName="stroke-dashoffset" values="150;0" dur="1s" begin="5.3s" fill="freeze"/>
+    </path>
+
+    <text x="175" y="615" text-anchor="middle" font-size="9" fill="#94a3b8">Fixed frequencies per dimension</text>
+    <text x="175" y="630" text-anchor="middle" font-size="9" fill="#94a3b8">PE(pos, 2i) = sin(pos/10000^(2i/d))</text>
+    <text x="175" y="645" text-anchor="middle" font-size="9" fill="#94a3b8">PE(pos, 2i+1) = cos(pos/10000^(2i/d))</text>
+
+    <!-- RoPE -->
+    <rect x="325" y="505" width="250" height="160" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="450" y="525" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">RoPE</text>
+    <text x="450" y="543" text-anchor="middle" font-size="9" fill="#64748b">Rotary Position Embedding</text>
+
+    <!-- Rotation arrow -->
+    <circle cx="450" cy="585" r="18" fill="none" stroke="#E95420" stroke-width="1.5"/>
+    <path d="M 450,567 A 18,18 0 1,1 435,577" fill="none" stroke="#E95420" stroke-width="2" marker-end="url(#arrow)">
+      <animate attributeName="opacity" values="0;1;0;1" dur="3s" begin="5.5s" repeatCount="indefinite"/>
+    </path>
+    <text x="450" y="598" text-anchor="middle" font-size="9" fill="#c34113">θ · pos</text>
+
+    <text x="450" y="625" text-anchor="middle" font-size="9" fill="#94a3b8">Rotates Q/K vectors by</text>
+    <text x="450" y="640" text-anchor="middle" font-size="9" fill="#94a3b8">angle proportional to position</text>
+    <text x="450" y="655" text-anchor="middle" font-size="9" fill="#94a3b8">Used by: LLaMA, Mistral, Gemini</text>
+
+    <!-- ALiBi -->
+    <rect x="600" y="505" width="250" height="160" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="725" y="525" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">ALiBi</text>
+    <text x="725" y="543" text-anchor="middle" font-size="9" fill="#64748b">Attention with Linear Biases</text>
+
+    <!-- Slope line -->
+    <line x1="640" y1="600" x2="710" y2="570" stroke="#E95420" stroke-width="2"/>
+    <line x1="640" y1="600" x2="710" y2="600" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,2"/>
+    <text x="715" y="568" font-size="8" fill="#E95420">bias</text>
+
+    <text x="725" y="625" text-anchor="middle" font-size="9" fill="#94a3b8">Adds bias to attention scores</text>
+    <text x="725" y="640" text-anchor="middle" font-size="9" fill="#94a3b8">proportional to token distance</text>
+    <text x="725" y="655" text-anchor="middle" font-size="9" fill="#94a3b8">Used by: BLOOM, MPT</text>
+  </g>
+</svg>

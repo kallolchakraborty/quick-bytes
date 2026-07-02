@@ -65,6 +65,8 @@ Example: "Transformer" → ["Transform", "er"] or ["Trans", "former"] depending 
 
 Each token is mapped to a dense vector via a learned embedding matrix \`E ∈ ℝ^(V×d)\` where V = vocabulary size, d = model dimension (e.g., 4096 for 7B models). These embeddings capture semantic similarity — similar tokens have nearby vectors.
 
+<object data="assets/diagrams/embeddings.svg" type="image/svg+xml" width="900" height="700" class="w-full my-8 rounded-xl shadow-lg" aria-label="Token &amp; Positional Embeddings"></object>
+
 **Positional Encoding:** Since self-attention is permutation-invariant, position information must be injected:
 
 - **Sinusoidal (original Transformer):** Fixed frequency-based encoding. Used in BERT, T5.
