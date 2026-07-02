@@ -252,6 +252,10 @@ document.addEventListener('DOMContentLoaded', function() {
     diagramContent.appendChild(obj);
     diagramModal.classList.remove('hidden');
     diagramModal.classList.add('flex');
+    diagramModal.animate([
+      { opacity: 0 },
+      { opacity: 1 }
+    ], { duration: 200, easing: 'ease' });
     document.body.style.overflow = 'hidden';
   }
 
