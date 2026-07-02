@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" fill="none">
-  <rect width="256" height="256" rx="48" fill="#e95420">
-    <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite"/>
-  </rect>
+  <rect width="256" height="256" rx="48" fill="#e95420"/>
 
   <!-- Hamburger lines -->
   <path d="M80 80h96" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"
@@ -20,19 +18,19 @@
   <!-- Circle background fill -->
   <circle cx="196" cy="176" r="0" fill="#e95420" opacity="0">
     <animate attributeName="opacity" from="0" to="1" dur="0.01s" begin="1.6s" fill="freeze"/>
-    <animate attributeName="r" from="0" to="22" dur="0.3s" begin="1.6s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
+    <animate attributeName="r" from="0" to="18" dur="0.3s" begin="1.6s" fill="freeze" calcMode="spline" keySplines="0.34 1.56 0.64 1"/>
   </circle>
 
-  <!-- Circle stroke (draws perimeter, then pulses) -->
-  <circle cx="196" cy="176" r="22" stroke="white" stroke-width="3" fill="none"
-          stroke-dasharray="138" stroke-dashoffset="138">
-    <animate attributeName="stroke-dashoffset" from="138" to="0" dur="0.35s" begin="1.6s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>
+  <!-- Circle stroke (draws perimeter) -->
+  <circle cx="196" cy="176" r="18" stroke="white" stroke-width="3" fill="none"
+          stroke-dasharray="113" stroke-dashoffset="113">
+    <animate attributeName="stroke-dashoffset" from="113" to="0" dur="0.35s" begin="1.6s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>
   </circle>
 
-  <!-- Circle pulse after drawing -->
-  <circle cx="196" cy="176" r="22" stroke="white" stroke-width="2" fill="none" opacity="0">
-    <animate attributeName="opacity" values="0;0.5;0" dur="1.5s" begin="2.1s" repeatCount="indefinite"/>
-    <animate attributeName="r" values="22;30;22" dur="1.5s" begin="2.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+  <!-- Circle pulse (plays once) -->
+  <circle cx="196" cy="176" r="18" stroke="white" stroke-width="2" fill="none" opacity="0">
+    <animate attributeName="opacity" values="0;0.5;0" dur="1.5s" begin="2.1s" fill="freeze"/>
+    <animate attributeName="r" values="18;26;18" dur="1.5s" begin="2.1s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
   </circle>
 
   <!-- Checkmark (white) -->
