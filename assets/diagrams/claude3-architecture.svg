@@ -148,7 +148,7 @@
 
   <!-- ===== RIGHT TOP: 200K Token Context ===== -->
   <g>
-    <rect x="310" y="217" width="520" height="80" rx="8" fill="rgba(5,150,105,0.04)" stroke="#059669" stroke-width="1" stroke-dasharray="4 2"/>
+    <rect x="310" y="217" width="520" height="80" rx="8" fill="rgba(5,150,105,0.08)" stroke="#059669" stroke-width="1" stroke-dasharray="4 2"/>
     <text x="570" y="236" text-anchor="middle" font-size="11" font-weight="600" fill="#059669">200K Token Context Window</text>
 
     <!-- Token row visualization -->
@@ -211,7 +211,7 @@
 
   <!-- ===== RIGHT BOTTOM: Constitutional AI ===== -->
   <g>
-    <rect x="310" y="305" width="520" height="110" rx="8" fill="rgba(5,150,105,0.04)" stroke="#059669" stroke-width="1" stroke-dasharray="4 2"/>
+    <rect x="310" y="305" width="520" height="110" rx="8" fill="rgba(5,150,105,0.08)" stroke="#059669" stroke-width="1" stroke-dasharray="4 2"/>
 
     <!-- Heading -->
     <text x="570" y="324" text-anchor="middle" font-size="11" font-weight="600" fill="#059669">Constitutional AI Training Pipeline</text>
@@ -264,7 +264,7 @@
     <!-- Nested layered boxes showing three sizes -->
 
     <!-- Opus (largest) -->
-    <rect x="80" y="460" width="230" height="90" rx="8" fill="rgba(233,84,32,0.04)" stroke="var(--brand-default, #e95420)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <rect x="80" y="460" width="230" height="90" rx="8" fill="var(--brand-light, rgba(233,84,32,0.08))" stroke="var(--brand-default, #e95420)" stroke-width="1.5" filter="url(#shadow1)"/>
     <text x="195" y="485" text-anchor="middle" font-size="12" font-weight="700" fill="var(--brand-default, #e95420)">Opus</text>
     <text x="195" y="500" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Largest — Full Capability</text>
     <text x="195" y="515" text-anchor="middle" font-size="9" fill="var(--text-muted, #64748b)">Reasoning, coding, analysis</text>
@@ -285,7 +285,7 @@
 
   <!-- ==================== VISION ENCODER CALLOUT ==================== -->
   <g>
-    <rect x="480" y="460" width="355" height="45" rx="8" fill="rgba(124,58,237,0.04)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow1)">
+    <rect x="480" y="460" width="355" height="45" rx="8" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow1)">
       <animate attributeName="stroke-opacity" values="1;0.4;1" dur="3s" repeatCount="indefinite"/>
     </rect>
     <!-- Image icon -->
@@ -335,7 +335,7 @@
   </g>
 
   <!-- Dense vs MoE note -->
-  <rect x="80" y="615" width="730" height="45" rx="8" fill="rgba(233,84,32,0.03)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+  <rect x="80" y="615" width="730" height="45" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
   <text x="100" y="633" font-size="10" font-weight="600" fill="var(--brand-default, #e95420)">Dense vs. Sparse (MoE)</text>
   <text x="100" y="649" font-size="9" fill="var(--text-muted, #64748b)">Dense models activate 100% of parameters per token. Sparse (Mixture-of-Experts) models route each token to a subset of experts. Claude 3 is a dense model — every neuron fires for every input.</text>
 </svg>

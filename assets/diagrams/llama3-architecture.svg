@@ -73,7 +73,7 @@
   <text x="450" y="206" text-anchor="middle" font-size="12" font-weight="600" fill="var(--brand-default, #e95420)">Single LLaMA 3 Decoder Layer — Key Design Innovations</text>
 
   <!-- Central decoder block -->
-  <rect x="330" y="215" width="240" height="200" rx="10" fill="rgba(233,84,32,0.03)" stroke="var(--brand-default, #e95420)" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <rect x="330" y="215" width="240" height="200" rx="10" fill="var(--brand-light, rgba(233,84,32,0.06))" stroke="var(--brand-default, #e95420)" stroke-width="1.5" stroke-dasharray="6 3"/>
   <text x="450" y="238" text-anchor="middle" font-size="11" font-weight="600" fill="var(--brand-default, #e95420)">Decoder Layer</text>
 
   <!-- Internal flow: Input → RMSNorm → GQA → + → RMSNorm → SwiGLU → + -->
@@ -286,7 +286,7 @@
   <!-- ==================== SIZE VARIANTS ==================== -->
   <g>
     <!-- 405B (largest) -->
-    <rect x="55" y="460" width="355" height="105" rx="8" fill="rgba(233,84,32,0.03)" stroke="var(--brand-default, #e95420)" stroke-width="1.5" filter="url(#shadow1)"/>
+    <rect x="55" y="460" width="355" height="105" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))" stroke="var(--brand-default, #e95420)" stroke-width="1.5" filter="url(#shadow1)"/>
     <rect x="55" y="460" width="355" height="28" rx="8" fill="rgba(233,84,32,0.06)"/>
     <text x="232" y="479" text-anchor="middle" font-size="13" font-weight="700" fill="var(--brand-default, #e95420)">LLaMA 3 405B</text>
     <line x1="70" y1="495" x2="395" y2="495" stroke="var(--border-default, #e2e8f0)" stroke-width="0.5"/>
@@ -298,7 +298,7 @@
     <text x="245" y="540" font-size="9" fill="var(--text-default, #0f172a)"><tspan font-weight="600">Context:</tspan> 128K tokens</text>
 
     <!-- 70B (medium) -->
-    <rect x="75" y="472" width="280" height="80" rx="6" fill="rgba(233,84,32,0.05)" stroke="rgba(233,84,32,0.5)" stroke-width="1.2" filter="url(#shadow1)"/>
+    <rect x="75" y="472" width="280" height="80" rx="6" fill="var(--brand-light, rgba(233,84,32,0.08))" stroke="rgba(233,84,32,0.5)" stroke-width="1.2" filter="url(#shadow1)"/>
     <rect x="75" y="472" width="280" height="22" rx="6" fill="rgba(233,84,32,0.07)"/>
     <text x="215" y="488" text-anchor="middle" font-size="11" font-weight="600" fill="var(--brand-default, #e95420)">LLaMA 3 70B</text>
     <text x="90" y="506" font-size="8" fill="var(--text-muted, #64748b)"><tspan font-weight="600">Layers:</tspan> 80</text>
@@ -321,7 +321,7 @@
 
   <!-- ==================== 128K CONTEXT WINDOW VISUALIZATION ==================== -->
   <g>
-    <rect x="470" y="460" width="375" height="52" rx="8" fill="rgba(13,148,136,0.04)" stroke="#0d9488" stroke-width="1" filter="url(#shadowTeal)"/>
+    <rect x="470" y="460" width="375" height="52" rx="8" fill="rgba(13,148,136,0.08)" stroke="#0d9488" stroke-width="1" filter="url(#shadowTeal)"/>
     <text x="657" y="478" text-anchor="middle" font-size="10" font-weight="600" fill="#0d9488">128K Token Context Window</text>
 
     <!-- Dense token visualization -->
@@ -396,7 +396,7 @@
 
   <!-- ==================== SCALING LAWS / CHINCHILLA CALLOUT ==================== -->
   <g>
-    <rect x="470" y="520" width="375" height="45" rx="8" fill="rgba(124,58,237,0.04)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow1)">
+    <rect x="470" y="520" width="375" height="45" rx="8" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow1)">
       <animate attributeName="stroke-opacity" values="1;0.4;1" dur="3s" repeatCount="indefinite"/>
     </rect>
     <!-- Chart icon -->
@@ -432,7 +432,7 @@
 
   <!-- ==================== DPO NOTE (BOTTOM) ==================== -->
   <g>
-    <rect x="55" y="615" width="790" height="45" rx="8" fill="rgba(233,84,32,0.03)" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
+    <rect x="55" y="615" width="790" height="45" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))" stroke="var(--border-default, #e2e8f0)" stroke-width="1"/>
     <text x="75" y="633" font-size="10" font-weight="600" fill="var(--brand-default, #e95420)">Instruction Tuning: DPO (not RLHF)</text>
     <text x="75" y="649" font-size="9" fill="var(--text-muted, #64748b)">LLaMA 3 uses Direct Preference Optimization — no separate reward model or PPO loop. Preference pairs directly update the policy via a binary cross-entropy loss on preferred vs. rejected responses.</text>
   </g>
