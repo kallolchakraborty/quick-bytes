@@ -110,6 +110,8 @@ Each attention output passes through a two-layer MLP with a non-linear activatio
 - FFN(x) = W_2 · σ(W_1 · x + b_1) + b_2
 - Inner dimension is typically 4× the model dimension (e.g., 4096 → 11008 for LLaMA 7B).
 
+<object data="assets/diagrams/ffn.svg" type="image/svg+xml" width="900" height="700" class="w-full my-8 rounded-xl shadow-lg" aria-label="Feed-Forward Network Architecture"></object>
+
 **Activation Functions:**
 
 - **ReLU:** GPT-1/2
