@@ -240,7 +240,7 @@
     <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.3s" fill="freeze"/>
     <rect x="30" y="625" width="405" height="26" rx="4" fill="#fde8dc"/>
     <text x="40" y="642" font-size="12" font-weight="700" fill="#C34113">4. By Modality</text>
-    <text x="345" y="642" font-size="10" fill="#64748b">Input/output data types</text>
+    <text x="280" y="642" font-size="10" fill="#64748b">Input/output data types</text>
   </g>
 
   <g opacity="0">
@@ -271,7 +271,7 @@
     <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.3s" fill="freeze"/>
     <rect x="465" y="625" width="405" height="26" rx="4" fill="#fde8dc"/>
     <text x="475" y="642" font-size="12" font-weight="700" fill="#C34113">5. By Context Window</text>
-    <text x="780" y="642" font-size="10" fill="#64748b">Max sequence length</text>
+    <text x="690" y="642" font-size="10" fill="#64748b">Max sequence length</text>
   </g>
 
   <g opacity="0">

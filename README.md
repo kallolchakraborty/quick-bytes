@@ -16,7 +16,7 @@ The site is built as a single-page application — content is authored in a Java
 
 ## Features
 
-- **10 animated SVG diagrams** covering the full LLM stack — tokenization, embeddings, self-attention, transformer architecture, FFN, normalization, training pipeline, and more
+- **12 animated SVG diagrams** covering the full LLM stack — tokenization, embeddings, self-attention, transformer architecture, FFN, normalization, training pipeline, model categorization, and more
 - **SMIL animations** — all diagram motion uses SVG-native animation (cross-browser, no JS)
 - **Markdown-rendered content** via [marked](https://marked.js.org/)
 - **Syntax highlighting** via [Prism.js](https://prismjs.com/)
@@ -45,6 +45,9 @@ The site is built as a single-page application — content is authored in a Java
 | Training Pipeline | `assets/diagrams/training-pipeline.svg` | 3-stage pipeline: pretraining, SFT, RLHF/DPO |
 | Inference Optimizations | `assets/diagrams/inference-optimizations.svg` | KV-Cache, speculative decoding, quantization, Flash Attention, continuous batching |
 
+| Types of LLMs | `assets/diagrams/types-of-llms.svg` | 5-axis categorization — architecture, context, modality, access, size |
+| Decision Framework | `assets/diagrams/decision-framework.svg` | When to use which model — 3-column decision tree (generation, understanding, seq2seq) |
+
 All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from Google Fonts, and are embedded via `<object>` tags so external fonts render correctly.
 
 ---
@@ -57,7 +60,7 @@ All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from 
 | **JavaScript** | Vanilla JS — no framework |
 | **Markdown** | [marked](https://marked.js.org/) |
 | **Syntax Highlighting** | [Prism](https://prismjs.com/) |
-| **Sticky Nav** | [Headroom.js](https://wicky.nillia.ms/headroom.js/) |
+| **Navigation** | Sticky header with glassmorphism |
 | **Font** | Ubuntu (Google Fonts) |
 | **Theme** | Orange brand (#E95420) — matching git-bytes design system |
 | **Icons** | Material Symbols Outlined |

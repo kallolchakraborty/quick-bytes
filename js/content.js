@@ -166,7 +166,7 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
               title: 'Types of LLMs',
                content: `LLMs can be categorized along several axes: architecture, parameter density, accessibility, and modality. The diagram below provides a visual overview of these categories.
 
-<object data="assets/diagrams/types-of-llms.svg" type="image/svg+xml" width="900" height="760" class="rounded-xl shadow-lg" aria-label="Types of LLMs"></object>
+<object data="assets/diagrams/types-of-llms.svg" type="image/svg+xml" width="900" height="820" class="rounded-xl shadow-lg" aria-label="Types of LLMs"></object>
 
 ### 1. By Architecture
 

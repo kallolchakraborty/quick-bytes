@@ -364,8 +364,9 @@ function initDocs() {
     html += '</div>';
     content.innerHTML = html;
 
-    // Right outline
-    updateOutline(found.guide, found.phase);
+    // Right outline and scrollspy
+    buildOutline();
+    initScrollSpy();
 
     // Add copy buttons to code blocks
     document.querySelectorAll('.content-section pre').forEach(function(pre) {
@@ -404,23 +405,64 @@ function initDocs() {
   function renderMarkdown(text) {
     if (typeof marked !== 'undefined') {
       var html = marked.parse(text);
-      html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1></object></div>');
+      html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1 loading="lazy"></object></div>');
       return html;
     }
     return text;
   }
 
-  function updateOutline(guide, phase) {
+  function buildOutline() {
+    var container = document.getElementById('docs-dynamic-content');
     var outline = document.getElementById('docs-right-outline');
-    if (!outline) return;
+    if (!container || !outline) return;
+    var headings = container.querySelectorAll('h2, h3, h4');
+    if (!headings.length) { outline.innerHTML = ''; return; }
     var html = '<div class="table-of-contents">';
-    if (guide.sections && guide.sections.length) {
-      guide.sections.forEach(function(s) {
-        html += '<a href="#' + s.id + '">' + s.title + '</a>';
-      });
-    }
+    headings.forEach(function(h) {
+      if (!h.id) return;
+      var tag = h.tagName.toLowerCase();
+      var indent = tag === 'h3' ? ' style="padding-left:1.25rem"' : tag === 'h4' ? ' style="padding-left:2.25rem;font-size:0.75rem"' : '';
+      html += '<a href="#' + h.id + '" data-heading="' + h.id + '"' + indent + '>' + h.textContent + '</a>';
+    });
     html += '</div>';
     outline.innerHTML = html;
+  }
+
+  function initScrollSpy() {
+    var container = document.getElementById('docs-dynamic-content');
+    var outline = document.getElementById('docs-right-outline');
+    if (!container || !outline) return;
+    var headings = container.querySelectorAll('h2, h3, h4');
+    var links = outline.querySelectorAll('.table-of-contents a');
+    if (!headings.length || !links.length) return;
+
+    function updateActive() {
+      var activeId = null;
+      for (var i = 0; i < headings.length; i++) {
+        var rect = headings[i].getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.4) {
+          activeId = headings[i].id;
+        }
+      }
+      if (!activeId && headings.length > 0) {
+        activeId = headings[0].id;
+      }
+      links.forEach(function(a) {
+        a.classList.toggle('active', a.getAttribute('data-heading') === activeId);
+      });
+    }
+
+    var ticking = false;
+    document.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateActive();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+    updateActive();
   }
 
   function scrollToHash() {

@@ -19,29 +19,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" /></noscript>
 </head>
-<body class="font-sans min-h-screen flex flex-col" style="background-color:var(--bg-default);color:var(--text-default);">
-  <header class="glass-nav">
+<body class="theme-bg theme-text font-sans min-h-screen flex flex-col">
+  <header class="glass-nav sticky top-0 z-40 w-full">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2.5 transition-all" style="color:var(--text-default);" onmouseover="this.style.color='#e95420'" onmouseout="this.style.color=''">
+      <a href="index.html" class="theme-text hover:text-brand-500 transition-all flex items-center gap-2.5">
         <img src="assets/logo.svg" alt="Quick Bytes" class="w-8 h-8" />
         <span class="text-base font-semibold">Quick Bytes</span>
       </a>
     </div>
   </header>
-  <main class="flex-grow flex items-center justify-center px-6 py-24">
+  <main class="flex-1 flex items-center justify-center px-6 py-24">
     <div class="max-w-md text-center">
       <div class="text-8xl font-bold text-brand-500/20 select-none mb-4">404</div>
       <h1 class="text-2xl font-bold mb-3">Page not found</h1>
       <p class="theme-text-muted mb-8 leading-relaxed">This page doesn't exist or has been moved. Browse our guides to find what you're looking for.</p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <a href="index.html" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg transition-colors">Go Home</a>
-        <a href="docs.html" class="px-5 py-2.5 border-2 theme-border hover:border-brand-500 rounded-lg font-semibold transition-colors" style="color:var(--text-default);">Browse Docs</a>
+        <a href="docs.html" class="px-5 py-2.5 border-2 theme-border hover:border-brand-500 rounded-lg font-semibold transition-colors theme-text">Browse Docs</a>
       </div>
     </div>
   </main>
-  <footer class="border-t py-8" style="border-color:var(--border-default);background-color:var(--bg-default);">
-    <div class="max-w-7xl mx-auto px-6 flex justify-center text-sm" style="color:var(--text-muted);">
-      &copy; 2026 Kallol Chakraborty
+  <footer class="w-full border-t theme-border py-4 theme-bg">
+    <div class="max-w-7xl mx-auto px-6 flex justify-center items-center text-sm theme-text-muted">
+      <span class="flex flex-wrap items-center gap-1">&copy; 2026 <a href="https://www.linkedin.com/in/kallol-chakraborty-9728a699/" target="_blank" rel="noopener noreferrer" class="text-brand-500 hover:text-brand-600 transition-colors font-semibold">Kallol Chakraborty</a> &mdash; All content protected under MIT license. Unauthorized scraping or reproduction is prohibited.</span>
     </div>
   </footer>
 </body>
