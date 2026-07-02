@@ -1,3 +1,32 @@
+// ---- Module-level state ----
+
+var _scrollSpyCleanup = null;
+var _mdCache = {};
+var _searchIndex = null;
+
+function sanitizeHtml(html) {
+  html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  html = html.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  html = html.replace(/href\s*=\s*(?:"javascript:[^"]*"|'javascript:[^']*')/gi, 'href="#"');
+  return html;
+}
+
+function buildSearchIndex() {
+  if (_searchIndex) return _searchIndex;
+  var index = [];
+  var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
+  phases.forEach(function(phase) {
+    (phase.guides || []).forEach(function(guide) {
+      index.push({ phase: phase, guide: guide, section: null });
+      (guide.sections || []).forEach(function(s) {
+        index.push({ phase: phase, guide: guide, section: s });
+      });
+    });
+  });
+  _searchIndex = index;
+  return index;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Theme toggle
   var themeToggle = document.querySelector('.theme-toggle-btn');
@@ -81,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Search functionality
+  // Search functionality (uses pre-built index)
   if (searchInput) {
     searchInput.addEventListener('input', function() {
       var query = this.value.toLowerCase().trim();
@@ -91,26 +120,21 @@ document.addEventListener('DOMContentLoaded', function() {
         results.innerHTML = '<div class="p-4 text-sm theme-text-muted text-center">Type to search guides...</div>';
         return;
       }
+      var index = buildSearchIndex();
       var matches = [];
-      var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
-      phases.forEach(function(phase) {
-        (phase.guides || []).forEach(function(guide) {
-          var titleMatch = guide.title.toLowerCase().includes(query);
-          var descMatch = (guide.description || '').toLowerCase().includes(query);
-          var phaseMatch = phase.title.toLowerCase().includes(query);
-          var sectionMatch = null;
-          if (guide.sections) {
-            guide.sections.forEach(function(s) {
-              if (s.title.toLowerCase().includes(query) ||
-                  (s.content && s.content.toLowerCase().includes(query))) {
-                sectionMatch = s;
-              }
-            });
-          }
-          if (titleMatch || descMatch || phaseMatch || sectionMatch) {
-            matches.push({ phase: phase, guide: guide, section: sectionMatch });
-          }
-        });
+      index.forEach(function(entry) {
+        var guide = entry.guide;
+        var section = entry.section;
+        var match = guide.title.toLowerCase().includes(query) ||
+          (guide.description || '').toLowerCase().includes(query) ||
+          entry.phase.title.toLowerCase().includes(query);
+        if (!match && section) {
+          match = section.title.toLowerCase().includes(query) ||
+            (section.content && section.content.toLowerCase().includes(query));
+        }
+        if (match) {
+          matches.push(entry);
+        }
       });
       if (matches.length === 0) {
         results.innerHTML = '<div class="p-4 text-sm theme-text-muted text-center">No guides found for "' + query + '"</div>';
@@ -120,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
       matches.forEach(function(m) {
         var href = 'docs.html#' + m.guide.id;
         if (m.section) href = 'docs.html#' + m.section.id;
-        html += '<a href="' + href + '" class="search-result-item block px-3 py-2 rounded-lg transition-colors" onclick="closeSearch()">' +
+        html += '<a href="' + href + '" class="search-result-item block px-3 py-2 rounded-lg transition-colors">' +
           '<div class="text-sm font-medium theme-text">' + m.guide.title + '</div>' +
           '<div class="text-xs theme-text-muted mt-0.5">' + m.phase.title +
           (m.section ? ' &middot; ' + m.section.title : '') +
@@ -129,6 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       html += '</div>';
       results.innerHTML = html;
+      // Attach click handlers to close search
+      results.querySelectorAll('.search-result-item').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+          closeSearch();
+        });
+      });
     });
   }
 
@@ -231,14 +261,15 @@ function updateBookmarksSidebar() {
   if (!list.length) { container.innerHTML = ''; return; }
   var html = '<div class="sidebar-section-header">Bookmarks</div>';
   html += '<div class="space-y-0.5">';
-  var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
+  var index = buildSearchIndex();
   list.forEach(function(id) {
     var found = null;
-    phases.forEach(function(p) {
-      (p.guides || []).forEach(function(g) {
-        if (g.id === id) found = g;
-      });
-    });
+    for (var i = 0; i < index.length; i++) {
+      if (index[i].guide.id === id && !index[i].section) {
+        found = index[i].guide;
+        break;
+      }
+    }
     if (found) {
       html += '<div class="sidebar-bookmark-item">';
       html += '<span class="material-symbols-outlined icon">bookmark</span>';
@@ -284,6 +315,18 @@ function initDocs() {
   }
 
   function loadGuide(guideId) {
+    try {
+      _loadGuide(guideId);
+    } catch(e) {
+      console.error('Failed to load guide:', e);
+      var content = document.getElementById('docs-dynamic-content');
+      if (content) {
+        content.innerHTML = '<div class="content-section py-12 text-center"><div class="material-symbols-outlined text-4xl theme-text-muted mb-3">error_outline</div><h2 class="text-xl font-semibold mb-2">Failed to load guide</h2><p class="theme-text-muted mb-4">Something went wrong. Please try again.</p><button onclick="location.reload()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-lg transition-colors">Reload</button></div>';
+      }
+    }
+  }
+
+  function _loadGuide(guideId) {
     var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
     var found = null;
     phases.forEach(function(p) {
@@ -309,14 +352,18 @@ function initDocs() {
       history.pushState(null, '', '#' + guideId);
     }
 
-    // Calculate reading time
-    var totalWords = 0;
-    if (found.guide.sections) {
-      found.guide.sections.forEach(function(s) {
-        if (s.content) totalWords += s.content.split(/\s+/).filter(Boolean).length;
-      });
+    // Pre-compute reading time (memoized per guide)
+    var readTime = found.guide._readTime;
+    if (!readTime) {
+      var totalWords = 0;
+      if (found.guide.sections) {
+        found.guide.sections.forEach(function(s) {
+          if (s.content) totalWords += s.content.split(/\s+/).filter(Boolean).length;
+        });
+      }
+      readTime = Math.max(1, Math.round(totalWords / 200));
+      found.guide._readTime = readTime;
     }
-    var readTime = Math.max(1, Math.round(totalWords / 200));
 
     // Check bookmark state
     var bookmarks = loadBookmarks();
@@ -325,13 +372,13 @@ function initDocs() {
     // Build content HTML
     var html = '';
     html += '<div class="content-section" data-guide-id="' + found.guide.id + '">';
-    html += '<h1>' + found.guide.title + '</h1>';
+    html += '<h1 tabindex="-1">' + found.guide.title + '</h1>';
     html += '<div class="flex flex-wrap items-center gap-2 text-xs theme-text-muted mb-6">';
     html += '<span class="px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 font-medium">' + found.phase.title + '</span>';
     html += '<span class="px-2 py-0.5 rounded-full theme-bg-subtle theme-border border font-medium">' + found.phase.level + '</span>';
     html += '<span class="flex items-center gap-1 px-2 py-0.5 rounded-full theme-bg-subtle theme-border border">';
     html += '<span class="material-symbols-outlined text-[12px]">schedule</span> ' + readTime + ' min read</span>';
-    html += '<button onclick="toggleBookmark(\'' + guideId + '\')" class="flex items-center gap-1 px-2 py-0.5 rounded-full theme-bg-subtle theme-border border hover:text-brand-500 transition-colors" aria-label="Bookmark this guide">';
+    html += '<button id="bookmark-btn-' + guideId + '" class="flex items-center gap-1 px-2 py-0.5 rounded-full theme-bg-subtle theme-border border hover:text-brand-500 transition-colors" aria-label="Bookmark this guide">';
     html += '<span class="material-symbols-outlined text-[14px]">' + (isBookmarked ? 'bookmark' : 'bookmark_border') + '</span>';
     html += '</button>';
     html += '</div>';
@@ -357,12 +404,28 @@ function initDocs() {
     // Progress checkbox
     html += '<div class="mt-8 pt-6 border-t theme-border flex items-center gap-3">';
     html += '<input type="checkbox" id="progress-check" ' + (progressData[found.guide.id] ? 'checked' : '') +
-      ' class="w-4 h-4 rounded border-2 theme-border text-brand-500 focus:ring-brand-500 cursor-pointer" onchange="toggleProgress(\'' + found.guide.id + '\')">';
+      ' class="w-4 h-4 rounded border-2 theme-border text-brand-500 focus:ring-brand-500 cursor-pointer">';
     html += '<label for="progress-check" class="text-sm theme-text-muted cursor-pointer select-none">Mark as completed</label>';
     html += '</div>';
 
     html += '</div>';
     content.innerHTML = html;
+
+    // Attach bookmark click handler (no inline onclick)
+    var bookmarkBtn = document.getElementById('bookmark-btn-' + guideId);
+    if (bookmarkBtn) {
+      bookmarkBtn.addEventListener('click', function() {
+        toggleBookmark(guideId);
+      });
+    }
+
+    // Attach progress checkbox handler
+    var progressCheck = document.getElementById('progress-check');
+    if (progressCheck) {
+      progressCheck.addEventListener('change', function() {
+        toggleProgress(guideId);
+      });
+    }
 
     // Right outline and scrollspy
     buildOutline();
@@ -400,18 +463,30 @@ function initDocs() {
       wrapper.appendChild(table);
     });
 
+    // Focus management: move focus to the heading
+    var firstHeading = content.querySelector('h1');
+    if (firstHeading) {
+      firstHeading.focus({ preventScroll: true });
+    }
+
     updateProgress();
     updateBookmarksSidebar();
     scrollToHash();
   }
 
   function renderMarkdown(text) {
-    if (typeof marked !== 'undefined') {
+    if (typeof marked === 'undefined') return text;
+    if (_mdCache[text]) return _mdCache[text];
+    try {
       var html = marked.parse(text);
+      html = sanitizeHtml(html);
       html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1 loading="lazy"></object></div>');
+      _mdCache[text] = html;
       return html;
+    } catch(e) {
+      console.error('Markdown render error:', e);
+      return '<div class="p-4 border border-red-300 dark:border-red-700 rounded-lg text-red-500 text-sm">Content rendering error. Please try refreshing.</div>';
     }
-    return text;
   }
 
   function addHeadingAnchors() {
@@ -453,6 +528,12 @@ function initDocs() {
     var links = outline.querySelectorAll('.table-of-contents a');
     if (!headings.length || !links.length) return;
 
+    // Clean up previous scroll listener
+    if (_scrollSpyCleanup) {
+      _scrollSpyCleanup();
+      _scrollSpyCleanup = null;
+    }
+
     function updateActive() {
       var activeId = null;
       for (var i = 0; i < headings.length; i++) {
@@ -471,7 +552,7 @@ function initDocs() {
 
     var scrollEl = document.getElementById('docs-scroll-container') || window;
     var ticking = false;
-    scrollEl.addEventListener('scroll', function() {
+    var handler = function() {
       if (!ticking) {
         requestAnimationFrame(function() {
           updateActive();
@@ -479,7 +560,11 @@ function initDocs() {
         });
         ticking = true;
       }
-    });
+    };
+    scrollEl.addEventListener('scroll', handler);
+    _scrollSpyCleanup = function() {
+      scrollEl.removeEventListener('scroll', handler);
+    };
     updateActive();
   }
 
@@ -501,6 +586,18 @@ function initDocs() {
         loadGuide(href.substring(1));
       }
     });
+  });
+
+  // popstate handler for browser back/forward
+  window.addEventListener('popstate', function() {
+    var hash = window.location.hash.substring(1);
+    if (hash) {
+      if (hash !== currentGuide) {
+        loadGuide(hash);
+      } else {
+        scrollToHash();
+      }
+    }
   });
 
   // Load initial guide from hash or first available
@@ -529,7 +626,7 @@ function toggleBookmark(guideId) {
   var idx = list.indexOf(guideId);
   if (idx > -1) { list.splice(idx, 1); } else { list.push(guideId); }
   localStorage.setItem('qb-bookmarks', JSON.stringify(list));
-  var btn = document.querySelector('.content-section button[onclick*="' + guideId + '"]');
+  var btn = document.getElementById('bookmark-btn-' + guideId);
   var icon = btn && btn.querySelector('.material-symbols-outlined');
   if (icon) {
     icon.textContent = idx > -1 ? 'bookmark_border' : 'bookmark';
@@ -564,7 +661,7 @@ function toggleProgress(guideId) {
   if (text) text.textContent = completed + '/' + total + ' · ' + pct + '%';
 }
 
-// Close search function for inline onclick
+// Close search function for inline onclick (kept for backward compat)
 function closeSearch() {
   var modal = document.getElementById('search-modal');
   var backdrop = document.getElementById('search-backdrop');

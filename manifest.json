@@ -1,0 +1,18 @@
+{
+  "name": "Quick Bytes",
+  "short_name": "Quick Bytes",
+  "description": "Software engineering quick references — from fundamentals to staff+.",
+  "start_url": "index.html",
+  "scope": "/quick-bytes/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#E95420",
+  "icons": [
+    {
+      "src": "assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
