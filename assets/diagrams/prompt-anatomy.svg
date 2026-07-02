@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" width="900" height="720" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');
+    :root {
+      --bg-subtle: #f8fafc;
+      --bg-default: #ffffff;
+      --text-default: #0f172a;
+      --text-muted: #64748b;
+      --border-default: #e2e8f0;
+      --brand-default: #e95420;
+      --brand-light: rgba(233,84,32,0.06);
+    }
+  </style>
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="var(--brand-default, #e95420)"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="#059669"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="720" fill="none"/>
+
+  <!-- ==================== TITLE ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.2s" fill="freeze"/>
+    <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-default, #0f172a)">Prompt Anatomy</text>
+    <text x="450" y="48" text-anchor="middle" font-size="11" fill="var(--text-muted, #64748b)">System → User → Context → LLM → Response</text>
+    <line x1="280" y1="55" x2="620" y2="55" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- ==================== SECTION HEADERS ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="0.5s" fill="freeze"/>
+    <rect x="30" y="70" width="420" height="34" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="45" y="93" font-size="13" font-weight="700" fill="var(--brand-default, #e95420)">ROLES &amp; MESSAGES</text>
+    <rect x="460" y="70" width="410" height="34" rx="8" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="475" y="93" font-size="13" font-weight="700" fill="var(--brand-default, #e95420)">PROMPT COMPONENTS</text>
+  </g>
+
+  <!-- ==================== LEFT: ROLES & MESSAGES ==================== -->
+
+  <!-- System Message -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.7s" fill="freeze"/>
+    <rect x="40" y="118" width="400" height="82" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="40" y="124" width="5" height="70" rx="1" fill="#7c3aed"/>
+    <text x="58" y="140" font-size="11" font-weight="600" fill="#7c3aed">&#x1F4AC; System Message</text>
+    <text x="58" y="162" font-size="10" fill="var(--text-default, #0f172a)">You are a helpful assistant. Answer</text>
+    <text x="58" y="178" font-size="10" fill="var(--text-default, #0f172a)">concisely and accurately.</text>
+    <circle cx="32" cy="135" r="4" fill="#7c3aed">
+      <animate attributeName="opacity" values="0.3;1;0.3;0.3;0.3" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- User Message -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.85s" fill="freeze"/>
+    <rect x="40" y="215" width="400" height="82" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="40" y="221" width="5" height="70" rx="1" fill="#2563eb"/>
+    <text x="58" y="237" font-size="11" font-weight="600" fill="#2563eb">&#x1F4AC; User Message</text>
+    <text x="58" y="259" font-size="10" fill="var(--text-default, #0f172a)">Summarize the following article in 3</text>
+    <text x="58" y="275" font-size="10" fill="var(--text-default, #0f172a)">bullet points:</text>
+    <text x="58" y="291" font-size="10" fill="var(--text-muted, #64748b)" font-style="italic">[article text here]</text>
+    <circle cx="32" cy="232" r="4" fill="#2563eb">
+      <animate attributeName="opacity" values="0.3;0.3;0.3;1;0.3" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Assistant Response -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="1.0s" fill="freeze"/>
+    <rect x="40" y="312" width="400" height="82" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="40" y="318" width="5" height="70" rx="1" fill="#059669"/>
+    <text x="58" y="334" font-size="11" font-weight="600" fill="#059669">&#x1F4AC; Assistant Response</text>
+    <text x="58" y="356" font-size="10" fill="var(--text-default, #0f172a)">The model's generated response based</text>
+    <text x="58" y="372" font-size="10" fill="var(--text-default, #0f172a)">on the input prompt and learned</text>
+    <text x="58" y="388" font-size="10" fill="var(--text-default, #0f172a)">knowledge.</text>
+    <circle cx="32" cy="329" r="4" fill="#059669">
+      <animate attributeName="opacity" values="0.3;0.3;0.3;0.3;1" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ==================== RIGHT: PROMPT COMPONENTS ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.7s" fill="freeze"/>
+
+    <!-- Document box -->
+    <rect x="470" y="118" width="390" height="276" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+
+    <!-- Document header -->
+    <rect x="470" y="118" width="390" height="30" rx="8" fill="var(--brand-default, #e95420)"/>
+    <rect x="470" y="138" width="390" height="10" fill="var(--brand-default, #e95420)"/>
+    <text x="665" y="138" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">COMPLETE PROMPT</text>
+
+    <!-- Animated highlight sweep -->
+    <rect x="474" y="155" width="382" height="60" rx="4" fill="var(--brand-light, rgba(233,84,32,0.06))">
+      <animate attributeName="y" values="155;155;320;320;155" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.7;0.7;0;0" dur="8s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Section: Instructions -->
+    <rect x="480" y="158" width="370" height="44" rx="4" fill="var(--bg-subtle, #f8fafc)"/>
+    <text x="490" y="176" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">&#x1F4CB; Instructions</text>
+    <text x="490" y="193" font-size="9" fill="var(--text-muted, #64748b)">Summarize the article concisely and accurately.</text>
+
+    <!-- Section: Few-Shot Examples -->
+    <rect x="480" y="210" width="370" height="56" rx="4" fill="var(--bg-subtle, #f8fafc)"/>
+    <text x="490" y="228" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">&#x1F4DD; Few-Shot Examples</text>
+    <text x="500" y="245" font-size="9" fill="var(--text-muted, #64748b)">Q: What is the main topic? A: The article covers...</text>
+    <text x="500" y="259" font-size="9" fill="var(--text-muted, #64748b)">Q: What are key findings? A: The research shows...</text>
+
+    <!-- Section: Context/Documents -->
+    <rect x="480" y="278" width="370" height="44" rx="4" fill="var(--bg-subtle, #f8fafc)"/>
+    <text x="490" y="296" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">&#x1F4C4; Context Documents</text>
+    <text x="490" y="313" font-size="9" fill="var(--text-muted, #64748b)">[Relevant article text and background context]</text>
+
+    <!-- Section: Output Format -->
+    <rect x="480" y="330" width="370" height="54" rx="4" fill="var(--bg-subtle, #f8fafc)"/>
+    <text x="490" y="348" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">&#x1F3AF; Output Format</text>
+    <text x="490" y="366" font-size="9" fill="var(--text-muted, #64748b)">Respond in JSON: { summary: [...],</text>
+    <text x="490" y="380" font-size="9" fill="var(--text-muted, #64748b)">key_topics: [...] }</text>
+  </g>
+
+  <!-- ==================== DIVIDER ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.2s" fill="freeze"/>
+    <line x1="30" y1="420" x2="870" y2="420" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- ==================== IN-CONTEXT LEARNING (sidebar left) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.4s" fill="freeze"/>
+
+    <rect x="30" y="440" width="260" height="120" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--brand-default, #e95420)" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="30" y="440" width="260" height="30" rx="8" fill="var(--brand-default, #e95420)"/>
+    <rect x="30" y="460" width="260" height="10" fill="var(--brand-default, #e95420)"/>
+    <text x="160" y="461" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">In-Context Learning</text>
+
+    <text x="45" y="490" font-size="10" fill="var(--text-default, #0f172a)">No weight update — attention</text>
+    <text x="45" y="507" font-size="10" fill="var(--text-default, #0f172a)">pattern shifts over exemplars</text>
+    <text x="45" y="524" font-size="10" fill="var(--text-default, #0f172a)">in the context window.</text>
+  </g>
+
+  <!-- ==================== BOTTOM FLOW: TOKENS → LLM → RESPONSE ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.6s" fill="freeze"/>
+
+    <!-- Token Sequence label -->
+    <text x="425" y="450" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-muted, #64748b)">Token Sequence</text>
+
+    <!-- Token boxes (15w x 22h, gap 3, group gap 8) -->
+    <!-- Group 1: System (purple) -->
+    <rect x="320" y="472" width="15" height="22" rx="3" fill="#7c3aed" opacity="0.85"/>
+    <rect x="338" y="472" width="15" height="22" rx="3" fill="#7c3aed" opacity="0.75"/>
+    <rect x="356" y="472" width="15" height="22" rx="3" fill="#7c3aed" opacity="0.65"/>
+
+    <!-- Group 2: User (blue) -->
+    <rect x="379" y="472" width="15" height="22" rx="3" fill="#2563eb" opacity="0.85"/>
+    <rect x="397" y="472" width="15" height="22" rx="3" fill="#2563eb" opacity="0.75"/>
+    <rect x="415" y="472" width="15" height="22" rx="3" fill="#2563eb" opacity="0.65"/>
+
+    <!-- Group 3: Context (gray) -->
+    <rect x="438" y="472" width="15" height="22" rx="3" fill="#94a3b8" opacity="0.7"/>
+    <rect x="456" y="472" width="15" height="22" rx="3" fill="#94a3b8" opacity="0.6"/>
+
+    <!-- Group 4: Output Format (orange) -->
+    <rect x="479" y="472" width="15" height="22" rx="3" fill="var(--brand-default, #e95420)" opacity="0.8"/>
+    <rect x="497" y="472" width="15" height="22" rx="3" fill="var(--brand-default, #e95420)" opacity="0.7"/>
+
+    <!-- Group 5: more context (gray) -->
+    <rect x="520" y="472" width="15" height="22" rx="3" fill="#94a3b8" opacity="0.5"/>
+
+    <!-- Token group labels below -->
+    <text x="346" y="506" text-anchor="middle" font-size="8" fill="#7c3aed" font-weight="500">sys</text>
+    <text x="397" y="506" text-anchor="middle" font-size="8" fill="#2563eb" font-weight="500">user</text>
+    <text x="455" y="506" text-anchor="middle" font-size="8" fill="#64748b" font-weight="500">ctx</text>
+    <text x="496" y="506" text-anchor="middle" font-size="8" fill="var(--brand-default, #e95420)" font-weight="500">fmt</text>
+
+    <!-- Arrow from tokens to LLM (animated) -->
+    <line x1="540" y1="483" x2="568" y2="483" stroke="var(--brand-default, #e95420)" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="4,3">
+      <animate attributeName="stroke-dashoffset" values="0;-7" dur="0.6s" repeatCount="indefinite"/>
+    </line>
+
+    <!-- LLM box with pulse -->
+    <rect x="573" y="453" width="135" height="60" rx="10" fill="var(--brand-default, #e95420)" filter="url(#shadow)">
+      <animate attributeName="opacity" values="1;0.85;1" dur="2s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Gear icon inside LLM box -->
+    <g transform="translate(600, 483)">
+      <g>
+        <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite"/>
+        <circle cx="0" cy="0" r="12" stroke="#ffffff" stroke-width="2" fill="none"/>
+        <circle cx="0" cy="0" r="17" stroke="#ffffff" stroke-width="2" stroke-dasharray="5,5" fill="none"/>
+      </g>
+      <circle cx="0" cy="0" r="4" fill="#ffffff" opacity="0.4"/>
+    </g>
+
+    <text x="637" y="480" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">LLM</text>
+    <text x="637" y="496" text-anchor="middle" font-size="8" fill="#fde8dc">Large Language Model</text>
+
+    <!-- Arrow from LLM to Response (animated) -->
+    <line x1="708" y1="483" x2="740" y2="483" stroke="#059669" stroke-width="2" marker-end="url(#arrowGreen)" stroke-dasharray="4,3">
+      <animate attributeName="stroke-dashoffset" values="0;-7" dur="0.6s" repeatCount="indefinite"/>
+    </line>
+
+    <!-- Response box -->
+    <rect x="745" y="458" width="100" height="50" rx="8" fill="var(--bg-default, #ffffff)" stroke="#059669" stroke-width="2" filter="url(#shadow)"/>
+    <text x="795" y="479" text-anchor="middle" font-size="10" font-weight="600" fill="#059669">Response</text>
+    <text x="795" y="495" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">Generated Text</text>
+  </g>
+
+</svg>
