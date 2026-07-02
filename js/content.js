@@ -498,27 +498,7 @@ Longer context windows enable reasoning over large documents, codebases, and con
 
 #### When to Use Which Model (Decision Framework)
 
-\`\`\`
-Need text generation?
-├─ Need self-hosting / data privacy?
-│  ├─ Budget for 4× A100 80GB? → LLaMA 3 70B or Mixtral 8x7B
-│  └─ Single GPU? → LLaMA 3 8B or Mistral 7B (quantized)
-├─ Need multimodal (vision)?
-│  ├─ Best quality → GPT-4o or Claude 3.5 Sonnet
-│  └─ Long video → Gemini 1.5 Pro
-├─ Need ultra-long context?
-│  └─ Gemini 1.5 Pro (1M+) or Claude 3 (200K)
-└─ Best general purpose?
-   └─ GPT-4 (strongest overall) or Claude 3 Opus (safest)
-
-Need embeddings / understanding only?
-├─ Sentence similarity / RAG retrieval → BERT (all-MiniLM-L6-v2)
-├─ Classification / NER → BERT / RoBERTa (fine-tuned)
-└─ Need both generation + understanding → Decoder-only (use hidden states for embeddings)
-
-Need seq2seq (translation, summarization)?
-└─ T5 or Flan-T5 (still competitive, efficient for dedicated tasks)
-\`\`\`
+<object data="assets/diagrams/decision-framework.svg" type="image/svg+xml" width="900" height="780" class="mx-auto block my-8 rounded-xl shadow-lg" aria-label="Model Decision Framework"></object>
 
 ### Key Takeaways
 
