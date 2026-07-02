@@ -517,11 +517,9 @@ function initDocs() {
     }
 
     // Right outline and scrollspy
+    addHeadingAnchors();
     buildOutline();
     initScrollSpy();
-
-    // Add heading anchor links
-    addHeadingAnchors();
 
     // Add copy buttons to code blocks
     document.querySelectorAll('.content-section pre').forEach(function(pre) {
@@ -582,7 +580,13 @@ function initDocs() {
   function addHeadingAnchors() {
     var container = document.getElementById('docs-dynamic-content');
     if (!container) return;
-    container.querySelectorAll('h2[id], h3[id], h4[id]').forEach(function(h) {
+    var slugCounts = {};
+    container.querySelectorAll('h2, h3, h4').forEach(function(h) {
+      if (!h.id) {
+        var base = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        h.id = slugCounts[base] ? base + '-' + slugCounts[base] : base;
+        slugCounts[base] = (slugCounts[base] || 0) + 1;
+      }
       if (h.querySelector('.heading-anchor')) return;
       var a = document.createElement('a');
       a.className = 'heading-anchor';
