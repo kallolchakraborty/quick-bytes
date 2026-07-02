@@ -531,6 +531,7 @@ function initDocs() {
     try {
       var html = marked.parse(text);
       html = sanitizeHtml(html);
+      html = html.replace(/<p>\s*(<object\b[\s\S]*?<\/object>)\s*<\/p>/gi, '$1');
       html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1 loading="lazy"></object><button class="diagram-expand-btn" aria-label="View fullscreen"><span class="material-symbols-outlined">fullscreen</span><span>View fullscreen</span></button></div>');
       _mdCache[text] = html;
       return html;
