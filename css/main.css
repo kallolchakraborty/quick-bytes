@@ -56,18 +56,6 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-.glass-nav.headroom--unpinned {
-  transform: translateY(-100%);
-}
-
-.glass-nav.headroom--pinned {
-  transform: translateY(0);
-}
-
-.glass-nav {
-  transition: transform 0.3s ease, background-color 0.2s ease;
-}
-
 #left-sidebar {
   scrollbar-width: thin;
   scrollbar-color: var(--border-default) transparent;
@@ -463,7 +451,7 @@ body {
 
 @media print {
   .glass-nav, #left-sidebar, #docs-right-outline, .copy-btn,
-  #reading-progress-track, .open-search-btn, .theme-toggle-btn,
+  .open-search-btn, .theme-toggle-btn,
   .open-share-btn, #sidebar-toggle, footer {
     display: none !important;
   }

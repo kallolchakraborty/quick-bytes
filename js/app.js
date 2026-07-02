@@ -443,17 +443,6 @@ function initDocs() {
     });
   });
 
-  // Reading progress bar
-  var progressBar = document.getElementById('reading-progress-bar');
-  if (progressBar) {
-    window.addEventListener('scroll', function() {
-      var docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      var scrollPos = window.scrollY;
-      var pct = docHeight ? Math.min(scrollPos / docHeight, 1) : 0;
-      progressBar.style.transform = 'scaleX(' + pct + ')';
-    });
-  }
-
   // Load initial guide from hash or first available
   var initialHash = window.location.hash.substring(1);
   if (initialHash) {
