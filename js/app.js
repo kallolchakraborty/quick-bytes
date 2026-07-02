@@ -452,8 +452,9 @@ function initDocs() {
       });
     }
 
+    var scrollEl = document.getElementById('docs-scroll-container') || window;
     var ticking = false;
-    document.addEventListener('scroll', function() {
+    scrollEl.addEventListener('scroll', function() {
       if (!ticking) {
         requestAnimationFrame(function() {
           updateActive();
