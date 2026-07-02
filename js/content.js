@@ -59,6 +59,8 @@ Raw text is split into tokens — subword units that balance vocabulary size and
 
 Example: "Transformer" → ["Transform", "er"] or ["Trans", "former"] depending on tokenizer.
 
+<object data="assets/diagrams/tokenization.svg" type="image/svg+xml" width="900" height="620" class="w-full my-8 rounded-xl shadow-lg" aria-label="BPE Tokenization Process"></object>
+
 ### 2. Embeddings
 
 Each token is mapped to a dense vector via a learned embedding matrix \`E ∈ ℝ^(V×d)\` where V = vocabulary size, d = model dimension (e.g., 4096 for 7B models). These embeddings capture semantic similarity — similar tokens have nearby vectors.
