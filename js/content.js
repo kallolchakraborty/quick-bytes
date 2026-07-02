@@ -126,6 +126,8 @@ Each attention output passes through a two-layer MLP with a non-linear activatio
 - **Post-LN** (applied after sublayer): Used in original Transformer, BERT. Less stable, requires warmup.
 - **RMSNorm:** A simplified LN that omits mean subtraction. y = x / RMS(x) · γ. Used in LLaMA, Mistral. ~5% faster.
 
+<object data="assets/diagrams/norm-residual.svg" type="image/svg+xml" width="900" height="520" class="w-full my-8 rounded-xl shadow-lg" aria-label="Normalization &amp; Residual Connections"></object>
+
 **Residual Connections:** x ← x + Sublayer(x). Enables gradients to flow directly through the network, mitigating vanishing gradients in deep (32–80+ layer) models.
 
 ### 6. Full Transformer Block
@@ -135,6 +137,8 @@ Each decoder layer follows:
 x → RMSNorm → Self-Attention (GQA) → Residual +
   → RMSNorm → FFN (SwiGLU) → Residual +
 \`\`\`
+
+<object data="assets/diagrams/transformer-block.svg" type="image/svg+xml" width="900" height="650" class="w-full my-8 rounded-xl shadow-lg" aria-label="Full Transformer Decoder Block"></object>
 
 Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT, LLaMA) use **causal masking** — each token can only attend to itself and earlier tokens. Encoder-decoder models (T5) use a cross-attention layer between encoder and decoder.
 
@@ -153,7 +157,9 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 - **Speculative Decoding:** A smaller "draft" model generates candidate tokens; the large model verifies them in parallel. 2–3× speedup.
 - **Quantization:** FP16 → INT8 (weight-only or activation-aware) reduces memory 2× with minimal quality loss. GPTQ, AWQ, GGUF formats.
 - **Flash Attention:** Fuses attention computation with tiling, avoiding O(n²) memory writes. 2–4× training and inference speedup on long sequences.
-- **Continuous Batching:** Serves multiple requests in a single forward pass, maximizing GPU utilization. Implemented in vLLM, TGI, TensorRT-LLM.`
+- **Continuous Batching:** Serves multiple requests in a single forward pass, maximizing GPU utilization. Implemented in vLLM, TGI, TensorRT-LLM.
+
+<object data="assets/diagrams/inference-optimizations.svg" type="image/svg+xml" width="900" height="620" class="w-full my-8 rounded-xl shadow-lg" aria-label="Inference Optimizations"></object>`
             },
             {
               id: 'types-of-llms',
