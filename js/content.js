@@ -182,6 +182,9 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 - **Examples:** BERT, RoBERTa, ALBERT, DistilBERT, ELECTRA.
 
 #### Decoder-Only (GPT-style)
+
+<object data="assets/diagrams/decoder-only-gpt.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" loading="lazy"></object>
+
 - **Mechanism:** Causal (unidirectional) self-attention — each token attends only to itself and preceding tokens. Trained via next-token prediction.
 - **Output:** Autoregressive text generation.
 - **Strengths:** Generative capabilities, in-context learning, emergent reasoning at scale. Scales effectively with parameters (scaling laws hold).
@@ -189,6 +192,9 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 - **Examples:** GPT-4, LLaMA 3, Mistral, Claude 3, Gemini, Qwen, DeepSeek.
 
 #### Encoder-Decoder (T5-style)
+
+<object data="assets/diagrams/encoder-decoder-t5.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" loading="lazy"></object>
+
 - **Mechanism:** Encoder processes input with bidirectional attention; decoder generates output with causal attention + cross-attention to encoder.
 - **Training:** Span corruption — mask contiguous spans, predict them as sequences.
 - **Strengths:** Best for sequence-to-sequence tasks (translation, summarization, text-to-SQL). Cross-attention provides explicit alignment between input and output.
@@ -206,12 +212,18 @@ Encoder-only models (BERT) use bidirectional attention. Decoder-only models (GPT
 ### 2. By Parameter Density
 
 #### Dense Models
+
+<object data="assets/diagrams/dense-models.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" loading="lazy"></object>
+
 - Every parameter is active for every token.
 - **Pros:** Simple architecture, full model capacity used, predictable performance.
 - **Cons:** Full compute cost per token, lower parameter count for same FLOPs budget.
 - **Examples:** LLaMA 3 (8B, 70B, 405B), Mistral 7B, BERT, T5.
 
 #### Sparse Models (Mixture of Experts / MoE)
+
+<object data="assets/diagrams/sparse-models-moe.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" loading="lazy"></object>
+
 - Only a subset of parameters (experts) is activated per token. A learned router selects the top-k experts (typically top-2).
 - **Effective params:** Total = sum of all expert params. Active = k × expert params per token. Typically ~15–30% of total.
 - **Pros:** More total capacity for same compute budget. Higher quality per FLOP.
