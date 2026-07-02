@@ -4,6 +4,28 @@ var _scrollSpyCleanup = null;
 var _mdCache = {};
 var _searchIndex = null;
 
+function injectThemeIntoSVG(obj) {
+  try {
+    var doc = obj.contentDocument;
+    if (!doc) return;
+    var isDark = document.documentElement.classList.contains('dark');
+    var root = doc.documentElement;
+    if (isDark) {
+      root.style.setProperty('--bg-default', '#000000');
+      root.style.setProperty('--bg-subtle', '#111111');
+      root.style.setProperty('--text-default', '#e8e8e8');
+      root.style.setProperty('--text-muted', '#94a3b8');
+      root.style.setProperty('--border-default', 'rgba(255,255,255,0.08)');
+    } else {
+      root.style.setProperty('--bg-default', '#ffffff');
+      root.style.setProperty('--bg-subtle', '#f8fafc');
+      root.style.setProperty('--text-default', '#0f172a');
+      root.style.setProperty('--text-muted', '#64748b');
+      root.style.setProperty('--border-default', '#e2e8f0');
+    }
+  } catch(e) { /* silently fail for cross-origin or inaccessible documents */ }
+}
+
 function sanitizeHtml(html) {
   html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
   html = html.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
@@ -36,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
       var isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('qb-theme', isDark ? 'dark' : 'light');
       updateThemeIcon();
+      // Re-inject theme into all loaded SVG objects
+      document.querySelectorAll('.diagram-wrapper object').forEach(injectThemeIntoSVG);
     });
   }
 
@@ -249,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
     obj.type = 'image/svg+xml';
     obj.data = src;
     obj.setAttribute('aria-label', 'Diagram fullscreen view');
+    obj.addEventListener('load', function() { injectThemeIntoSVG(obj); });
     diagramContent.appendChild(obj);
     diagramModal.classList.remove('hidden');
     diagramModal.classList.add('flex');
@@ -465,6 +490,15 @@ function initDocs() {
 
     html += '</div>';
     content.innerHTML = html;
+
+    // Inject theme into inline SVG objects (CSS variables don't cascade into <object>)
+    content.querySelectorAll('object').forEach(function(obj) {
+      if (obj.contentDocument && obj.contentDocument.readyState === 'complete') {
+        injectThemeIntoSVG(obj);
+      } else {
+        obj.addEventListener('load', function() { injectThemeIntoSVG(obj); });
+      }
+    });
 
     // Attach bookmark click handler (no inline onclick)
     var bookmarkBtn = document.getElementById('bookmark-btn-' + guideId);

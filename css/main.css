@@ -329,21 +329,21 @@ body {
 /* ---- Diagrams ---- */
 
 .content-section .diagram-wrapper {
-  text-align: center;
+  display: grid;
+  place-items: center;
+  position: relative;
+  cursor: zoom-in;
   margin: 1.75rem 0;
 }
 
 .content-section .diagram-wrapper object {
-  display: inline-block;
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
   height: auto;
   max-width: 100%;
   border-radius: 0.5rem;
   transition: opacity 0.3s ease;
-}
-
-.content-section .diagram-wrapper {
-  position: relative;
-  cursor: zoom-in;
 }
 
 .content-section .diagram-wrapper::after {
@@ -361,10 +361,8 @@ body {
 }
 
 .diagram-expand-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
+  grid-column: 1;
+  grid-row: 1;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -390,7 +388,6 @@ body {
 .content-section .diagram-wrapper:hover .diagram-expand-btn {
   opacity: 1;
   pointer-events: auto;
-  transform: translate(-50%, -50%) scale(1);
 }
 
 /* ---- Diagram Fullscreen Modal ---- */
