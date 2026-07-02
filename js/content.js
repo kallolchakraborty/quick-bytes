@@ -765,7 +765,7 @@ Using a strong LLM (GPT-4, Claude 3) to evaluate outputs of weaker models. Commo
 > System: You are an expert evaluator. Rate the assistant's response on accuracy, helpfulness, and safety. Score 1-5.
 > User: Query: {query}
 > Assistant Response: {response}
-> Evaluate:`
+> Evaluate: \`{evaluation}\`
 
 #### Prompt Regression Testing
 
@@ -1367,13 +1367,11 @@ Track these metrics per deployment:
 
 **4. Model Routing Decision Tree**
 
-```
-Query received
-  ├─ Context needed < 4K AND simple task → Route to fast/cheap model (Mistral 7B, GPT-4o-mini)
-  ├─ Context needed < 32K AND moderate complexity → Route to mid model (GPT-4, Claude 3 Sonnet)
-  ├─ Context needed > 32K AND full document required → Route to long-context model (Claude 3 Opus, Gemini 1.5 Pro)
-  └─ Context needed > 128K OR multi-modal → Route to Gemini 1.5 Pro / GPT-4V
-```
+    Query received
+      ├─ Context needed < 4K AND simple task → Route to fast/cheap model (Mistral 7B, GPT-4o-mini)
+      ├─ Context needed < 32K AND moderate complexity → Route to mid model (GPT-4, Claude 3 Sonnet)
+      ├─ Context needed > 32K AND full document required → Route to long-context model (Claude 3 Opus, Gemini 1.5 Pro)
+      └─ Context needed > 128K OR multi-modal → Route to Gemini 1.5 Pro / GPT-4V
 
 **5. When to pay for long context vs. when 8K suffices:**
 
