@@ -416,7 +416,7 @@
   <!-- ==================== OUTPUT TOKEN ==================== -->
   <g>
     <rect x="380" y="580" width="140" height="55" rx="8" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1.5" filter="url(#shadow1)">
-      <animate attributeName="stroke" values="var(--border-default, #e2e8f0);#e95420;var(--border-default, #e2e8f0)" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="stroke" values="#e2e8f0;#e95420;#e2e8f0" dur="3s" repeatCount="indefinite"/>
     </rect>
     <text x="450" y="607" text-anchor="middle" font-size="14" font-weight="600" fill="var(--text-default, #0f172a)">Output Token</text>
     <text x="450" y="624" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">Generated response</text>
