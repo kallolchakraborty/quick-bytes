@@ -152,36 +152,99 @@
 
   <!-- Heat map grid -->
   <g transform="translate(520, 95)">
-    <!-- Row labels -->
+    <!-- Column labels -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.5s" fill="freeze"/>
+      <text x="11" y="-5" text-anchor="middle" font-size="8" fill="#94a3b8">I</text>
+      <text x="37" y="-5" text-anchor="middle" font-size="8" fill="#94a3b8">love</text>
+      <text x="63" y="-5" text-anchor="middle" font-size="8" fill="#94a3b8">machine</text>
+      <text x="89" y="-5" text-anchor="middle" font-size="8" fill="#94a3b8">learning</text>
+    </g>
+
+    <!-- Row labels (appear with row) -->
     <text x="-10" y="18" text-anchor="end" font-size="9" fill="#94a3b8">I</text>
     <text x="-10" y="40" text-anchor="end" font-size="9" fill="#94a3b8">love</text>
     <text x="-10" y="62" text-anchor="end" font-size="9" fill="#94a3b8">machine</text>
     <text x="-10" y="84" text-anchor="end" font-size="9" fill="#94a3b8">learning</text>
 
-    <!-- Animation: heat map fading in -->
+    <!-- Key label -->
     <g opacity="0">
-      <animate attributeName="opacity" values="0;1" dur="1.5s" begin="0.5s" fill="freeze"/>
-      <!-- Grid cells -->
-      <rect x="0" y="5" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
-      <rect x="26" y="5" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
-      <rect x="52" y="5" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
-      <rect x="78" y="5" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
-
-      <rect x="0" y="27" width="22" height="22" rx="3" fill="#E95420" opacity="0.7"/>
-      <rect x="26" y="27" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
-      <rect x="52" y="27" width="22" height="22" rx="3" fill="#E95420" opacity="0.5"/>
-      <rect x="78" y="27" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
-
-      <rect x="0" y="49" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
-      <rect x="26" y="49" width="22" height="22" rx="3" fill="#E95420" opacity="0.5"/>
-      <rect x="52" y="49" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
-      <rect x="78" y="49" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
-
-      <rect x="0" y="71" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
-      <rect x="26" y="71" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
-      <rect x="52" y="71" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
-      <rect x="78" y="71" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9"/>
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.8s" fill="freeze"/>
+      <text x="80" y="-12" text-anchor="end" font-size="7" fill="#c34113" font-weight="600">Key</text>
+      <line x1="0" y1="-2" x2="100" y2="-2" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
     </g>
+
+    <!-- Query label -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.8s" fill="freeze"/>
+      <text x="-12" y="40" text-anchor="end" font-size="7" fill="#c34113" font-weight="600" transform="rotate(-90,-12,40)">Query</text>
+    </g>
+
+    <!-- Row 0: "I" → attends to [I, love, machine, learning] -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1s" fill="freeze"/>
+      <rect x="0" y="5" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" begin="1s" repeatCount="indefinite"/>
+      </rect>
+      <text x="11" y="21" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.8">.9</text>
+      <rect x="26" y="5" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
+      <text x="37" y="21" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.7">.6</text>
+      <rect x="52" y="5" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
+      <text x="63" y="21" text-anchor="middle" font-size="8" fill="#64748b">.2</text>
+      <rect x="78" y="5" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
+      <text x="89" y="21" text-anchor="middle" font-size="8" fill="#64748b">.2</text>
+    </g>
+
+    <!-- Row 1: "love" -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.4s" fill="freeze"/>
+      <rect x="0" y="27" width="22" height="22" rx="3" fill="#E95420" opacity="0.7"/>
+      <text x="11" y="43" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.7">.7</text>
+      <rect x="26" y="27" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" begin="1.4s" repeatCount="indefinite"/>
+      </rect>
+      <text x="37" y="43" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.8">.9</text>
+      <rect x="52" y="27" width="22" height="22" rx="3" fill="#E95420" opacity="0.5"/>
+      <text x="63" y="43" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.6">.5</text>
+      <rect x="78" y="27" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
+      <text x="89" y="43" text-anchor="middle" font-size="8" fill="#64748b">.3</text>
+    </g>
+
+    <!-- Row 2: "machine" -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.8s" fill="freeze"/>
+      <rect x="0" y="49" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
+      <text x="11" y="65" text-anchor="middle" font-size="8" fill="#64748b">.3</text>
+      <rect x="26" y="49" width="22" height="22" rx="3" fill="#E95420" opacity="0.5"/>
+      <text x="37" y="65" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.6">.5</text>
+      <rect x="52" y="49" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" begin="1.8s" repeatCount="indefinite"/>
+      </rect>
+      <text x="63" y="65" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.8">.9</text>
+      <rect x="78" y="49" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
+      <text x="89" y="65" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.7">.6</text>
+    </g>
+
+    <!-- Row 3: "learning" -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.2s" fill="freeze"/>
+      <rect x="0" y="71" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.2"/>
+      <text x="11" y="87" text-anchor="middle" font-size="8" fill="#64748b">.2</text>
+      <rect x="26" y="71" width="22" height="22" rx="3" fill="#fbd1bd" opacity="0.3"/>
+      <text x="37" y="87" text-anchor="middle" font-size="8" fill="#64748b">.3</text>
+      <rect x="52" y="71" width="22" height="22" rx="3" fill="#E95420" opacity="0.6"/>
+      <text x="63" y="87" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.7">.6</text>
+      <rect x="78" y="71" width="22" height="22" rx="3" fill="#9a330e" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" begin="2.2s" repeatCount="indefinite"/>
+      </rect>
+      <text x="89" y="87" text-anchor="middle" font-size="8" font-weight="600" fill="#fff" opacity="0.8">.9</text>
+    </g>
+
+    <!-- Row scanning highlight -->
+    <rect x="-2" y="3" width="104" height="26" rx="4" fill="none" stroke="#E95420" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0.8;0" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="3;3;29;29;55;55;81;81" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+    </rect>
 
     <!-- Legend for heat map -->
     <g transform="translate(0, 105)">
@@ -189,6 +252,15 @@
       <text x="14" y="9" font-size="8" fill="#94a3b8">High attention</text>
       <rect x="85" y="0" width="10" height="10" rx="2" fill="#fbd1bd"/>
       <text x="99" y="9" font-size="8" fill="#94a3b8">Low attention</text>
+
+      <text x="192" y="9" font-size="8" fill="#c34113" font-weight="600">softmax scores</text>
+    </g>
+
+    <!-- Explanation note -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      <rect x="-5" y="120" width="110" height="22" rx="4" fill="#fde8dc"/>
+      <text x="50" y="134" text-anchor="middle" font-size="8" fill="#c34113" font-weight="600">Each row sums to ≈ 1.0</text>
     </g>
   </g>
 
