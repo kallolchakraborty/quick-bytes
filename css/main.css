@@ -339,26 +339,27 @@ body {
 .content-section table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
-  min-width: max-content;
+  font-size: 0.8125rem;
 }
 
 .content-section th {
   text-align: left;
   font-weight: 600;
-  padding: 0.625rem 0.75rem;
+  padding: 0.5rem 0.5rem;
   border-bottom: 2px solid var(--border-default);
   color: var(--text-default);
-  font-size: 0.8125rem;
-  white-space: nowrap;
+  font-size: 0.75rem;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .content-section td {
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.5rem;
   border-bottom: 1px solid var(--border-default);
   color: var(--text-muted);
   vertical-align: top;
-  line-height: 1.5;
+  line-height: 1.4;
+  overflow-wrap: break-word;
 }
 
 .content-section tr:last-child td {
