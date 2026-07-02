@@ -1014,7 +1014,12 @@ The Staff+ engineer's ultimate value in prompt engineering is not writing the be
         {
           id: 'context-windows',
           title: 'Context Windows',
-          content: `Context windows define how many tokens a model can process in a single inference pass. This guide covers the architecture, optimization, evaluation, and production management of context windows from a Staff+ engineer's perspective.
+          description: 'Architecture, optimization, evaluation, and production management of context windows in LLMs from a Staff+ engineer\'s perspective.',
+          sections: [
+            {
+              id: 'what-is-a-context-window',
+              title: 'What Is a Context Window',
+              content: `Context windows define how many tokens a model can process in a single inference pass. This guide covers the architecture, optimization, evaluation, and production management of context windows from a Staff+ engineer's perspective.
 
 <object data="assets/diagrams/context-window-anatomy.svg" type="image/svg+xml" width="900" height="520" class="rounded-xl shadow-lg" aria-label="Context Window Anatomy"></object>
 
@@ -1022,12 +1027,7 @@ Key concepts:
 - **Context length:** The maximum number of tokens (input + output) the model can process in one forward pass.
 - **Token:** A unit of text (~0.75 words for English). Different tokenizers produce different counts.
 - **KV Cache:** Stores Key/Value matrices for all previous tokens, enabling efficient autoregressive generation.
-- **Position Encoding:** Injects positional information into token representations so the model knows token order.`,
-          sections: [
-            {
-              id: 'what-is-a-context-window',
-              title: 'What Is a Context Window',
-              content: `A context window is the span of tokens a model can attend to when generating a response. It includes both the input (prompt) and the output (completion).
+- **Position Encoding:** Injects positional information into token representations so the model knows token order.
 
 **How it works:**
 
