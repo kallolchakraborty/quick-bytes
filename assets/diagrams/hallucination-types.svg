@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" width="900" height="650" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');
+    :root {
+      --bg-subtle: #f8fafc;
+      --bg-default: #ffffff;
+      --text-default: #0f172a;
+      --text-muted: #64748b;
+      --border-default: #e2e8f0;
+      --brand-default: #e95420;
+      --brand-light: rgba(233,84,32,0.06);
+      --brand-medium: rgba(233,84,32,0.15);
+    }
+  </style>
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="var(--brand-default, #e95420)"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="650" fill="none"/>
+
+  <!-- Title -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.2s" fill="freeze"/>
+    <text x="450" y="28" text-anchor="middle" font-size="20" font-weight="700" fill="var(--text-default, #0f172a)">Hallucination Taxonomy &amp; Types</text>
+    <line x1="250" y1="36" x2="650" y2="36" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+    <text x="450" y="55" text-anchor="middle" font-size="11" fill="var(--text-muted, #64748b)">Hallucination is a property of next-token prediction — not a bug</text>
+  </g>
+
+  <!-- ==================== THREE MAIN CATEGORIES ==================== -->
+
+  <!-- Category 1: Factual Hallucination -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.6s" fill="freeze"/>
+    <rect x="20" y="72" width="280" height="34" rx="8" fill="#dc2626" opacity="0.9"/>
+    <text x="160" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">FACTUAL HALLUCINATION</text>
+    <text x="160" y="120" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">Model asserts incorrect facts</text>
+    <text x="160" y="136" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">with high confidence</text>
+
+    <!-- Subtypes -->
+    <rect x="25" y="148" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#dc2626" stroke-width="1" filter="url(#shadow)"/>
+    <text x="35" y="165" font-size="10" font-weight="600" fill="#dc2626">Entity Hallucination</text>
+    <text x="35" y="180" font-size="9" fill="var(--text-muted, #64748b)">"CEO of Google is Sundar Pichai" → Wrong company</text>
+
+    <rect x="25" y="194" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#dc2626" stroke-width="1" filter="url(#shadow)"/>
+    <text x="35" y="211" font-size="10" font-weight="600" fill="#dc2626">Relation Hallucination</text>
+    <text x="35" y="226" font-size="9" fill="var(--text-muted, #64748b)">"Paris is the capital of England" → Wrong relation</text>
+
+    <rect x="25" y="240" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#dc2626" stroke-width="1" filter="url(#shadow)"/>
+    <text x="35" y="257" font-size="10" font-weight="600" fill="#dc2626">Numerical Hallucination</text>
+    <text x="35" y="272" font-size="9" fill="var(--text-muted, #64748b)">"3.2 million" vs actual "2.1 million"</text>
+  </g>
+
+  <!-- Category 2: Faithfulness Hallucination -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="0.8s" fill="freeze"/>
+    <rect x="310" y="72" width="280" height="34" rx="8" fill="#ca8a04" opacity="0.9"/>
+    <text x="450" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">FAITHFULNESS HALLUCINATION</text>
+    <text x="450" y="120" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">Output contradicts provided</text>
+    <text x="450" y="136" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">context or instructions</text>
+
+    <!-- Subtypes -->
+    <rect x="315" y="148" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#ca8a04" stroke-width="1" filter="url(#shadow)"/>
+    <text x="325" y="165" font-size="10" font-weight="600" fill="#ca8a04">Context-contradiction</text>
+    <text x="325" y="180" font-size="9" fill="var(--text-muted, #64748b)">Ignores provided document; uses training data</text>
+
+    <rect x="315" y="194" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#ca8a04" stroke-width="1" filter="url(#shadow)"/>
+    <text x="325" y="211" font-size="10" font-weight="600" fill="#ca8a04">Instruction-following failure</text>
+    <text x="325" y="226" font-size="9" fill="var(--text-muted, #64748b)">"Summarize in 3 bullets" → Outputs paragraph</text>
+
+    <rect x="315" y="240" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#ca8a04" stroke-width="1" filter="url(#shadow)"/>
+    <text x="325" y="257" font-size="10" font-weight="600" fill="#ca8a04">Format hallucination</text>
+    <text x="325" y="272" font-size="9" fill="var(--text-muted, #64748b)">Outputs JSON with wrong schema or missing keys</text>
+  </g>
+
+  <!-- Category 3: Input/Ambiguity Hallucination -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.35s" begin="1.0s" fill="freeze"/>
+    <rect x="600" y="72" width="280" height="34" rx="8" fill="#7c3aed" opacity="0.9"/>
+    <text x="740" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">INPUT / AMBIGUITY</text>
+    <text x="740" y="120" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">Model fills gaps in ambiguous</text>
+    <text x="740" y="136" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">or underspecified queries</text>
+
+    <!-- Subtypes -->
+    <rect x="605" y="148" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow)"/>
+    <text x="615" y="165" font-size="10" font-weight="600" fill="#7c3aed">Ambiguity hallucination</text>
+    <text x="615" y="180" font-size="9" fill="var(--text-muted, #64748b)">Assumes wrong referent for "it" or "they"</text>
+
+    <rect x="605" y="194" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow)"/>
+    <text x="615" y="211" font-size="10" font-weight="600" fill="#7c3aed">Logical hallucination</text>
+    <text x="615" y="226" font-size="9" fill="var(--text-muted, #64748b)">"A is taller than B, B is taller than C → C is tallest"</text>
+
+    <rect x="605" y="240" width="270" height="40" rx="5" fill="var(--bg-default, #ffffff)" stroke="#7c3aed" stroke-width="1" filter="url(#shadow)"/>
+    <text x="615" y="257" font-size="10" font-weight="600" fill="#7c3aed">Over-extrapolation</text>
+    <text x="615" y="272" font-size="9" fill="var(--text-muted, #64748b)">Extends a pattern beyond valid bounds</text>
+  </g>
+
+  <!-- Root Cause section -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.2s" fill="freeze"/>
+    <line x1="20" y1="300" x2="880" y2="300" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+
+    <text x="450" y="320" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text-default, #0f172a)">Root Cause: Statistical Next-Token Prediction</text>
+    <text x="450" y="340" text-anchor="middle" font-size="10" fill="var(--text-muted, #64748b)">The model doesn't "know" facts — it predicts the most probable token given training distribution</text>
+
+    <!-- Four root cause boxes -->
+    <rect x="20" y="355" width="205" height="65" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <circle cx="40" cy="375" r="10" fill="var(--brand-default, #e95420)" opacity="0.8"/>
+    <text x="40" y="379" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">1</text>
+    <text x="56" y="375" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">Training Data Noise</text>
+    <text x="34" y="393" font-size="9" fill="var(--text-muted, #64748b)">Corpus has conflicts, errors,</text>
+    <text x="34" y="407" font-size="9" fill="var(--text-muted, #64748b)">outdated info, and low-quality sources</text>
+
+    <rect x="240" y="355" width="205" height="65" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <circle cx="260" cy="375" r="10" fill="var(--brand-default, #e95420)" opacity="0.8"/>
+    <text x="260" y="379" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">2</text>
+    <text x="276" y="375" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">Position Bias</text>
+    <text x="254" y="393" font-size="9" fill="var(--text-muted, #64748b)">Information in middle of long</text>
+    <text x="254" y="407" font-size="9" fill="var(--text-muted, #64748b)">context gets ignored (Lost in the Middle)</text>
+
+    <rect x="460" y="355" width="205" height="65" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <circle cx="480" cy="375" r="10" fill="var(--brand-default, #e95420)" opacity="0.8"/>
+    <text x="480" y="379" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">3</text>
+    <text x="496" y="375" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">Overconfidence</text>
+    <text x="474" y="393" font-size="9" fill="var(--text-muted, #64748b)">At T=0, always picks most likely</text>
+    <text x="474" y="407" font-size="9" fill="var(--text-muted, #64748b)">token even when probability is 0.3</text>
+
+    <rect x="680" y="355" width="200" height="65" rx="6" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <circle cx="700" cy="375" r="10" fill="var(--brand-default, #e95420)" opacity="0.8"/>
+    <text x="700" y="379" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">4</text>
+    <text x="716" y="375" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">No True "Knowledge"</text>
+    <text x="694" y="393" font-size="9" fill="var(--text-muted, #64748b)">Model has no fact database —</text>
+    <text x="694" y="407" font-size="9" fill="var(--text-muted, #64748b)">only pattern-matching weights</text>
+  </g>
+
+  <!-- Detection & Mitigation section -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.5s" fill="freeze"/>
+    <line x1="20" y1="435" x2="880" y2="435" stroke="var(--border-default, #e2e8f0)" stroke-width="1" opacity="0.5"/>
+
+    <text x="450" y="455" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text-default, #0f172a)">Detection &amp; Mitigation Strategies</text>
+
+    <!-- Left: Detection methods -->
+    <rect x="20" y="470" width="420" height="160" rx="10" fill="var(--bg-default, #ffffff)" stroke="var(--border-default, #e2e8f0)" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="20" y="470" width="420" height="28" rx="10" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <rect x="20" y="492" width="420" height="6" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="230" y="490" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand-default, #e95420)">Detection Methods</text>
+
+    <text x="36" y="514" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">✓ Factual Consistency Checking</text>
+    <text x="50" y="530" font-size="9" fill="var(--text-muted, #64748b)">Compare output against retrieved documents. Use NLI models.</text>
+
+    <text x="36" y="550" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">✓ Self-Consistency / Self-Eval</text>
+    <text x="50" y="566" font-size="9" fill="var(--text-muted, #64748b)">Ask LLM to verify its own output. Sample multiple times, check agreement.</text>
+
+    <text x="36" y="586" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">✓ Perplexity / Entropy Scoring</text>
+    <text x="50" y="602" font-size="9" fill="var(--text-muted, #64748b)">Low confidence output has higher entropy — flag for review.</text>
+
+    <text x="36" y="618" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">✓ Human-in-the-loop Review</text>
+    <text x="50" y="634" font-size="9" fill="var(--text-muted, #64748b)">Sample-based human review for critical applications (medical, legal).</text>
+
+    <!-- Right: Production Mitigations -->
+    <rect x="460" y="470" width="420" height="160" rx="10" fill="var(--bg-default, #ffffff)" stroke="var(--brand-default, #e95420)" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="460" y="470" width="420" height="28" rx="10" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <rect x="460" y="492" width="420" height="6" fill="var(--brand-light, rgba(233,84,32,0.06))"/>
+    <text x="670" y="490" text-anchor="middle" font-size="11" font-weight="700" fill="var(--brand-default, #e95420)">Production Mitigations</text>
+
+    <text x="476" y="514" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">1. RAG with Relevance Threshold</text>
+    <text x="490" y="530" font-size="9" fill="var(--text-muted, #64748b)">min 0.5 cosine similarity — don't retrieve irrelevant docs</text>
+
+    <text x="476" y="550" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">2. Citation Generation</text>
+    <text x="490" y="566" font-size="9" fill="var(--text-muted, #64748b)">Force model to cite source passages for each claim</text>
+
+    <text x="476" y="586" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">3. Temperature 0.0 for Facts</text>
+    <text x="490" y="602" font-size="9" fill="var(--text-muted, #64748b)">Extraction/factual tasks use T=0 for deterministic output</text>
+
+    <text x="476" y="618" font-size="10" font-weight="600" fill="var(--text-default, #0f172a)">4. Confidence Thresholding</text>
+    <text x="490" y="634" font-size="9" fill="var(--text-muted, #64748b)">Below probability threshold → return "I'm not sure"</text>
+  </g>
+</svg>
