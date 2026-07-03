@@ -18,9 +18,6 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
       <path d="M0,0 L10,5 L0,10" fill="var(--brand-default, #e95420)"/>
     </marker>
-    <marker id="arrowBlue" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0,0 L10,5 L0,10" fill="#2563eb"/>
-    </marker>
   </defs>
 
   <rect width="900" height="600" fill="none"/>

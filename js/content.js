@@ -108,7 +108,7 @@ A **parameter** is a learnable weight in the neural network. The total parameter
 
 #### Temperature
 
-<object data="assets/diagrams/temp-anatomy.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600"></object>
+<object data="assets/diagrams/temp-anatomy.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600" aria-label="Temperature Sampling Anatomy diagram showing logits to probability distribution across three temperature values"></object>
 
 **Temperature** controls the randomness of token sampling. It scales the logits before the softmax:
 
@@ -134,7 +134,7 @@ P(token) = softmax(logits / temperature)
               title: 'Hallucination & Reliability',
               content: `A **hallucination** is when an LLM generates factually incorrect, nonsensical, or unverifiable information presented as fact. This is not a bug — it is a fundamental property of how LLMs work.
 
-<object data="assets/diagrams/hallucination-types.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650"></object>
+<object data="assets/diagrams/hallucination-types.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Hallucination taxonomy diagram showing factual, faithfulness, and input ambiguity categories with root causes"></object>
 
 **Why LLMs hallucinate:**
 
@@ -193,7 +193,7 @@ The system message is a persistent behavioral guide — it sets the "personality
 
 #### Prompt Anatomy
 
-<object data="assets/diagrams/prompt-anatomy.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="720"></object>
+<object data="assets/diagrams/prompt-anatomy.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="720" aria-label="Prompt anatomy diagram showing system message, user message, assistant response, and prompt components"></object>
 
 **Key insight:** The model does not "see" a chat interface — it sees a flat token sequence with special tokens marking role boundaries. For example, a Llama 3 chat template might look like:
 
@@ -478,7 +478,7 @@ Each attention output passes through a two-layer MLP:
 ### 1. By Architecture
 
 #### Encoder-Only (BERT-style)
-<object data="assets/diagrams/encoder-only-bert.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+<object data="assets/diagrams/encoder-only-bert.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" aria-label="Encoder-only BERT architecture diagram"></object>
 
 - **Mechanism:** Bidirectional self-attention — each token attends to all tokens. Trained via Masked Language Model (MLM).
 - **Output:** Contextualized token embeddings (not generative).
@@ -486,7 +486,7 @@ Each attention output passes through a two-layer MLP:
 - **Examples:** BERT, RoBERTa, ALBERT, DistilBERT, ELECTRA.
 
 #### Decoder-Only (GPT-style)
-<object data="assets/diagrams/decoder-only-gpt.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+<object data="assets/diagrams/decoder-only-gpt.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" aria-label="Decoder-only GPT architecture diagram"></object>
 
 - **Mechanism:** Causal (unidirectional) self-attention. Trained via next-token prediction.
 - **Output:** Autoregressive text generation.
@@ -494,7 +494,7 @@ Each attention output passes through a two-layer MLP:
 - **Examples:** GPT-4, LLaMA 3, Mistral, Claude 3, Gemini, Qwen, DeepSeek.
 
 #### Encoder-Decoder (T5-style)
-<object data="assets/diagrams/encoder-decoder-t5.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+<object data="assets/diagrams/encoder-decoder-t5.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" aria-label="Encoder-decoder T5 architecture diagram"></object>
 
 - **Mechanism:** Encoder with bidirectional attention; decoder with causal + cross-attention.
 - **Training:** Span corruption.
@@ -511,12 +511,12 @@ Each attention output passes through a two-layer MLP:
 ### 2. By Parameter Density
 
 #### Dense Models
-<object data="assets/diagrams/dense-models.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+<object data="assets/diagrams/dense-models.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" aria-label="Dense model architecture diagram"></object>
 
 Every parameter active for every token. Simple, predictable. Examples: LLaMA 3 (8B, 70B, 405B), Mistral 7B.
 
 #### Sparse Models (Mixture of Experts / MoE)
-<object data="assets/diagrams/sparse-models-moe.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680"></object>
+<object data="assets/diagrams/sparse-models-moe.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="680" aria-label="Sparse mixture-of-experts model architecture diagram"></object>
 
 A learned router selects top-k experts per token (typically top-2). Active params ~15-30% of total.
 - **Pros:** More capacity for same compute budget. Higher quality per FLOP.
@@ -759,7 +759,7 @@ An alternative that eliminates the reward model:
               title: 'Distillation',
               content: `**Knowledge distillation** compresses a large "teacher" model into a smaller "student" model by training the student to mimic the teacher's outputs. At FAANG scale, distillation is how you deploy GPT-4-class quality at GPT-3.5-class cost.
 
-<object data="assets/diagrams/distillation-flow.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600"></object>
+<object data="assets/diagrams/distillation-flow.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600" aria-label="Knowledge distillation flow diagram showing teacher model generating soft targets for student model"></object>
 
 #### How Distillation Works
 
@@ -802,11 +802,11 @@ At FAANG, distillation is used to:
               title: 'Reasoning Models & Compute Scaling',
               content: `**Reasoning models** (OpenAI o1/o3, DeepSeek-R1) represent a paradigm shift: instead of scaling model size, they scale **test-time compute** — the model "thinks" longer before answering.
 
-<object data="assets/diagrams/reasoning-compute.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650"></object>
+<object data="assets/diagrams/reasoning-compute.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Train-time versus test-time compute comparison diagram showing reasoning model scaling"></object>
 
 #### Train-time Compute vs Test-time Compute
 
-| | Train-time Compute | Test-time Compute |
+| Aspect | Train-time Compute | Test-time Compute |
 |---|---|---|
 | **When it happens** | During pre-training / fine-tuning | At inference / generation time |
 | **What it buys** | Model capability (knowledge, patterns) | Task-level reasoning (thinking before answering) |
@@ -875,7 +875,7 @@ The key innovations:
               title: 'Prompt Injection',
               content: `**Prompt injection** is a security attack where an adversary crafts input that overrides or bypasses the model's system instructions. It is the LLM equivalent of SQL injection — and equally critical.
 
-<object data="assets/diagrams/prompt-injection-attacks.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550"></object>
+<object data="assets/diagrams/prompt-injection-attacks.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550" aria-label="Prompt injection attack taxonomy diagram with mitigation architecture tiers"></object>
 
 #### Attack Taxonomy
 
@@ -916,7 +916,7 @@ The key innovations:
 
 #### Three-Tier Guardrail Architecture
 
-<object data="assets/diagrams/hallucination-types.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650"></object>
+<object data="assets/diagrams/hallucination-types.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Hallucination taxonomy diagram with detection and mitigation strategies"></object>
 
 **Tier 1: Input Guardrail**
 - Runs before the LLM call.
@@ -1027,7 +1027,7 @@ Organize attacks by category:
               title: 'Embeddings & Semantic Search',
               content: `**Semantic search** uses embeddings to find documents by meaning rather than keyword overlap. It is the foundation of modern RAG systems.
 
-<object data="assets/diagrams/semantic-search-flow.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550"></object>
+<object data="assets/diagrams/semantic-search-flow.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550" aria-label="Semantic search pipeline diagram showing indexing and query flow"></object>
 
 #### How Semantic Search Works
 
@@ -1039,7 +1039,7 @@ Organize attacks by category:
 
 #### Dense vs Sparse Retrieval
 
-| | Dense (Embeddings) | Sparse (BM25 / Keyword) |
+| Aspect | Dense (Embeddings) | Sparse (BM25 / Keyword) |
 |---|---|---|
 | **How it works** | Semantic similarity in vector space | Lexical keyword matching |
 | **Strength** | Understands meaning, synonyms, paraphrasing | Exact matches, rare terms |
@@ -1099,7 +1099,7 @@ Organize attacks by category:
               title: 'Vector Databases',
               content: `**Vector databases** store and index embeddings for fast approximate nearest neighbor (ANN) search. They are the backbone of production RAG systems.
 
-<object data="assets/diagrams/vector-db-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600"></object>
+<object data="assets/diagrams/vector-db-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600" aria-label="Vector database architecture diagram showing storage, index, and query layers"></object>
 
 #### How Vector DBs Work
 
@@ -1225,7 +1225,7 @@ For a model with 128K context:
 
 #### The Agentic Loop
 
-<object data="assets/diagrams/agent-loop-diagram.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650"></object>
+<object data="assets/diagrams/agent-loop-diagram.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Agentic loop diagram showing ReAct pattern of thought, action, observation"></object>
 
 The fundamental pattern is the **ReAct** (Reasoning + Acting) loop:
 
@@ -1269,7 +1269,7 @@ In agent loops, context accumulates with each turn. Without management, context 
               title: 'Function Calling',
               content: `**Function calling** is the structured interface between LLMs and external tools/APIs. Instead of the LLM generating free-form text about what action to take, it outputs a structured JSON object specifying the function name and parameters.
 
-<object data="assets/diagrams/function-calling-flow.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550"></object>
+<object data="assets/diagrams/function-calling-flow.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550" aria-label="Function calling flow diagram showing tool definition, LLM decision, execution, and response"></object>
 
 #### How Function Calling Works
 
@@ -1323,7 +1323,7 @@ In agent loops, context accumulates with each turn. Without management, context 
               title: 'MCP - Model Context Protocol',
               content: `**MCP (Model Context Protocol)** is an open standard developed by Anthropic that defines how LLM applications connect to external tools and data sources. Think of it as "USB-C for AI" — a universal protocol for integrating LLMs with any tool or data source.
 
-<object data="assets/diagrams/mcp-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550"></object>
+<object data="assets/diagrams/mcp-architecture.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="550" aria-label="MCP Model Context Protocol architecture diagram showing host, client, and server layers"></object>
 
 #### The MCP Architecture
 
@@ -1367,7 +1367,7 @@ Before MCP, every LLM integration required custom code: parse the LLM's output, 
               title: 'Multi-agent Systems',
               content: `**Multi-agent systems** coordinate multiple LLM agents to work together on complex tasks. Different agents have different roles, and they communicate via structured message passing.
 
-<object data="assets/diagrams/multi-agent-patterns.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600"></object>
+<object data="assets/diagrams/multi-agent-patterns.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600" aria-label="Multi-agent coordination patterns diagram showing orchestrator, supervisor, debate, pipeline, and swarm"></object>
 
 #### Multi-agent Patterns
 
@@ -1580,7 +1580,7 @@ Before MCP, every LLM integration required custom code: parse the LLM's output, 
               title: 'Production Prompt Lifecycle',
               content: `Managing prompts in production requires CI/CD, monitoring, caching, and cost optimization.
 
-<object data="assets/diagrams/prompt-production-pipeline.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="700"></object>
+<object data="assets/diagrams/prompt-production-pipeline.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="700" aria-label="Prompt production pipeline diagram"></object>
 
 #### Versioning & CI/CD
 
