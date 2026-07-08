@@ -1,14 +1,14 @@
 const QUICK_BYTES = {
   site: {
     name: 'Quick Bytes',
-    tagline: 'Software engineering \u2014 from fundamentals to staff+.',
-    description: 'Concise technical references, system design guides, and engineering career resources for developers at every level.',
+    tagline: 'AI engineering \u2014 from foundations to FAANG Staff+.',
+    description: 'FAANG Staff+ AI interview prep and AI engineering references across 11 guides and 5 phases from foundations to expert.',
     url: 'https://kallolchakraborty.github.io/quick-bytes/',
     author: 'Kallol Chakraborty',
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 9,
+    guides: 11,
     phases: 5,
     platform: 'Engineering',
   },
@@ -1561,283 +1561,887 @@ Before MCP, every LLM integration required custom code: parse the LLM's output, 
     },
 
     // ======================================================================
-    // PHASE 5: STAFF+ ENGINEERING (Expert)
+    // PHASE 5: FAANG STAFF+ INTERVIEWS (Expert)
     // ======================================================================
     {
-      id: 'staff-plus-engineering',
-      title: 'Staff+ Engineering',
+      id: 'faang-staff-plus-interviews',
+      title: 'FAANG Staff+ Interviews',
       level: 'Expert',
-      description: 'Master production AI engineering at scale. Prerequisites: all previous phases.',
+      description: 'Technical interview prep for FAANG Staff+ AI Engineering roles. 12 core topics with deep-dive answers, trade-off analysis, and follow-up questions.',
       guides: [
-        // ----- Guide 9: Staff+ AI Engineering -----
+        // ----- Guide 9: Transformer & Attention Architecture -----
         {
-          id: 'staff-plus-ai-engineering',
-          title: 'Staff+ AI Engineering',
-          description: 'Production prompt lifecycle, advanced optimization, caching, routing, cost optimization, scaling AI across organizations, and Staff+ career growth.',
+          id: 'transformer-attention-architecture',
+          title: 'Transformer & Attention Architecture',
+          description: 'Staff+ interview questions on Transformer internals, attention mechanisms, KV cache optimization, and PagedAttention.',
           sections: [
             {
-              id: 'production-prompt-lifecycle',
-              title: 'Production Prompt Lifecycle',
-              content: `Managing prompts in production requires CI/CD, monitoring, caching, and cost optimization.
+              id: 'interview-transformer-architecture',
+              title: 'Transformer Architecture',
+              content: `**Staff+ Interview Question:** "Walk me through the Transformer architecture from scratch. What are the key components and why was each design choice made?"
 
-<object data="assets/diagrams/prompt-production-pipeline.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="700" aria-label="Prompt production pipeline diagram"></object>
+#### Core Architecture
 
-#### Versioning & CI/CD
+The Transformer (Vaswani et al., 2017) replaced RNNs by eliminating sequential computation. It processes all tokens in parallel using self-attention:
 
-Treat prompts as code, not config:
+<object data="assets/diagrams/transformer-architecture.svg" type="image/svg+xml" width="900" height="1160" class="rounded-xl shadow-lg" aria-label="Transformer Architecture Data Flow"></object>
 
-1. **Store prompts in git** as YAML/JSON files with version tags.
-2. **PR workflow:** Prompt change \u2192 PR \u2192 reviewer \u2192 CI runs regression suite \u2192 merge \u2192 deploy.
-3. **Canary deployment:** Route 5% of traffic to new version. Compare metrics against baseline.
-4. **Instant rollback:** If canary metrics degrade, revert in <30 seconds.
+**Encoder-Decoder structure:**
+- **Encoder:** N identical layers, each with multi-head self-attention + feed-forward network (FFN). Bidirectional — each token attends to all tokens.
+- **Decoder:** N identical layers, each with masked self-attention (can't see future tokens) + cross-attention (attends to encoder output) + FFN.
 
-\`\`\`yaml
-# prompt-config.yaml
-version: 1.2
-model: gpt-4-turbo
-system_prompt: "You are a helpful assistant..."
-temperature: 0.3
-max_tokens: 1024
-evaluation:
-  regression_suite: summarization-v3
-  min_accuracy: 0.85
+**Key innovations:**
+| Component | Purpose | Why it matters |
+|-----------|---------|----------------|
+| **Self-attention** | Each token computes weighted sum of all tokens | Captures long-range dependencies without distance penalty |
+| **Multi-head** | h parallel attention heads with different projections | Each head learns different relationship types (syntax, semantics, position) |
+| **Positional encoding** | Sinusoidal or learned position signals | Attention is permutation-invariant; positions must be injected |
+| **LayerNorm + Residual** | Normalize + skip connection per sublayer | Enables training 100+ layer networks without gradient vanishing |
+| **FFN** | Two-layer MLP (typically 4x hidden dim) | Adds non-linear transformation per token independently |
+
+#### Why Self-Attention Instead of RNNs/CNNs?
+
+| Aspect | RNN | CNN | Transformer |
+|--------|-----|-----|-------------|
+| **Sequential computation** | O(n) sequential steps, can't parallelize | Parallel within kernel | Fully parallel |
+| **Long-range dependencies** | O(n) path length, vanishing gradients | O(log_k(n)) with dilated conv | O(1) path length |
+| **Parameter efficiency** | State shared across time | Kernel shared across space | Global computation, more params |
+
+**Staff+ answer differentiator:** Explain that the Transformer's O(1) path length between any two positions is the fundamental advantage. In an RNN, information must travel through n steps. In a Transformer, one attention computation connects position 1 to position n directly. This is why Transformers scale to 100K+ tokens and RNNs cannot.
+
+#### Complexity Analysis
+
+- **Self-attention:** Compute O(n\u00b2 \u00b7 d), Memory O(n\u00b2)
+- **FFN:** Compute O(n \u00b7 d\u00b2), Memory O(n \u00b7 d)
+- **Total per layer:** O(n\u00b2 \u00b7 d + n \u00b7 d\u00b2)
+
+The quadratic O(n\u00b2) in sequence length is the primary bottleneck — this is the subject of virtually every follow-up question.
+
+#### Follow-up Questions
+
+1. *"Why does the decoder use masked self-attention?"* — Prevents the model from cheating by looking at future tokens during autoregressive generation. The mask sets attention scores for future positions to -\u221e before softmax.
+
+2. *"Why LayerNorm before or after the sublayer?"* — Pre-LN (GPT, LLaMA) is more stable during training. Post-LN (original paper) requires careful warmup. Most modern models use Pre-LN + RMSNorm.
+
+3. *"What happens if you remove the FFN?"* — The model becomes a linear transformation of attention outputs. FFN provides the non-linear capacity. Without it, model quality degrades catastrophically beyond small scales.
+
+4. *"How does the Transformer scale to 100B+ parameters?"* — Through width (hidden dim), depth (layers), and sparsity (MoE). See Phase 2's LLM Architecture guide for details.
+
+**Cross-reference:** See Phase 2: [Transformer Overview](#transformer-overview) and [Self-Attention & Attention Variants](#self-attention) for the full architecture deep-dive.`
+            },
+            {
+              id: 'interview-attention',
+              title: 'Attention',
+              content: `**Staff+ Interview Question:** "Explain the attention mechanism in detail. How is it computed, and what are its failure modes at scale?"
+
+#### The Attention Equation
+
+The fundamental operation is a scaled dot-product attention:
+
+\`\`\`
+Attention(Q, K, V) = softmax(QK^T / \u221a(d_k)) \u00b7 V
 \`\`\`
 
-#### Monitoring & Drift
+| Symbol | Shape | Description |
+|--------|-------|-------------|
+| Q (Query) | n \u00d7 d_k | What each token is looking for |
+| K (Key) | n \u00d7 d_k | What each token offers |
+| V (Value) | n \u00d7 d_v | What each token contributes |
+| Scores QK^T | n \u00d7 n | Pairwise compatibility between tokens |
 
-| Metric | What it detects | Alert threshold |
-|--------|----------------|-----------------|
-| Response length | Model behavior changed | \u00b120% from 7-day avg |
-| Refusal rate | Alignment drift, injection | >5% above baseline |
-| Latency p50/p99 | Model degradation | p99 > 5s |
-| Token count | Prompt bloat | +30% week-over-week |
-| Cost per call | Efficiency regression | +20% above budget |
+**Step-by-step:**
+1. Project input X through W_Q, W_K, W_V to get Q, K, V.
+2. Compute dot products: each query scores against every key.
+3. Scale by \u221a(d_k) to prevent softmax saturation with large d_k.
+4. Softmax normalizes scores into a probability distribution per query.
+5. Weighted sum of values produces each token's output.
 
-#### Production Checklist
+#### Why Scaling by \u221a(d_k)?
 
-- [ ] Prompts versioned in git with PR-based change process
-- [ ] Regression test suite with 50+ canonical cases
-- [ ] Canary deployment with 5% traffic split
-- [ ] Dashboard monitoring response length, latency, refusal rate, cost
-- [ ] Semantic cache enabled for classification/repetitive tasks
-- [ ] Model router configured for cheap/simple queries
-- [ ] Input guardrail blocks obvious attacks before LLM call
-- [ ] Output guardrail catches PII, toxic content, format violations
-- [ ] Rollback procedure documented and tested
-- [ ] Cost budget alerts configured`
+Without scaling, the variance of QK^T grows with d_k: Var(q_i \u00b7 k_i) = d_k. For d_k=128, dot products have variance 128 \u2192 large values push softmax into regions with near-zero gradients. Scaling by \u221a(d_k) normalizes variance to 1, keeping gradients healthy.
+
+**Staff+ answer differentiator:** Mention that this scale factor is derived from the assumption that q_i and k_i are independent random variables with mean 0 and variance 1. In practice, after training, this assumption is approximate — but the scaling remains critical. Some models (e.g., LLaMA) use \u221a(2d_k) or other heuristics for better stability with RoPE.
+
+#### Multi-Head Attention
+
+Instead of one attention function, h parallel heads:
+
+\`\`\`
+MultiHead(Q, K, V) = Concat(head_1, ..., head_h) \u00b7 W_O
+where head_i = Attention(QW_Q^i, KW_K^i, VW_V^i)
+\`\`\`
+
+**Why multiple heads?** Each head learns a different attention pattern. Research (Clark et al., 2019) shows:
+- Some heads focus on syntax (subject-verb agreement)
+- Others focus on coreference (pronoun resolution)
+- Others capture positional patterns (adjacent tokens)
+- At larger scales, heads become redundant (representation degeneration)
+
+#### Failure Modes at Scale
+
+| Issue | Cause | Impact | Mitigation |
+|-------|-------|--------|------------|
+| **Attention collapse** | Heads converge to same pattern | Wasted capacity, no diversity | Regularization, aux loss |
+| **Softmax saturation** | Extreme score values | Near-hard attention, no gradient | Better initialization, scaling |
+| **Position bias** | Model prefers certain positions | Lost-in-the-middle (see Phase 4) | Document reordering |
+| **KV cache OOM** | O(n \u00d7 d \u00d7 layers) memory | Service crash at long contexts | PagedAttention, eviction |
+| **Attention sink** | First token gets disproportionate attention | Quality degradation | Special first-token handling |
+
+#### Follow-up Questions
+
+1. *"Why is attention O(n\u00b2) and how do you avoid it?"* — Every query attends to every key. Sparse attention, sliding window, and FlashAttention mitigate this. See Phase 4: Attention Patterns.
+
+2. *"What is the attention is all you need paper's actual contribution?"* — Not just the attention mechanism — it's the complete removal of recurrence and convolution, enabling fully parallelizable training with O(1) path length between any two positions.
+
+3. *"How does causal masking work in decoder-only models?"* — A triangular mask where upper-right entries are set to -\u221e before softmax. This ensures token at position i can only attend to positions \u2264 i.
+
+**Cross-reference:** See Phase 2: [Self-Attention & Attention Variants](#self-attention) for a visual deep-dive.`
             },
             {
-              id: 'advanced-optimization',
-              title: 'Advanced Optimization (DSPy, APE)',
-              content: `For Staff+ engineers building production prompt pipelines, manual prompt tweaking is not scalable. These techniques treat prompt engineering as an optimization problem.
+              id: 'interview-kv-cache',
+              title: 'KV Cache',
+              content: `**Staff+ Interview Question:** "How does the KV cache work in autoregressive generation? What are its memory implications and how do you optimize it?"
 
-#### DSPy (Programmatic Prompt Compilation)
+#### What is the KV Cache?
 
-[DSPy](https://github.com/stanfordnlp/dspy) frames prompting as a compiler optimization problem. Define a **signature** and let the optimizer tune the prompt automatically.
+During autoregressive generation, each new token attends to all previous tokens. Instead of recomputing the Key (K) and Value (V) matrices for every previous token on each step, we **cache them**:
 
-> \`\`\`python
-> class Summarize(dspy.Signature):
->     """Summarize a document in 3 bullet points."""
->     document = dspy.InputField()
->     summary = dspy.OutputField()
->
-> optimized = dspy.BootstrapFewShot(metric=quality_score).compile(Summarize(), trainset=examples)
-> \`\`\`
+<object data="assets/diagrams/inference-optimizations.svg" type="image/svg+xml" width="900" height="620" class="rounded-xl shadow-lg" aria-label="Inference Optimizations"></object>
 
-**Key benefit:** The optimizer searches over prompt templates, exemplar choices, and few-shot ordering — discovering configurations humans miss. Typical improvement: 5-15% on held-out metrics.
+**Without KV cache (naive):**
+- Step 1: Compute K,V for token 1, generate token 2
+- Step 2: Recompute K,V for tokens 1-2, generate token 3
+- Step 3: Recompute K,V for tokens 1-2-3, generate token 4
+- Total compute: O(n\u00b2) per layer — quadratic in sequence length
 
-#### APE (Automatic Prompt Engineer)
+**With KV cache:**
+- Step 1: Compute K,V for token 1, cache them, generate token 2
+- Step 2: Compute K,V for token 2 only, append to cache, generate token 3
+- Step 3: Compute K,V for token 3 only, append to cache, generate token 4
+- Total compute: O(n) per layer — linear
 
-An LLM generates candidate prompts, evaluates them against a held-out set, and selects the best:
+#### Memory Cost
 
-1. Prompt LLM to generate 10-50 candidate prompts.
-2. Run each against a test set with scoring metric.
-3. Select top-k candidates.
-4. Optionally: ask LLM to "reflect" on common patterns and generate new batch.
+The KV cache cost is the key interview topic:
 
-#### Dynamic Few-Shot Selection
+\`\`\`
+KV_cache_size = 2 (K + V) \u00d7 n_layers \u00d7 n_heads \u00d7 d_head \u00d7 sequence_length \u00d7 bytes_per_param
+\`\`\`
 
-Instead of static exemplars, retrieve the most relevant examples per query:
-1. Embed all candidate exemplars + the user query.
-2. Find k nearest neighbors by cosine similarity.
-3. Prepend to prompt before sending to LLM.
-This is **RAG for the prompt itself**. Non-uniform exemplars per query typically outperform static sets.
+**Example: LLaMA 3 70B at 128K context:**
+- Layers: 80, Heads: 64, d_head: 128
+- KV cache per token: 2 \u00d7 80 \u00d7 64 \u00d7 128 = 1,310,720 values
+- At FP16 (2 bytes): ~2.6 MB per token
+- At 128K tokens: ~333 GB — exceeds A100 80GB memory by 4x
 
-#### Ensemble Methods
+| Model | Params | Context | KV Cache (FP16) | GPUs needed |
+|-------|--------|---------|-----------------|-------------|
+| LLaMA 3 8B | 8B | 8K | ~8 GB | 1 |
+| LLaMA 3 8B | 8B | 128K | ~128 GB | 2-4 A100 |
+| LLaMA 3 70B | 70B | 128K | ~333 GB | 8+ A100 |
+| GPT-4 (est.) | ~1.7T | 128K | ~TB+ | Distributed across nodes |
 
-1. **Multi-prompt voting:** Send same query with K prompt phrasings, take majority vote.
-2. **Cross-model voting:** Different phrasings to different models, vote.
-3. **Temperature sweep:** Same prompt, different temperatures (0.0 for factual, 0.7 for creative).`
+**Staff+ answer differentiator:** The single most important insight is that **KV cache memory scales linearly with sequence length but quadratically in the naive compute cost**. This is why KV cache optimization is the #1 inference optimization problem at FAANG. The cache is often larger than the model weights themselves (333 GB vs 140 GB for LLaMA 70B).
+
+#### Optimization Techniques
+
+| Technique | Memory Savings | Quality Impact | Complexity |
+|-----------|---------------|----------------|------------|
+| **KV cache quantization** (INT8/FP8) | 2x | <0.5% loss | Low |
+| **Multi-Query Attention (MQA)** | ~h_head / 1 (dramatic) | Slight at large scale | Architecture change |
+| **Grouped Query Attention (GQA)** | ~h_head / n_groups | Negligible | Architecture change |
+| **PagedAttention / vLLM** | Near-optimal | None | System-level |
+| **Sliding window cache** | Window / total | Depends on task | Architecture + system |
+| **KV cache eviction** | Configurable | Some quality loss | Research |
+
+#### Follow-up Questions
+
+1. *"What happens when the KV cache exceeds GPU memory?"* — Swap to CPU (slow), recompute from scratch (costly), or use PagedAttention with unified memory. vLLM handles this with OS-style paging.
+
+2. *"How does the KV cache grow during a multi-turn conversation?"* — With each user message and assistant response, the cache grows. After ~5-10 turns of 2K tokens each, the cache can exceed 20K tokens. Context management strategies (summarization, sliding window) are essential.
+
+3. *"Can you share the KV cache across requests?"* — Only if the prefix is identical (e.g., system message + few-shot examples). This is called **prefix caching** and is used by vLLM, TGI, and TensorRT-LLM.
+
+**Cross-reference:** See Phase 1: [Inference & Temperature](#inference-and-temperature) for inference pipeline overview.`
             },
             {
-              id: 'semantic-caching-model-routing',
-              title: 'Semantic Caching & Model Routing',
-              content: `#### Semantic Caching
+              id: 'interview-paged-attention',
+              title: 'PagedAttention',
+              content: `**Staff+ Interview Question:** "Explain PagedAttention. How does it solve the KV cache memory problem, and why was it a breakthrough?"
 
-Cache LLM responses for semantically similar queries, reducing cost and latency:
+#### The Problem
 
-1. Embed the user query using a cheap embedding model.
-2. Query vector store for nearest neighbors with cosine similarity > 0.95.
-3. If cached response found, return immediately — no LLM call.
-4. If not found, call the LLM, cache the response + embedding.
+Standard KV cache allocation uses **pre-allocated contiguous memory** — the maximum sequence length is reserved upfront, and unused slots are wasted. This leads to:
+- **Internal fragmentation:** Reserved but unused memory within each request
+- **External fragmentation:** Free memory split into small chunks across the GPU
+- **Low utilization:** Studies show 60-85% of reserved KV cache memory goes unused
 
-**Staff+ considerations:**
-- Cache hit rate: 20-50% for classification, 5-15% for generation.
-- Cache invalidation: clear when prompt version changes.
-- Cost savings: at 30% hit rate on 10M queries/month, saves ~$30K/month in GPT-4 API costs.
+#### The PagedAttention Solution
 
-#### Model Routing
+PagedAttention (Kwon et al., 2023) applies **virtual memory paging** — the same technique OS kernels use for RAM — to the KV cache:
 
-Not all queries need a 200B+ model. Route simple queries to cheaper models:
+<object data="assets/diagrams/context-window-anatomy.svg" type="image/svg+xml" width="900" height="520" class="rounded-xl shadow-lg" aria-label="Context Window Anatomy"></object>
 
-| Query type | Route to | Cost savings |
-|------------|----------|-------------|
-| Classification, extraction | GPT-4o-mini, Claude Haiku | ~20x cheaper |
-| Short-form generation | GPT-4o-mini | ~15x cheaper |
-| Complex reasoning, code | GPT-4, Claude Opus | Full price |
-| Summarization | Custom fine-tuned 7B | ~100x cheaper |
+**Key insight:** The logical KV cache (contiguous sequence of tokens) is mapped to non-contiguous physical blocks:
 
-A router prompt (itself a cheap classification) decides the destination. Combined with semantic caching, model routing can reduce average per-query cost by 5-10x.
+| Concept | OS Virtual Memory | PagedAttention |
+|---------|------------------|----------------|
+| **Address space** | Virtual memory pages | Logical KV cache |
+| **Physical unit** | Physical memory frames | Physical KV blocks |
+| **Mapping** | Page table | Block table |
+| **Allocation** | On-demand page loading | On-demand block allocation |
+| **Shared pages** | Shared memory (fork) | Copy-on-write across requests |
 
-#### Model Routing Decision Tree
+#### How It Works
 
-    Query received
-      \u251c\u2500 Context < 4K AND simple \u2192 Fast model (Mistral 7B, GPT-4o-mini)
-      \u251c\u2500 Context < 32K AND moderate \u2192 Mid model (GPT-4, Claude 3 Sonnet)
-      \u251c\u2500 Context > 32K AND full doc required \u2192 Long-context model (Claude 3 Opus, Gemini 1.5)
-      \u2514\u2500 Context > 128K OR multi-modal \u2192 Gemini 1.5 Pro / GPT-4V
+1. **Block-level allocation:** KV cache is divided into fixed-size blocks (typically 16-32 tokens each).
+2. **On-demand:** Blocks are allocated only when a token actually occupies them.
+3. **Non-contiguous:** Logical consecutive tokens can map to physically non-consecutive blocks.
+4. **Copy-on-write:** Multiple requests sharing the same prefix share KV cache blocks until one modifies them.
 
-#### Prompt Chaining
+#### Performance Impact
 
-The output of one prompt becomes the input to the next.
+| Metric | Standard (contiguous) | PagedAttention |
+|--------|----------------------|----------------|
+| Memory utilization | 20-40% | 95-99% |
+| Requests served per GPU | 1-4 (large models) | 4-10x more |
+| Throughput (tokens/sec) | Baseline | 2-4x |
+| Batching efficiency | Limited by memory | Memory-bound (good) |
 
-> Step 1: "Extract key entities." \u2192 Entities
-> Step 2: "Generate a question from these entities." \u2192 Question
-> Step 3: "Answer the question using the original text." \u2192 Answer
+**Staff+ answer differentiator:** The breakthrough is not a new attention algorithm — it's a **systems-level insight** that the memory management problem in LLM inference is the same problem OS kernels solved 50 years ago. PagedAttention is to LLM inference what virtual memory was to multitasking operating systems. This ability to draw cross-domain analogies is what distinguishes Staff+ system design.
 
-Useful for complex tasks that benefit from intermediate representations. Each step has a focused prompt, which is more reliable than one monolithic prompt.`
+#### vLLM: Production Implementation
+
+[vLLM](https://github.com/vllm-project/vllm) is the open-source inference engine built on PagedAttention:
+
+- **Continuous batching:** New requests join ongoing batches without flushing the cache
+- **Prefix caching:** Shared prefixes across requests reuse KV cache blocks
+- **Copy-on-write:** Beam search and parallel sampling share cache efficiently
+- **Tensor parallelism:** Distributes KV cache across GPUs
+
+#### Comparison with Other Systems
+
+| System | Memory strategy | Throughput | Flexibility |
+|--------|----------------|------------|-------------|
+| **Hugging Face TGI** | Contiguous pre-allocation | Baseline | High |
+| **TensorRT-LLM** | Contiguous + optimization | 1.5-2x baseline | NVIDIA-specific |
+| **vLLM (PagedAttention)** | Paged on-demand | 2-4x baseline | Model-agnostic |
+| **SGLang** | RadixAttention (prefix tree) | 2-5x baseline | Structured generation |
+
+#### Follow-up Questions
+
+1. *"What's the block size trade-off?"* — Small blocks (16 tokens): less fragmentation, more block table overhead. Large blocks (64 tokens): better GPU utilization, more fragmentation. 16-32 tokens is the sweet spot for most workloads.
+
+2. *"How does PagedAttention affect attention computation?"* — Attention is computed block-by-block, not token-by-token. Each block's K,V are contiguous in physical memory, so the attention kernel uses block-level masking. The overhead is negligible (\u22641%).
+
+3. *"What are the limitations of PagedAttention?"* — Requires attention kernel modifications. Doesn't help with the O(n\u00b2) compute cost of attention itself — it only optimizes memory. For very long contexts, compute-bound models see less benefit.
+
+**Cross-reference:** See Phase 1: [Inference & Temperature](#inference-and-temperature) for the inference pipeline where KV cache fits in.`
+            }
+          ]
+        },
+
+        // ----- Guide 10: Advanced Attention & LLM Systems -----
+        {
+          id: 'advanced-attention-llm-systems',
+          title: 'Advanced Attention & LLM Systems',
+          description: 'Staff+ interview questions on attention variants, LLM design decisions, AI agents, and RAG vs fine-tuning trade-offs.',
+          sections: [
+            {
+              id: 'interview-gqa-and-attention-variants',
+              title: 'Grouped Query Attention & Others',
+              content: `**Staff+ Interview Question:** "Compare Multi-Head Attention, Multi-Query Attention, and Grouped Query Attention. When would you use each, and why was GQA introduced?"
+
+#### Attention Variants Overview
+
+| Variant | Key-Value heads | Query heads | Memory (KV cache) | Used By |
+|---------|----------------|-------------|-------------------|---------|
+| **MHA** (Multi-Head) | h (full) | h (full) | Highest | BERT, original Transformer |
+| **MQA** (Multi-Query) | 1 | h | ~1/h of MHA | PaLM, Falcon |
+| **GQA** (Grouped Query) | g (1 < g < h) | h | ~g/h of MHA | LLaMA 2/3, Mistral, Gemma |
+| **MLA** (Multi-head Latent) | Compressed latent | h | ~5-10% of MHA | DeepSeek-V2 |
+
+#### Multi-Head Attention (MHA)
+
+Each attention head has its own Q, K, V projections:
+
+\`\`\`
+Q_i = X \u00b7 W_Q^i,  K_i = X \u00b7 W_K^i,  V_i = X \u00b7 W_V^i  for i = 1..h
+\`\`\`
+
+- **KV cache memory:** h \u00d7 n_layers \u00d7 d_head \u00d7 seq_len \u00d7 2 bytes
+- **Pro:** Maximum expressivity — each head can specialize
+- **Con:** KV cache is proportional to number of heads. At 70B scale with 64+ heads, this is hundreds of GB.
+
+#### Multi-Query Attention (MQA)
+
+All query heads share a single K,V projection:
+
+\`\`\`
+K = X \u00b7 W_K,  V = X \u00b7 W_V  (shared across all heads)
+Q_i = X \u00b7 W_Q^i  (unique per head)
+\`\`\`
+
+- **KV cache memory:** ~1/h of MHA. For 64 heads: 1/64 = 1.5% of MHA.
+- **Pro:** Dramatic memory savings, faster decoding
+- **Con:** Quality degradation at small model scales. The single K,V projection becomes a bottleneck — all heads must agree on what keys/values to use.
+
+#### Grouped Query Attention (GQA)
+
+A middle ground: h query heads are divided into g groups, each sharing a K,V projection:
+
+\`\`\`
+K_j = X \u00b7 W_K^j,  V_j = X \u00b7 W_V^j  for j = 1..g groups
+Q_i = X \u00b7 W_Q^i  for i = 1..h query heads
+\`\`\`
+
+- **KV cache memory:** g/h of MHA. With h=64, g=8: 12.5% of MHA.
+- **Pro:** Approaches MHA quality with MQA-level efficiency
+- **Con:** Small quality gap vs MHA at the largest scales
+
+**Staff+ answer differentiator:** The evolution MHA \u2192 MQA \u2192 GQA is a textbook example of **the compute-memory trade-off curve**. As models grew to 70B+, the KV cache became the dominant memory consumer. MQA was the first fix (aggressive), GQA is the refined balance. The key insight: not all attention heads need unique K,V — many heads learn redundant patterns. GQA exploits this redundancy.
+
+#### Multi-head Latent Attention (MLA)
+
+DeepSeek's MLA compresses K,V into a low-rank latent space:
+
+\`\`\`
+k_i = W_UK \u00b7 W_DK \u00b7 h_i  (compressed key via down+up projection)
+v_i = W_UV \u00b7 W_DV \u00b7 h_i  (compressed value)
+\`\`\`
+
+- **KV cache memory:** ~5-10% of MHA — only the latent vectors are cached
+- **Pro:** Massive memory savings without quality loss
+- **Con:** Extra compute for compression/decompression
+
+#### Decision Framework
+
+| Scenario | Recommended | Rationale |
+|----------|-------------|-----------|
+| Training from scratch, unlimited memory | MHA | Maximum expressivity |
+| Serving at scale, memory-constrained | GQA (g=8) | Best quality-efficiency trade-off |
+| Extreme memory constraint, large model | MQA | May accept minor quality loss |
+| Ultra-long context (>128K), cost-sensitive | MLA | Best memory efficiency |
+| Fine-tuning existing model | Match base variant | Architectural change requires pre-training |
+
+#### Follow-up Questions
+
+1. *"Why not use MQA for everything if it saves so much memory?"* — MQA shows quality degradation, especially for tasks requiring fine-grained attention patterns (e.g., coreference resolution, long-range dependencies). GQA recovers most of this quality.
+
+2. *"How do you choose the number of groups in GQA?"* — Empirically, 8 groups for 64 heads (ratio 8:1) works well across model sizes. LLaMA 2 uses 8 groups for 32 heads (4:1). The optimal ratio depends on model size and target quality.
+
+3. *"Is MLA always better than GQA?"* — Not if latency matters. MLA adds decompression on every attention step. For low-latency serving, GQA's simpler computation wins. MLA is optimal for memory-bound scenarios with relaxed latency requirements.
+
+**Cross-reference:** See Phase 2: [Self-Attention & Attention Variants](#self-attention) for a visual explanation of each variant.`
             },
             {
-              id: 'cost-optimization-decision-frameworks',
-              title: 'Cost Optimization & Decision Frameworks',
-              content: `#### Decision Framework: Prompt vs RAG vs Fine-tune vs Model Swap
+              id: 'interview-llms',
+              title: 'LLMs',
+              content: `**Staff+ Interview Question:** "Design an LLM-based system for X. Walk through model selection, architecture decisions, and scaling considerations."
 
-The first question a Staff+ engineer asks is not "how do I do this?" but "should I be doing this at all?"
+This is a classic **open-ended system design** question. The interviewer evaluates breadth (do you know the options?) and depth (can you justify trade-offs?).
 
-| Approach | Best for | Cost | Quality ceiling | Iteration speed |
-|----------|----------|------|----------------|-----------------|
-| **Prompt engineering** | Prototyping, simple tasks, frequent changes | ~$0/token (cheapest) | Model-imposed | Instant |
-| **RAG (retrieval)** | Knowledge-heavy, dynamic context | Embedding storage + prompt | Higher (can inject facts) | Hours |
-| **Fine-tuning (LoRA)** | Style, format, domain adaptation | Training + inference | Highest for narrow tasks | Days |
-| **Model swap** | Capability gap, new modality | No change (just API call) | Highest overall | Hours |
+#### System Design Framework
 
-**Guidelines:**
-- **Prototype with prompting** — validate the task is solvable before investing in fine-tuning or RAG.
-- **Add RAG when the prompt needs facts the model doesn't know** — but measure retrieval precision first.
-- **Fine-tune when the model can't follow format or style** — no amount of few-shot fixes a model that refuses JSON.
-- **Switch models when base capability isn't there** — if GPT-4 can't reason about your domain, try Claude.
+**Step 1: Define constraints**
+| Constraint | Questions to ask |
+|------------|-----------------|
+| **Latency** | Real-time (<500ms) or batch (minutes)? |
+| **Throughput** | 100 QPS or 10M QPS? |
+| **Cost budget** | $0.001/query or $0.10/query? |
+| **Quality bar** | 90% accuracy or 99.9%? |
+| **Data residency** | Can data leave the VPC? |
+| **Context length** | 4K tokens or 200K tokens? |
 
-#### Cost Per Query by Approach
+**Step 2: Model selection decision tree**
 
-| Approach | Cost per 1K queries | Notes |
-|----------|-------------------|-------|
-| Simple prompt (4K context) | $0.03-0.30 | GPT-4o-mini / Claude Haiku |
-| Complex prompt (32K context) | $0.60-3.00 | GPT-4 / Claude Sonnet |
-| RAG (32K context + retrieval) | $0.70-3.50 | Embedding + DB cost extra |
-| Fine-tuned model (self-hosted) | $0.01-0.10 | GPU amortized cost |
-| Reasoning model (o1, long CoT) | $3.00-15.00 | 10-100x thinking tokens |
+1. **Can a 7B model suffice?** Test with your specific task. If accuracy is within 5% of GPT-4, use 7B. Cost saving: 100x.
+2. **Do you need generation or just understanding?** Understanding-only: encoder-only (BERT) is cheaper and faster.
+3. **Is retrieval needed?** If the model needs facts beyond training data, add RAG — not fine-tuning.
+4. **Latency SLA?** If <100ms, use speculative decoding or a distilled model. If <50ms, consider on-device deployment.
+5. **Context >32K?** Use GQA-based models with FlashAttention. Consider sliding window if full context isn't needed.
 
-#### ROI Thinking
+**Step 3: Architecture decisions**
 
-| Investment | Effort | Typical ROI | When to do it |
-|------------|--------|-------------|---------------|
-| Basic prompt (1 hour) | Very low | High | Every task initially |
-| Few-shot collection (1 day) | Low | Medium | When zero-shot is 80%+ |
-| Regression suite (1 week) | Medium | High | Before production |
-| DSPy compilation (2 weeks) | High | Medium | When manual optimization plateaus |
-| Semantic cache (2-4 weeks) | High | High | Volume > 100K queries/month |
-| Fine-tuning (2-6 weeks) | Very high | Highest for style | When prompting hits ceiling |
+| Decision | Options | Trade-off |
+|----------|---------|-----------|
+| **Model hosting** | Self-hosted vs API | Cost vs control vs latency |
+| **Batching** | Dynamic batching vs continuous batching | Simplicity vs throughput |
+| **Quantization** | FP16 vs INT8 vs FP4 | Quality vs speed vs memory |
+| **Caching** | Exact vs semantic | Hit rate vs complexity |
+| **Routing** | Single model vs model router | Simplicity vs cost optimization |
 
-**Staff+ rule:** The most expensive approach is not always the one with the highest API cost. Fine-tuning costs engineer time upfront but reduces per-query cost at scale. Prompt engineering costs nothing upfront but every query pays full price. Model router + semantic cache is the highest-ROI production optimization at FAANG.`
+**Staff+ answer differentiator:** The best candidates don't just describe a solution — they **structure their thinking** around trade-offs. Use the "Two Options" framing: "There are two approaches to this problem. Option A is simpler but more expensive. Option B is cheaper but requires more infrastructure. Here's how I decide between them..."
+
+#### Scaling Considerations
+
+| Scale | Challenge | Solution |
+|-------|-----------|----------|
+| <1K QPD | None | Any setup works |
+| 1K-100K QPD | Cost | Model router + semantic cache |
+| 100K-1M QPD | Latency, throughput | Continuous batching, prefill optimization |
+| 1M-10M QPD | Cost, infra | Distillation, dedicated clusters |
+| >10M QPD | All of the above | Custom inference engine, ASIC deployment |
+
+#### Follow-up Questions
+
+1. *"When would you choose self-hosting over API?"* — Cost at scale (API cost per token \u00d7 volume exceeds GPU amortized cost), data residency requirements, latency predictability.
+
+2. *"How do you evaluate whether a 7B model is good enough?"* — Build a representative evaluation set (100-500 examples). Measure the target metric using the 7B model. If it achieves >90% of GPT-4's score on your task, the 7B model is sufficient.
+
+3. *"What metrics matter for production LLM systems?"* — Beyond accuracy: latency (p50, p95, p99), throughput (tokens/sec), cost per query, cache hit rate, error rate, refusal rate, hallucination rate, uptime.
+
+**Cross-reference:** See Phase 2: [Model Comparison](#model-comparison) for a detailed model selection framework.`
             },
             {
-              id: 'scaling-ai-across-orgs',
-              title: 'Scaling AI Across Orgs',
-              content: `At Staff+ level, you don't write prompts — you build systems that let your org write good prompts.
+              id: 'interview-ai-agent',
+              title: 'AI Agent',
+              content: `**Staff+ Interview Question:** "Design an AI agent system that can research a topic, write a report, and send it via email. Walk through the architecture."
 
-#### Prompt Libraries as Internal Packages
+#### Agent Architecture
 
-Treat prompts like shared modules. Each prompt has a version, owner, unit test suite, and documented metric. Teams import prompts from the library rather than writing from scratch. This prevents fragmentation (12 teams with 12 slightly different summarization prompts).
+<object data="assets/diagrams/agent-loop-diagram.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Agentic loop diagram showing ReAct pattern of thought, action, observation"></object>
 
-#### Style Guides & Conventions
+**Core components:**
+1. **Planner:** Decomposes the complex task into sub-tasks.
+2. **Tool executor:** Calls search, browse, code execution, email APIs.
+3. **Memory:** Conversation history, retrieved documents, intermediate results.
+4. **Controller:** Decides next action based on current state and plan.
 
-Standardize on:
-- Chat template format (system/user/assistant role conventions)
-- Output format specification style (JSON schema vs plain text)
-- Error handling patterns (what the model should say when it cannot answer)
-- Temperature and token limit conventions per task type
+#### The ReAct Loop
 
-#### PR Review for Prompts
+\`\`\`
+Cycle:
+  1. Thought: "What should I do next given current state?"
+  2. Action: call_tool("search", query="latest AI research 2026")
+  3. Observation: search results with titles and snippets
+  4. Thought: "I need more detail on this paper"
+  5. Action: call_tool("browse", url="https://...")
+  6. Observation: Full paper text
+  ... repeat until task complete
+  7. Final Answer: "Here is the report..."
+\`\`\`
 
-A prompt diff should be reviewable like a code diff. Each change shows:
-- Before/after of the system message and exemplars
-- Diff on the regression suite (metrics before/after)
-- Justification for the change
+#### Key Design Decisions
 
-#### Prompt Debt
+| Decision | Options | Trade-off |
+|----------|---------|-----------|
+| **Loop control** | Fixed steps vs dynamic | Predictability vs flexibility |
+| **Tool access** | All tools vs scoped per step | Speed vs safety |
+| **Memory strategy** | Sliding window vs summarization | Simplicity vs completeness |
+| **Error recovery** | Retry vs inform user | Autonomy vs safety |
+| **State management** | In-context vs external DB | Simplicity vs persistence |
 
-Like technical debt, prompt debt accumulates when quick iterations leave behind messy, untested prompts. Symptoms: exemplars that no longer match recent training data, redundant instructions accumulated over months, fragile prompts that break when the base model is updated. Schedule regular prompt audits to clean debt.
+#### Safety Architecture
 
-#### Org Models for AI Engineering
+**Staff+ answer differentiator:** The most important part of agent design is the **safety layer**. A raw agent with tool access can:
+- Send 1000 emails in a loop (no rate limit)
+- Execute destructive code
+- Expose internal data via tool outputs
 
-| Model | Description | Works for |
-|-------|-------------|-----------|
-| **Center of Excellence** | A small team of specialists builds libraries and tools for product teams | Larger orgs (100+ engineers) |
-| **Embedded expertise** | Prompt-capable engineers sit within each product team | Mid-size orgs, diverse use cases |
-| **Self-service + guardrails** | Every engineer writes prompts; platform team provides guardrails | Smaller teams, standardized use cases |
+**Safety checklist:**
+- [ ] Tool-level rate limits per agent and per user
+- [ ] Approval gates for destructive actions (send email, delete, modify)
+- [ ] Maximum step count (hard limit: 25 steps)
+- [ ] Token budget per agent turn (10K tokens)
+- [ ] Input/output guardrails on every LLM call
+- [ ] Human-in-the-loop for high-cost actions
+- [ ] Session isolation (one agent can't access another's state)
 
-**Staff+ perspective:** The ultimate goal is self-service + guardrails. Every engineer should be able to build AI features safely. Your job as Staff+ is to build the guardrails, libraries, and education that make this possible.`
+#### Multi-Agent Coordination
+
+| Pattern | Description | When to use |
+|---------|-------------|-------------|
+| **Orchestrator-Workers** | One planner delegates to specialized workers | Complex multi-step tasks with clear sub-tasks |
+| **Supervisor** | One agent reviews and approves others' outputs | Quality-critical outputs (code, financial reports) |
+| **Debate** | Multiple agents argue different positions | High-uncertainty decisions |
+| **Pipeline** | Sequential agents: A \u2192 B \u2192 C | Fixed workflows with well-defined handoffs |
+
+#### Follow-up Questions
+
+1. *"How do you prevent infinite loops?"* — Hard step limit (25), token budget per turn, loop detection (if last 5 actions are identical, stop), timeout per tool call.
+
+2. *"How do you evaluate agent quality?"* — Task completion rate, average steps to completion, tool call correctness, error recovery rate, hallucination rate in final output.
+
+3. *"When should you NOT use an agent?"* — When a simple RAG pipeline suffices, when deterministic rules work, when latency is critical (<100ms), when the cost of errors is unacceptable without human review.
+
+**Cross-reference:** See Phase 4: [AI Agents & Agentic AI](#ai-agents-and-agentic-ai) and [Multi-agent Systems](#multi-agent-systems) for deeper coverage.`
             },
             {
-              id: 'staff-plus-career-impact',
-              title: 'Staff+ Career & Impact',
-              content: `#### Staff+ Anti-Patterns
+              id: 'interview-rag-vs-finetuning',
+              title: 'RAG vs Fine Tuning',
+              content: `**Staff+ Interview Question:** "When would you use RAG vs fine-tuning vs prompting? Walk through your decision framework with concrete examples."
 
-1. **Over-engineering:** A 50-shot CoT with self-consistency when a 3-shot scores within 1%. Fix: benchmark the simplest approach first.
-2. **Premature optimization:** Building semantic caching before basic evaluation. Fix: establish baseline metrics first.
-3. **Cargo culting:** Adopting ReAct or DSPy because "that's what the papers use." Fix: A/B test before committing to any technique.
-4. **Ignoring the base model:** Optimizing a prompt for GPT-4 when switching to Claude-3 would fix the issue. Fix: try different models when stuck.
-5. **Evaluation blindness:** Optimizing one metric while regressing others. Fix: monitor a basket of metrics.
-6. **Prompt drift neglect:** A prompt that works today breaks next month because the base model updated. Fix: daily automated regression tests.
+#### The Decision Framework
 
-#### The Staff+ Mental Model
+<object data="assets/diagrams/decision-framework.svg" type="image/svg+xml" width="900" height="780" class="rounded-xl shadow-lg" aria-label="Model Decision Framework"></object>
 
-The context window is the working memory of an LLM system. Like CPU caches, it is expensive, limited, and should be treated as a scarce resource. The best Staff+ engineers are not those who can use the longest context — they are those who can get the best results with the shortest context.
+#### When Each Approach Wins
 
-**Key metrics a Staff+ engineer tracks:**
-- Effective context utilization ratio (used / claimed)
-- Cost per effective token (total cost / effective tokens used)
-- Context waste ratio (tokens sent that don't contribute to output)
-- Retrieval precision at different context fill levels
-- Latency p99 as a function of context length
+| Scenario | Recommended | Rationale |
+|----------|-------------|-----------|
+| Answer needs up-to-date information | RAG | Fine-tuning can't add new knowledge |
+| Model refuses structured output format | Fine-tuning | Prompt engineering hits a ceiling |
+| Simple classification or extraction | Prompting (few-shot) | Zero infrastructure cost |
+| Domain-specific terminology | RAG first, fine-tune if needed | RAG is cheaper and faster |
+| Need model to learn a new style/tone | Fine-tuning (LoRA) | Prompting isn't consistent enough |
+| Prototyping a new feature | Prompting | Fastest iteration, validate before investing |
+| User data can't leave the VPC | Fine-tuning (self-hosted) | RAG with local embedding is also viable |
 
-#### Career Progression for AI Engineers
+#### The Knowledge vs Behavior Distinction
 
-1. Learn prompting fundamentals and tooling.
-2. Build eval frameworks and automate regression testing.
-3. Design prompt libraries and style guides.
-4. Architect multi-prompt systems (routing, chaining, agents).
-5. Drive org-level strategy: when to build, buy, or fine-tune.
+**Staff+ answer differentiator:** The single most important distinction is between **knowledge** and **behavior**:
 
-**The Staff+ engineer's ultimate value** is not writing the best prompt — it is building the system and culture where every prompt is well-written, well-tested, and well-monitored.
+| Concern | What it affects | Best approach |
+|---------|----------------|---------------|
+| **Knowledge** | Facts, data, documents | RAG |
+| **Behavior** | Format, style, tone, refusal patterns | Fine-tuning |
+| **Both** | Domain expertise + domain-specific format | RAG + fine-tuning |
 
-#### Key Takeaways
+**Why this matters:** RAG injects knowledge at inference time — it's always fresh, always controllable. Fine-tuning embeds knowledge into weights — it's static, can become stale, and is hard to audit. **Never fine-tune to add knowledge that changes over time.**
 
-1. **Production engineering trumps model choice** — Prompt engineering, RAG, caching, batching, and evaluation framework have more impact than picking between GPT-4 and Claude-3 for a given task.
-2. **Align how you evaluate with how you deploy** — If your evaluation uses GPT-4 as judge but your production system uses GPT-4o-mini, your eval metrics won't match production.
-3. **Investment Type Matters** — The cost of computational resources (inference, retrieval) differs fundamentally from the cost of engineering time (prompt optimization, fine-tuning, eval framework). Staff+ engineers optimize for total system cost, not just API cost.
-4. **Context windows will keep growing** — 2M tokens today, likely 10M+ in 2 years. But the principles remain: fit the right information into available space, measure what works, and build systems that degrade gracefully.
-5. **Your career grows with the systems you build** — The Staff+ engineer who builds evaluation frameworks, prompt libraries, and org-wide standards creates 100x more leverage than the one who writes the best individual prompt.`
+#### Cost Comparison
+
+| Aspect | Prompting | RAG | Fine-tuning |
+|--------|-----------|-----|-------------|
+| **Setup time** | Minutes | Days | Weeks |
+| **Cost (100K queries/month)** | ~$3,000 (GPT-4) | ~$3,500 (GPT-4 + embedding) | ~$500 (self-hosted 7B) |
+| **Knowledge freshness** | Static | Dynamic | Static |
+| **Eval complexity** | Simple | Medium | High |
+| **Iteration speed** | Instant | Hours | Days |
+| **Quality ceiling** | Model-limited | Higher (can inject facts) | Highest (task optimization) |
+
+#### Hybrid Approach
+
+In production, the best systems use all three:
+
+\`\`\`
+1. Model router classifies query type.
+2. For factual queries: RAG retrieves context \u2192 prompt with context \u2192 generate.
+3. For formatting/style: fine-tuned LoRA adapter is loaded \u2192 generate.
+4. For simple tasks: direct prompt with few-shot examples.
+\`\`\`
+
+**Staff+ rule:** Always exhaust prompting first. Then add RAG for knowledge. Only fine-tune when behavior changes are needed and prompting + RAG can't achieve the quality bar.
+
+#### Follow-up Questions
+
+1. *"Can RAG and fine-tuning be combined?"* — Yes, and this is the standard pattern in production. Fine-tune a model for your domain's style/format, then use RAG to inject knowledge at inference time.
+
+2. *"How do you evaluate whether RAG is working?"* — Measure end-to-end accuracy with and without retrieval. If retrieval improves accuracy by <5%, either your retrieval quality is poor or the task doesn't need external knowledge.
+
+3. *"What are the failure modes of RAG?"* — Missing relevant documents, retrieving irrelevant documents (misleads the model), chunking splitting important context across chunks, embedding model not capturing domain semantics.
+
+**Cross-reference:** See Phase 2: [Post-training & Alignment](#post-training) and Phase 3: [RAG Architecture & Patterns](#rag-architecture).`
+            }
+          ]
+        },
+
+        // ----- Guide 11: Engineering & Infrastructure -----
+        {
+          id: 'engineering-infrastructure',
+          title: 'Engineering & Infrastructure',
+          description: 'Staff+ interview questions on evaluation harnesses, tools ecosystem, engineering skills, and loop engineering patterns.',
+          sections: [
+            {
+              id: 'interview-harness-engineering',
+              title: 'Harness Engineering',
+              content: `**Staff+ Interview Question:** "Design an evaluation harness for an LLM system. What metrics do you track, how do you automate it, and how do you prevent regressions?"
+
+#### What is an Evaluation Harness?
+
+A **harness** is a systematic framework for measuring LLM output quality across a curated set of test cases. It is the LLM equivalent of a unit test suite — without it, you cannot know if your system is improving or degrading.
+
+#### Harness Components
+
+<object data="assets/diagrams/hallucination-types.svg" type="image/svg+xml" width="900" height="650" class="rounded-xl shadow-lg" aria-label="Hallucination Taxonomy diagram useful for evaluation design"></object>
+
+**1. Test Suite Design**
+
+| Test type | Purpose | Examples per suite | Refresh rate |
+|-----------|---------|-------------------|--------------|
+| **Canonical** | Core capability tests | 50-100 | Quarterly |
+| **Edge case** | Boundary conditions | 20-50 | Monthly |
+| **Adversarial** | Safety, injection, bias | 20-50 | Weekly |
+| **Regression** | Historical failures | 50-200 | Per release |
+| **A/B comparison** | Prompt vs prompt | 100-500 | Per experiment |
+
+**2. Metrics Pipeline**
+
+\`\`\`
+Raw output \u2192 metric computation \u2192 aggregation \u2192 dashboard
+                                \u2192 per-case scoring \u2192 regression detection
+\`\`\`
+
+| Metric type | Examples | Automation |
+|-------------|----------|------------|
+| **Exact/lexical** | Exact match, F1, BLEU, ROUGE | Fully automated |
+| **Semantic** | BERTScore, NLI consistency | Fully automated |
+| **LLM-as-judge** | 1-5 scale, rubric scoring | Partially automated (needs reference) |
+| **Human evaluation** | Side-by-side preference | Manual (gold standard) |
+| **Safety** | Toxicity score, refusal correctness | Fully automated |
+
+**3. Regression Detection**
+
+**Staff+ answer differentiator:** The critical insight is that **regressions are more important than improvements**. An improvement in one area that causes a regression in another is a net negative. Your harness must flag regressions automatically and block deployment.
+
+\`\`\`
+For each metric in the test suite:
+  new_score = evaluate(new_system, test_case)
+  if new_score < baseline_score - threshold:
+    flag as REGRESSION
+    require human review before deployment
+\`\`\`
+
+#### Production Harness Architecture
+
+\`\`\`
+[Test Cases] \u2192 [Parallel Executor] \u2192 [LLM API / Self-hosted]
+                                         \u2192 [Metric Computation]
+                                         \u2192 [Result Store (DB)]
+                                         \u2192 [Dashboard + Alerts]
+\`\`\`
+
+Key design decisions:
+- **Parallel execution** — Run all tests concurrently to minimize wall-clock time
+- **Deterministic mode** — Use temperature 0.0 for evaluation runs
+- **Cost budgeting** — 200 tests at 2K tokens each = 400K tokens per full run
+- **Caching** — Cache identical evaluations to avoid repeated API costs
+
+#### Common Pitfalls
+
+| Pitfall | Why it's a problem | Fix |
+|---------|--------------------|-----|
+| **Same model as judge** | Self-enhancement bias | Use a different model for evaluation |
+| **Static test set** | Test set becomes stale | Rotate 20% of cases monthly |
+| **Metric fixation** | Optimizing one metric regresses others | Monitor a basket of metrics |
+| **Leaky test set** | Tests appear in training data | Use held-out, never-before-seen examples |
+| **No baseline** | Can't tell if improving | Always compare against a fixed baseline |
+
+#### Follow-up Questions
+
+1. *"How many test cases do you need?"* — Start with 50-100 canonical cases. Add edge cases as you discover failures. A mature suite has 200-500 cases. Beyond 500, the marginal value of each additional case diminishes.
+
+2. *"How do you evaluate subjective quality (creativity, tone)?"* — Use LLM-as-judge with a structured rubric (1-5 scale per dimension). Calibrate against human judgments periodically.
+
+3. *"How do you handle the cost of running evaluations?"* — Prioritize tests: run the full suite nightly, a fast smoke test (20 cases) on every PR. Use cheaper models (GPT-4o-mini) for preliminary screening.
+
+**Cross-reference:** See Phase 3: [Evaluation & Benchmarks](#evaluation-benchmarks) and [A/B Testing](#red-teaming) for production evaluation strategies.`
+            },
+            {
+              id: 'interview-tools',
+              title: 'Tools',
+              content: `**Staff+ Interview Question:** "What tools belong in an LLM engineer's toolkit? How do you evaluate and choose between them?"
+
+#### The LLM Engineer's Tool Stack
+
+| Layer | Tools | Purpose |
+|-------|-------|---------|
+| **Prompting & IDE** | Continue.dev, Cursor, Claude Code, Aider | Write, test, and iterate prompts in an editor |
+| **Inference engines** | vLLM, TGI, TensorRT-LLM, llama.cpp | Serve models efficiently |
+| **RAG & retrieval** | Chroma, Weaviate, Qdrant, Pinecone, FAISS | Store and search embeddings |
+| **Evaluation** | LangSmith, Weights & Biases, MLflow, DeepEval | Track experiments, evaluate outputs |
+| **Agent frameworks** | LangGraph, CrewAI, AutoGen, Semantic Kernel | Build multi-step agent systems |
+| **Monitoring** | Langfuse, Helicone, Lunary, Datadog | Track latency, cost, quality in production |
+| **Guardrails** | NVIDIA NeMo Guardrails, Guardrails AI, LLM Guard | Safety, validation, content filtering |
+| **Fine-tuning** | Axolotl, Unsloth, Hugging Face TRL, LitGPT | Efficient fine-tuning (LoRA/QLoRA) |
+
+#### How to Evaluate a Tool
+
+**Staff+ answer differentiator:** Instead of listing tools, demonstrate your **evaluation framework**:
+
+**1. Solve the problem, not the tool.** Start with the problem, not "I want to use X." Define what you need, then find the tool that fits.
+
+**2. Evaluate on these dimensions:**
+| Dimension | What to ask |
+|-----------|-------------|
+| **Fit** | Does it solve the exact problem? (not 80%) |
+| **Ecosystem** | Does it integrate with your existing stack? |
+| **Community** | Is it actively maintained? GitHub stars < issues response time |
+| **Performance** | Does it meet your latency/throughput requirements? |
+| **Cost** | Open source vs SaaS pricing at your scale |
+| **Lock-in risk** | Can you migrate away if needed? |
+
+**3. Run a spike:** Before committing, build a small proof-of-concept with 2-3 candidates. Measure each against your specific use case.
+
+#### Production Tooling Anti-Patterns
+
+| Anti-pattern | Why it fails | Better approach |
+|-------------|--------------|-----------------|
+| **Over-tooling** | 10 tools for a 2-tool problem | Use the simplest stack that works |
+| **Bleeding edge** | Adopting v0.1.0 of a tool | Wait for maturity (>1000 GitHub stars, >6 months old) |
+| **Vendor lock-in** | Proprietary format with no migration path | Prefer open standards (OpenAI-compatible API, OpenTelemetry) |
+| **Not evaluating** | "Everyone uses X, so we should too" | Test against YOUR specific workload |
+
+#### Follow-up Questions
+
+1. *"Open source vs managed service?"* — Open source for control and cost at scale; managed for speed of setup and maintenance savings. The inflection point is typically $5K-10K/month in infrastructure costs.
+
+2. *"When do you build vs buy?"* — Build when the tool is core to your competitive advantage. Buy when it's a commodity (logging, monitoring, storage). Your vector database is a commodity; your RAG pipeline architecture is not.
+
+3. *"How do you stay current with new tools?"* — Follow key GitHub repos, attend LLM infra meetups, run monthly tech radars with your team. Allocate 10% of engineering time for tool evaluation spikes.
+
+**Cross-reference:** See Phase 3: [Vector Databases](#vector-databases) for DB-specific deep-dives and Phase 4: [MCP - Model Context Protocol](#mcp-model-context-protocol) for tool integration standards.`
+            },
+            {
+              id: 'interview-skills',
+              title: 'Skills',
+              content: `**Staff+ Interview Question:** "What skills differentiate a Staff+ AI engineer from a senior engineer? How do you develop them?"
+
+#### The Staff+ Skill Matrix
+
+| Skill | Senior | Staff+ |
+|-------|--------|--------|
+| **Prompt engineering** | Writes effective prompts | Designs org-wide prompt libraries and conventions |
+| **System design** | Designs single LLM systems | Designs multi-system architectures (routing, caching, fallbacks) |
+| **Evaluation** | Runs manual evaluations | Builds automated evaluation frameworks |
+| **Cost optimization** | Considers cost | Optimizes total system cost (not just API cost) |
+| **Debugging** | Debugs individual failures | Builds systems that surface and diagnose failures automatically |
+| **Risk management** | Identifies risks | Designs redundant/fallback architectures |
+| **Cross-functional** | Collaborates with PMs | Drives technical strategy across teams |
+| **Mentorship** | Mentors individuals | Lifts the technical level of the entire org |
+
+#### Technical Skills Deep-Dive
+
+**1. Deep Transformer understanding**
+- Not just "Transformers use attention" — understand the computation graph, memory layout, parallelism strategies
+- Can reason about O(n\u00b2) vs O(n) attention, KV cache sizing, FlashAttention tiling
+- Skilled: Analyzes model behavior from attention patterns
+- Staff+: Optimizes inference by tuning batch size, block size, cache strategy
+
+**2. Production engineering**
+- Build and operate infrastructure, not just call APIs
+- Understand GPU memory hierarchy, networking topology (NVLink vs InfiniBand), quantization
+- Skilled: Deploys a model on one GPU
+- Staff+: Designs a multi-GPU, multi-node inference cluster with auto-scaling
+
+**3. Evaluation science**
+- Treat evaluation as a statistical problem, not a checklist
+- Understand measurement error, statistical significance, test design
+- Skilled: Runs A/B tests
+- Staff+: Designs evaluation frameworks that catch regressions before they reach users
+
+**4. Data systems**
+- RAG is a data system — chunking, indexing, retrieval, ranking
+- Understand embedding quality, ANN index tuning, hybrid search
+- Skilled: Implements basic RAG
+- Staff+: Optimizes retrieval precision@k across document types and query distributions
+
+#### The Career Progression Path
+
+| Stage | Focus | Timeline | Key indicator |
+|-------|-------|----------|---------------|
+| **L3-L4** | Prompt engineering, tool proficiency | 0-2 years | Can ship a working LLM feature |
+| **L5 (Senior)** | System design, evaluation, reliability | 2-5 years | Can architect a production system |
+| **L6 (Staff)** | Org leverage, strategy, risk management | 5-8 years | Lifts team output, sets technical direction |
+| **L7 (Senior Staff)** | Cross-org influence, industry impact | 8+ years | Sets AI strategy across multiple teams |
+
+**Staff+ answer differentiator:** The promotion from Senior to Staff is not about writing better code. It's about **changing the leverage equation** — instead of producing more output yourself, you make everyone around you more effective. The question is never "can you build this?" but "can you build the system and culture where your team builds it well?"
+
+#### Follow-up Questions
+
+1. *"What's the most underrated skill for AI engineers?"* — **Debugging.** LLMs are non-deterministic, opaque, and fail in unpredictable ways. The ability to systematically isolate a failure to prompt, model, retrieval, or data is rare and valuable.
+
+2. *"How do you stay current in this fast-moving field?"* — Weekly paper reading, building side projects with new models, running internal tech demos. Focus on fundamentals (attention, optimization, evaluation) — they don't change as fast as the tools.
+
+3. *"What's the difference between a 10x engineer and a Staff+ engineer?"* — A 10x engineer produces 10x the output. A Staff+ engineer produces the same output but makes 10 other engineers 2x more effective. The multiplier is different.
+
+**Cross-reference:** See Phase 1-4 for foundational Staff+ perspectives throughout the curriculum.`
+            },
+            {
+              id: 'interview-loop-engineering',
+              title: 'Loop Engineering',
+              content: `**Staff+ Interview Question:** "Design a loop-based AI system — an agent that continuously monitors, decides, and acts. How do you ensure it's stable, efficient, and safe?"
+
+#### What is Loop Engineering?
+
+**Loop engineering** is the discipline of designing closed-loop LLM systems — agents that observe, reason, act, and repeat. This includes agents, feedback loops, self-improvement systems, and continuous evaluation pipelines.
+
+#### Types of Loops
+
+| Loop Type | Description | Example |
+|-----------|-------------|---------|
+| **ReAct loop** | Thought \u2192 Action \u2192 Observation \u2192 Repeat | Research agent |
+| **Self-reflection loop** | Generate \u2192 Evaluate \u2192 Improve \u2192 Repeat | Code generation with self-review |
+| **Feedback loop** | Output \u2192 User feedback \u2192 Update \u2192 Repeat | Continuous model improvement |
+| **Monitoring loop** | Metrics \u2192 Threshold check \u2192 Alert/Act \u2192 Repeat | Production quality monitoring |
+| **Training loop** | Data \u2192 Train \u2192 Eval \u2192 Deploy \u2192 Collect data \u2192 Repeat | Continuous fine-tuning pipeline |
+
+#### The Agent Loop (ReAct Deep-Dive)
+
+<object data="assets/diagrams/agent-loop-diagram.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Agentic loop diagram showing ReAct pattern"></object>
+
+**Control flow:**
+\`\`\`
+while steps < MAX_STEPS:
+    1. context = build_context(history, observations, plan)
+    2. response = llm.generate(context)
+    3. if response contains "Final Answer": return response
+    4. tool_call = parse_action(response)
+    5. observation = execute_tool(tool_call)
+    6. append(history, tool_call, observation)
+    7. steps++
+return "Failed: max steps exceeded"
+\`\`\`
+
+**Key stability concerns:**
+
+| Concern | Failure mode | Mitigation |
+|---------|-------------|------------|
+| **Infinite loops** | Agent repeats the same action | Max step limit, duplicate detection |
+| **Tool cascading** | One tool call triggers another in a chain | Tool call depth limit, timeout per call |
+| **Context explosion** | Each loop appends more tokens | Sliding window, summarization, token budgeting |
+| **Compounding errors** | Error in step 1 propagates to step 10 | Error recovery, retry logic, human handoff |
+| **Goal drift** | Agent slowly deviates from original goal | Periodic goal re-assertion in prompt |
+
+#### Self-Improvement Loops
+
+**Staff+ answer differentiator:** The most sophisticated loop pattern is the **meta-loop** — a system that improves its own performance over time:
+
+\`\`\`
+1. Run agent on user queries \u2192 collect outputs
+2. Evaluate outputs (quality, correctness, safety)
+3. Identify failure patterns
+4. Update prompt / exemplars / guardrails
+5. Deploy update
+6. Monitor for regressions
+7. Repeat
+\`\`\`
+
+This turns a static system into a continuously improving one. FAANG teams run these at scale — thousands of automated evaluations per day drive continuous prompt and model updates.
+
+#### Safety in Loops
+
+Every loop needs **circuit breakers**:
+
+| Circuit breaker | Trigger | Action |
+|----------------|---------|--------|
+| **Step limit** | Max 25 steps | Hard stop, return partial output |
+| **Token budget** | 20K tokens per loop | Stop, summarize context, resume |
+| **Duplicate action** | Same action 3 times in a row | Halt, flag for review |
+| **Error threshold** | 3 consecutive tool errors | Switch to safer mode or hand off to human |
+| **Score threshold** | Output quality < 0.5 | Regenerate or escalate |
+| **Time limit** | > 30 seconds elapsed | Timeout, return best effort |
+
+#### Loop Anti-Patterns
+
+| Anti-pattern | Why it fails | Fix |
+|-------------|--------------|-----|
+| **Unbounded loops** | No max steps, agent runs forever | Always set hard limits |
+| **No context management** | Context grows until OOM | Sliding window + summarization |
+| **Silent errors** | Tool call fails silently, agent continues with bad data | Always surface errors to the agent |
+| **Over-loops** | Agent loops when a single call would suffice | First try single-shot, escalate to loop only if needed |
+| **No observability** | Can't debug why the agent made a decision | Log every thought, action, and observation |
+
+#### Follow-up Questions
+
+1. *"How do you test loop behavior?"* — Unit test each tool independently. Integration test the loop with mock tools. Chaos test: inject errors, slow responses, and unexpected outputs. Run in canary before production.
+
+2. *"When is a loop needed vs a single LLM call?"* — Single call for any task that can be expressed in one prompt. Loop when: multi-step reasoning is required, information gathering needs iteration, external tool calls are sequential.
+
+3. *"How do you handle non-determinism in loops?"* — The same input can produce different loop paths. Log full traces, run statistical analysis on 100+ runs, measure distribution of steps taken, and monitor for high-variance behavior.
+
+**Cross-reference:** See Phase 4: [AI Agents & Agentic AI](#ai-agents-and-agentic-ai), [Function Calling](#function-calling), and [Multi-agent Systems](#multi-agent-systems) for advanced loop patterns.`
             }
           ]
         },
