@@ -215,6 +215,7 @@ body {
 
 .content-section {
   --content-gap: 2.5rem;
+  padding: 0 1.5rem;
 }
 
 .content-section h1 {
@@ -258,7 +259,6 @@ body {
   margin-bottom: 1rem;
   line-height: 1.75;
   color: var(--text-muted);
-  max-width: 72ch;
 }
 
 .content-section ul, .content-section ol {
