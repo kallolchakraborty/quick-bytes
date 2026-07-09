@@ -451,7 +451,7 @@ function initDocs() {
 
     // Build content HTML
     var html = '';
-    html += '<div class="content-section" data-guide-id="' + found.guide.id + '">';
+    html += '<div class="content-section" id="' + found.guide.id + '" data-guide-id="' + found.guide.id + '">';
     html += '<h1 tabindex="-1">' + found.guide.title + '</h1>';
     html += '<div class="flex flex-wrap items-center gap-2 text-xs theme-text-muted mb-6">';
     html += '<span class="px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 font-medium">' + found.phase.title + '</span>';
