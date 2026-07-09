@@ -160,7 +160,6 @@
     <rect x="340" y="495" width="220" height="40" rx="10" fill="var(--bg-default, #ffffff)" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2" filter="url(#shadow)"/>
     <text x="450" y="510" text-anchor="middle" font-size="9" font-weight="600" fill="#dc2626">Static Fallback Response</text>
     <text x="450" y="524" text-anchor="middle" font-size="8" fill="var(--text-muted, #64748b)">All tiers exhausted or all fail</text>
-    <text x="450" y="520" font-size="9" font-weight="600" fill="#dc2626"/>
     <!-- Retry/Tier reset arrow -->
     <path d="M 340 515 L 140 515 L 140 310" stroke="#e95420" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrow)" fill="none">
       <animate attributeName="stroke-dashoffset" values="0;-5" dur="0.8s" repeatCount="indefinite"/>
