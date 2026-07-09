@@ -2,13 +2,13 @@ const QUICK_BYTES = {
   site: {
     name: 'Quick Bytes',
     tagline: 'AI engineering \u2014 from foundations to FAANG Staff+.',
-    description: 'FAANG Staff+ AI interview prep and AI engineering references across 11 guides and 5 phases from foundations to expert.',
+    description: 'FAANG Staff+ AI interview prep and AI engineering references across 12 guides and 5 phases from foundations to expert.',
     url: 'https://kallolchakraborty.github.io/quick-bytes/',
     author: 'Kallol Chakraborty',
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 11,
+    guides: 12,
     phases: 5,
     platform: 'Engineering',
   },
@@ -1210,7 +1210,7 @@ For a model with 128K context:
       id: 'advanced-systems',
       title: 'Advanced Systems',
       level: 'Expert',
-      description: 'Design advanced AI systems: agents, tool use, context architecture, and memory. Prerequisites: Phase 3.',
+      description: 'Design advanced AI systems: agents, tool use, context architecture, memory, and orchestration. Prerequisites: Phase 3.',
       guides: [
         // ----- Guide 7: AI Agents & Tool Use -----
         {
@@ -1397,7 +1397,9 @@ Before MCP, every LLM integration required custom code: parse the LLM's output, 
 4. **Log all inter-agent messages.** For debugging: which agent said what to whom, what was the outcome.
 5. **Monitor agent costs.** Each agent call costs money. A multi-agent system with 5 agents and 3 rounds each = 15 LLM calls per task. At $0.01/call (GPT-4o-mini), that's $0.15/task.
 
-**Staff+ insight:** Multi-agent systems are a powerful pattern but often overused. Before building a multi-agent system, ask: can a single agent with good tool use solve this? If yes, use a single agent — it's cheaper, faster, and easier to debug. Add agents only when a single agent's quality ceiling is insufficient for the task.`
+**Staff+ insight:** Multi-agent systems are a powerful pattern but often overused. Before building a multi-agent system, ask: can a single agent with good tool use solve this? If yes, use a single agent — it's cheaper, faster, and easier to debug. Add agents only when a single agent's quality ceiling is insufficient for the task.
+
+**Cross-reference:** See Guide 9: [Orchestration & Workflow Systems](#orchestration-workflow-systems) for production-grade agent orchestration with handoff protocols, dynamic delegation, and human-in-the-loop patterns.`
             }
           ]
         },
@@ -1556,6 +1558,1020 @@ Before MCP, every LLM integration required custom code: parse the LLM's output, 
 **Staff+ production rule:** Multi-modal queries are expensive. An image costs 256 tokens + ViT forward pass. A video minute costs more than an entire text document. For production systems, always estimate the token budget of multi-modal inputs before sending. Use text-only fallbacks when visual information isn't critical to the task.`
             }
           ]
+        },
+
+        // ----- Guide 9: Orchestration & Workflow Systems -----
+        {
+          id: 'orchestration-workflow-systems',
+          title: 'Orchestration & Workflow Systems',
+          description: 'FAANG-level deep dive into orchestrating AI systems: orchestration hierarchy, workflow DAGs, agent and model orchestration, GPU resource management, cost-aware routing, feedback flywheels, and model governance lifecycle.',
+          sections: [
+            {
+              id: 'what-is-orchestration',
+              title: 'What is Orchestration?',
+              content: `**Orchestration** is the coordinated execution of multiple AI components — models, agents, tools, data pipelines, and compute resources — to achieve a complex goal reliably, cost-effectively, and at scale. At FAANG, orchestration is the invisible layer that turns individual AI capabilities into production systems.
+
+#### The Orchestration Hierarchy
+
+Orchestration operates at multiple layers, each delegating to the one below:
+
+<object data="assets/diagrams/orchestration-stack.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="AI Orchestration Stack diagram showing six layers from task to governance"></object>
+
+| Layer | Responsibility | Example |
+|-------|----------------|---------|
+| **Task Orchestration** | Decompose goals into sub-tasks, resolve dependencies | Plan-then-execute agent |
+| **Workflow Orchestration** | Execute DAGs as state machines, handle retries | Temporal, Airflow, Prefect |
+| **Agent Orchestration** | Route between agents, handoff protocols, HITL | LangGraph, CrewAI |
+| **Model Orchestration** | Route queries to optimal model, cascading fallbacks | Model router, fallback chain |
+| **Resource Orchestration** | Schedule GPU/TPU, elastic scaling, preemption | K8s + GPU operator, Slurm |
+| **Governance** | Audit, compliance, model registry, approval gates | MLflow, Model registry |
+
+#### Orchestration vs Choreography
+
+| Aspect | Orchestration | Choreography |
+|--------|---------------|--------------|
+| **Control** | Central coordinator | Distributed, no single point |
+| **Visibility** | Full workflow view | Partial, per-service view |
+| **Coupling** | Tighter — participants depend on coordinator | Looser — event-driven |
+| **Failure handling** | Centralized retry, rollback, compensation | Distributed sagas |
+| **Best for** | Complex multi-step AI workflows | Simple event chains |
+
+**Staff+ insight:** "The best orchestration is the one you don't need. At Google, we spent more engineering time removing orchestration layers than adding them. Every layer adds latency, cost, and failure surface. Add orchestration only when the coordination complexity exceeds the orchestration tax."
+
+#### The Coordination Tax
+
+Every orchestration layer introduces:
+- **Latency overhead:** 5–50ms per orchestration decision
+- **Cost overhead:** 2–10% of total inference cost for coordination
+- **Failure surface:** The orchestrator itself can fail
+- **Debugging complexity:** Non-deterministic execution paths
+
+**Staff+ production rule:** Before adding an orchestration layer, measure the coordination complexity. If you have fewer than 3 components to coordinate, a simple script or direct API calls is cheaper and more reliable. Add orchestration when you hit 5+ components or need cross-component recovery.`,
+            },
+            {
+              id: 'workflow-orchestration',
+              title: 'Workflow Orchestration',
+              content: `**Workflow orchestration** manages the execution of multi-step, dependency-ordered pipelines as reliable state machines. At FAANG, workflows are not scripts — they are durable, idempotent, and recoverable from any intermediate state.
+
+#### Core Patterns
+
+Workflows are modeled as **Directed Acyclic Graphs (DAGs)** where each node is a state machine:
+
+<object data="assets/diagrams/workflow-dag-state-machine.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Workflow DAG and state machine diagram showing execution flow"></object>
+
+| Pattern | Description | FAANG Example |
+|---------|-------------|---------------|
+| **Chained** | Sequential steps, one after another | Data ingest → embed → index |
+| **Fan-out** | Run N parallel tasks, wait for all | Parallel model evaluation |
+| **Fan-in** | Collect results from N parallel tasks | Ensemble scoring |
+| **Conditional** | Branch based on step output | If confidence < T → escalate |
+| **Sub-workflow** | Compose workflows from other workflows | Nested agent calls |
+| **Human gate** | Pause workflow until human approves | Approval step in governance |
+
+#### State Machine for Each Node
+
+Every workflow node transitions through: \`Pending → Running → Completed\` or \`Failed\`. Failed nodes retry with exponential backoff up to a limit, then move to a dead letter queue for manual review.
+
+| Property | Requirement | Why |
+|----------|-------------|-----|
+| **Idempotency** | Running the same step twice produces the same result | Recovery after crash |
+| **Determinism** | Same input + same state = same output | Debuggable replay |
+| **Durability** | Workflow survives process restarts | Reliability at scale |
+
+#### FAANG Workflow Engines
+
+| Engine | Type | Used At | Key Strength |
+|--------|------|---------|--------------|
+| **Temporal / Cadence** | Workflow-as-code SDK | Uber, Netflix, Snap | Deterministic replay, long-running workflows |
+| **Airflow** | DAG-as-config (Python) | Airbnb, Lyft | Rich ecosystem, scheduling |
+| **Prefect** | DAG-as-code (Python) | FAANG-adjacent | Native async, cloud-native |
+| **Dagster** | Asset-based DAGs | Data-intensive ML | Data lineage, software-defined assets |
+| **AWS Step Functions** | Serverless state machine | Amazon, AWS users | Native cloud integration |
+
+**Staff+ insight:** "At Uber, Temporal (internally Cadence) was the backbone of our AI platform. Every model training pipeline, every A/B experiment, every deployment workflow ran on Temporal. The deterministic replay feature was indispensable — when a workflow failed in production, we could replay it locally with the exact same state to debug. This single feature saved us months of debugging time."
+
+#### Deterministic Replay in Detail
+
+The key insight of workflow-as-code engines: your workflow function must be deterministic. Nondeterministic operations (API calls, random numbers, time) are wrapped in activities. The engine records the activity results and replays them during recovery or debugging.
+
+\`\`\`text
+def my_workflow(input):
+    result_a = execute_activity(search_vector_db, input)   # recorded
+    result_b = execute_activity(llm_call, result_a)         # recorded
+    result_c = execute_activity(format_output, result_b)    # recorded
+    return result_c
+\`\`\`
+
+During replay: the engine skips the activities and returns the recorded results. This makes debugging deterministic even for non-deterministic systems.
+
+**Cross-reference:** See [Error Handling & Resilience](#error-handling-resilience) for retry policies and circuit breakers in workflows.`,
+            },
+            {
+              id: 'agent-orchestration',
+              title: 'Agent Orchestration',
+              content: `**Agent orchestration** coordinates multiple AI agents working together. While Guide 7 covers multi-agent patterns (Orchestrator-Workers, Supervisor, Debate, Pipeline, Swarm), this section focuses on the production orchestration concerns: dynamic delegation, handoff protocols, and human-in-the-loop integration.
+
+#### Beyond Static Multi-Agent Patterns
+
+The patterns in Guide 7 assume fixed roles. Production agent orchestration requires dynamic coordination:
+
+| Capability | Static Pattern | Dynamic Orchestration |
+|------------|---------------|----------------------|
+| **Agent selection** | Pre-defined | Runtime routing based on task classification |
+| **Tool assignment** | Hard-coded per agent | Delegation graph: which tool for which task |
+| **Handoff** | Fixed A→B→C | Contextual routing based on partial results |
+| **Scale** | Fixed agent pool | Elastic: spawn agents per task, terminate on completion |
+
+#### Delegation Graph
+
+A delegation graph defines which agent can delegate to which, and under what conditions:
+
+\`\`\`text
+            Router Agent
+           /      |      \\
+     Search    Code     Analysis
+     Agent     Agent      Agent
+        \       |        /
+        Synthesis Agent
+\`\`\`
+
+Each edge has a condition: delegate only if the subtask matches the agent's capability and the agent's current load is below threshold.
+
+#### Agent Handoff Protocols
+
+When Agent A determines Agent B should handle the next step:
+
+| Handoff Type | Description | When to Use |
+|-------------|-------------|-------------|
+| **Full handoff** | A transfers full context to B, A terminates | Clear task boundary |
+| **Delegation with monitoring** | A delegates subtask to B, monitors result | A needs to synthesize results |
+| **Escalation** | A cannot complete → escalates to B (more capable) | Low-confidence detection |
+| **Parallel delegation** | A delegates to B and C simultaneously | Independent sub-tasks |
+
+#### Handoff Context Schema
+
+Structured handoff messages prevent information loss between agents:
+
+\`\`\`json
+{
+  "from_agent": "router-v1",
+  "to_agent": "search-v2",
+  "task_id": "task-20260709-001",
+  "original_query": "Find Q3 earnings for tech companies",
+  "context": {
+    "already_found": ["AAPL Q3 2025", "GOOG Q3 2025"],
+    "constraints": { "timeout_ms": 30000, "max_results": 5 }
+  },
+  "deadline": "2026-07-09T12:00:00Z",
+  "escalation_path": ["search-v2", "search-v3-mega", "human-review"]
+}
+\`\`\`
+
+#### Human-in-the-Loop Orchestration
+
+HITL is not an afterthought — it's a first-class orchestration pattern:
+
+| Pattern | When to Trigger | Mechanism |
+|---------|----------------|-----------|
+| **Approval gate** | Before destructive action (send email, delete) | Pause workflow, notify human, wait for approve/reject |
+| **Escalation** | Agent confidence < threshold | Route to human with full context and suggested action |
+| **Review queue** | Batch review of low-confidence decisions | Queue with priority, SLA, and assignment |
+| **Exception handler** | All automated paths exhausted | Human takes over the workflow state |
+| **Shadow review** | Random sample for quality monitoring | Human reviews in parallel, output not served |
+
+**Staff+ production rule:** "Design HITL as a fallback, not a crutch. If your human-in-the-loop rate exceeds 5% of production traffic, your agents aren't good enough — fix the agents, don't grow the human team. At Uber, we targeted &lt;1% escalation rate for our AI agents."
+
+**Cross-reference:** See [Multi-agent Systems](#multi-agent-systems) in Guide 7 for foundational patterns. See [Task Decomposition & Planning](#task-decomposition-planning) for how tasks are split across agents.`,
+            },
+            {
+              id: 'model-orchestration',
+              title: 'Model Orchestration & Routing',
+              content: `**Model orchestration** routes queries to the optimal model given cost, quality, and latency constraints. At FAANG, no single model serves all traffic — a router selects the right model for each request.
+
+#### Model Router Architecture
+
+The model router sits between the application and the model fleet. It classifies each query and routes to the appropriate tier:
+
+<object data="assets/diagrams/model-cost-router.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="650" aria-label="Model and cost router diagram showing decision tree and fallback chains"></object>
+
+#### Routing Dimensions
+
+| Dimension | What it measures | Example policy |
+|-----------|-----------------|----------------|
+| **Semantic** | Query complexity, domain, intent | Math problem → reasoning model, creative writing → instruct model |
+| **Cost** | Budget per query/user/tenant | Free tier → 7B, premium → 70B |
+| **Latency** | SLA requirements | &lt;100ms → distilled model, &lt;500ms → 70B, no limit → 405B |
+| **Quality** | Accuracy requirements | Casual → fast, medical/legal → most accurate |
+| **Availability** | Which models are healthy | If 70B down → fallback to 7B, log incident |
+
+#### Cascading
+
+Cascading tries the cheapest adequate model first, escalates only when needed:
+
+\`\`\`text
+For each query:
+  1. Try Tier 1 (7B, $0.0001)
+  2. Check confidence ≥ 0.9 → deliver
+  3. If confidence < 0.9 → try Tier 2 (70B, $0.001)
+  4. Check confidence ≥ 0.95 → deliver
+  5. If confidence < 0.95 → try Tier 3 (405B MoE, $0.01)
+  6. Deliver result (no confidence check — best effort)
+\`\`\`
+
+**Cost impact:** At 10M queries/month, cascading routes 70% to Tier 1, 25% to Tier 2, 5% to Tier 3. Total cost = $3,250 vs $10,000 for routing everything to Tier 3. Saving: 67.5%.
+
+#### Fallback Chains
+
+| Scenario | Primary | Fallback 1 | Fallback 2 | Ultimate |
+|----------|---------|------------|------------|----------|
+| Model error | 70B model | 7B model (lower quality) | Cached response | "Service unavailable" |
+| Timeout | Fast model (200ms) | Fast fallback (100ms cutoff) | Static response | Return partial results |
+| Safety block | Guardrail-passing output | Paraphrased with safety filter | Truncated safe version | "I can't answer that" |
+
+#### Model A/B Testing at Scale
+
+| Stage | Traffic Split | Duration | Decision Criteria |
+|-------|--------------|----------|-------------------|
+| Shadow | 100% shadow (0% user-facing) | 24h | No errors, latency OK |
+| Canary 1 | 1% model B / 99% baseline | 4h | Quality ≥ baseline, latency within 10% |
+| Canary 2 | 5% B / 95% baseline | 12h | Statistical significance (p < 0.05) |
+| Canary 3 | 20% B / 80% baseline | 24h | Business metrics improve |
+| Rollout | 100% B | — | Monitor for 72h, reverts if regression |
+
+#### Prompt Orchestration
+
+Model orchestration also includes prompt management:
+
+\`\`\`json
+{
+  "prompt_id": "summarization-v3",
+  "version": 3,
+  "template": "Summarize the following in {style} style: {text}",
+  "model": "gpt-4o-mini",
+  "parameters": { "temperature": 0.3, "max_tokens": 200 },
+  "a/b_test": { "variant": "control", "metrics": ["user_rating", "completion"] }
+}
+\`\`\`
+
+**Staff+ production rule:** "A model router without cost tracking is flying blind. Every routing decision should be logged with cost, latency, model ID, and cascade depth. Run weekly cost reviews — a 2% improvement in routing efficiency at FAANG scale saves millions annually."
+
+**Cross-reference:** See [Model Orchestration](#cost-orchestration) for cost-aware routing. See [Error Handling & Resilience](#error-handling-resilience) for circuit breakers on model endpoints.`,
+            },
+            {
+              id: 'cost-orchestration',
+              title: 'Cost Orchestration',
+              content: `**Cost orchestration** is the practice of making every orchestration decision cost-aware. At FAANG, cost is a first-class correctness metric — systems that ignore cost don't ship to production.
+
+#### Cost-Aware Routing
+
+A model router can optimize for cost while respecting constraints:
+
+| Strategy | How it works | Cost Savings | Trade-off |
+|----------|-------------|--------------|-----------|
+| **Semantic routing** | Classify query → select minimum viable model | 40-60% | Classification errors |
+| **Cascading** | Try cheap model, escalate on low confidence | 50-70% | Added latency per escalation |
+| **Budget caps** | Per-user/per-tenant budget, enforce at router | Variable | Some users get lower quality |
+| **Batch window** | Queue non-urgent requests, batch-process | 30-50% on API costs | Added latency |
+| **Model compression** | Route to distilled/quantized models | 60-80% | Quality degradation at edge cases |
+
+#### Cost-Quality Pareto Frontier
+
+Every model has a cost-quality point. The orchestration layer should select models along the Pareto frontier:
+
+\`\`\`text
+Model          Cost/1K tokens   Quality (MMLU)   Pareto optimal?
+7B quantized   $0.001           68.2%            Yes (cheapest adequate)
+7B full        $0.003           72.1%            No (7B MoE dominates)
+7B MoE         $0.004           74.5%            Yes
+70B            $0.02            82.3%            Yes
+70B MoE        $0.03            85.1%            No (405B dominates)
+405B           $0.10            89.5%            Yes (highest quality)
+\`\`\`
+
+If your quality threshold is 75%, the optimal choice is 7B MoE at $0.004/1K tokens. Any model above that line is overkill.
+
+#### Spot vs On-Demand Orchestration
+
+| Resource Type | Training | Inference | Batch |
+|--------------|----------|-----------|-------|
+| **On-demand GPU** | Experimentation, last-mile training | Production serving | — |
+| **Spot GPU** | Bulk training, hyperparameter search | — | Large batch jobs |
+| **Reserved GPU** | — | High-availability serving | — |
+
+Orchestration layer should: (1) prefer spot for training with checkpoint-resume, (2) reserve on-demand for inference with strict SLAs, (3) fallback from spot to on-demand when preempted.
+
+#### Cost Attribution
+
+Every orchestrated workflow should produce a cost trace:
+
+\`\`\`json
+{
+  "workflow_id": "rag-qa-20260709-abc123",
+  "total_cost": 0.00345,
+  "breakdown": {
+    "router_classification": { "model": "classifier-7b", "cost": 0.00002 },
+    "embedding": { "model": "embed-v3", "cost": 0.00003 },
+    "vector_search": { "engine": "pinecone", "cost": 0.00010 },
+    "llm_response": { "model": "gpt-4o-mini", "cost": 0.00120, "cascade_depth": 1 },
+    "guardrail": { "model": "guard-v2", "cost": 0.00010 }
+  },
+  "escalations": []  // not empty = cost optimization opportunity
+}
+\`\`\`
+
+**Staff+ insight:** "At Uber, a 5% improvement in model routing efficiency saved $12M/year in inference costs. Cost orchestration is not a 'nice to have' — it's a P0 feature. Every engineering team had a weekly cost review where they explained routing decisions that deviated from the optimal Pareto frontier."
+
+**Cross-reference:** See [Model Orchestration & Routing](#model-orchestration) for router architecture. See [Resource & GPU Orchestration](#resource-gpu-orchestration) for compute cost management.`,
+            },
+            {
+              id: 'resource-gpu-orchestration',
+              title: 'Resource & GPU Orchestration',
+              content: `**Resource orchestration** manages the allocation of expensive compute resources — GPUs, TPUs, and high-memory CPUs — to AI workloads. At FAANG, this is one of the most critical orchestration functions, often with dedicated teams and proprietary systems.
+
+#### The GPU Orchestration Problem
+
+| Challenge | Impact | FAANG Solution |
+|-----------|--------|----------------|
+| **GPU scarcity** | Models compete for limited GPUs | Priority queues, preemption, gang scheduling |
+| **Fragmentation** | Partial GPU utilization | Bin packing, GPU sharing (MIG, MPS) |
+| **Preemption** | Spot instances can be reclaimed at any time | Checkpoint-resume, priority-based eviction |
+| **Topology** | GPU-to-GPU communication speed varies | Topology-aware placement (NVLink > PCIe) |
+| **Cold start** | Loading models takes 30s–5min | Model warmers, keep-warm pools, pre-warming |
+
+#### Gang Scheduling
+
+For multi-GPU training jobs, all GPUs must be allocated simultaneously:
+
+\`\`\`text
+Job wants 8 GPUs.
+If only 6 are free:
+  ❌ Bad: Start job on 6, let it wait for 2 more
+  ✅ Good: Wait until all 8 are available, allocate atomically
+\`\`\`
+
+Gang scheduling prevents a job from starting with partial resources and blocking other jobs from using the remaining resources.
+
+#### Topology-Aware Placement
+
+GPU communication speed varies dramatically:
+
+| Interconnect | Bandwidth | Latency | Use Case |
+|-------------|-----------|---------|----------|
+| **NVLink** (same GPU) | 900 GB/s | &lt;1µs | Tensor parallelism |
+| **NVSwitch** (same node) | 600 GB/s | 2-5µs | Pipeline parallelism |
+| **InfiniBand** (cross-node) | 400 Gb/s | 10-50µs | Data parallelism |
+| **Ethernet** (cross-rack) | 100 Gb/s | 100-500µs | Gradients (slow) |
+
+**Placement rule:** Place tensor-parallel model shards on GPUs sharing NVLink. Place pipeline-parallel stages on the same node. Data parallelism can span nodes.
+
+#### Elastic Inference Serving
+
+| Strategy | How it works | Best for |
+|----------|-------------|----------|
+| **Reactive scaling** | Scale up when queue depth > threshold | Predictable traffic patterns |
+| **Predictive scaling** | Pre-scale based on historical patterns | Spiky traffic (e.g., trading hours) |
+| **Spot + on-demand mix** | Spot handles base load, on-demand absorbs spikes | Cost optimization with reliability |
+| **Model warmers** | Send dummy requests to keep models loaded | Cold start mitigation |
+
+#### Preemption Handling
+
+\`\`\`text
+Worker receives preemption notice (usually 2 min warning):
+  Step 1: Save checkpoint to fast storage (S3/GCS)
+  Step 2: Notify orchestrator "preempting, checkpoint at URL"
+  Step 3: Orchestrator requeues the job
+  Step 4: New worker loads checkpoint, resumes from last saved state
+\`\`\`
+
+**Staff+ production rule:** "Always design for preemption. At Google, we assumed every training job would be preempted at least once. Checkpoints every 5 minutes, atomic saves, and automatic recovery. The orchestration layer handled this transparently — individual teams didn't need to think about it."
+
+**Cross-reference:** See [Error Handling & Resilience](#error-handling-resilience) for timeout policies on GPU-bound operations.`,
+            },
+            {
+              id: 'task-decomposition-planning',
+              title: 'Task Decomposition & Planning',
+              content: `**Task decomposition** is the process of breaking a high-level goal into executable subtasks. At the orchestration level, this is how a complex request becomes a directed graph of work.
+
+#### Hierarchical Task Networks (HTN)
+
+HTNs decompose goals hierarchically until reaching atomic actions that tools or agents can execute:
+
+\`\`\`text
+Goal: Book a business trip to NYC
+  → Sub-task 1: Find flights (departure: SFO, arrival: JFK, dates: Jul 9-11)
+  → Sub-task 2: Find hotel (location: Manhattan, dates: Jul 9-11, budget: <$500/night)
+  → Sub-task 3: Book transportation to/from airports
+  → Sub-task 4: Reserve dinner (date: Jul 10, party: 2, cuisine: Italian)
+  → Sub-task 5: Update calendar with all events
+
+Sub-task 1 (Find flights):
+  → Atomic action 1: Search flight APIs (conditions: non-stop, window seat)
+  → Atomic action 2: Filter results by preference (price, airline, time)
+  → Atomic action 3: Present options to user
+  → Atomic action 4: Execute booking on user selection
+\`\`\`
+
+#### Plan-Then-Execute vs Iterative Replanning
+
+| Approach | How it works | Best for |
+|----------|-------------|----------|
+| **Plan-then-execute** | Generate full plan, validate, then execute | Predictable tasks with clear steps |
+| **Iterative replanning (ReAct)** | Plan one step, execute, observe, adapt | Tasks with uncertainty or dynamic state |
+| **Hybrid** | Generate initial plan, then re-plan on failure | Most production systems |
+
+**Staff+ interview design pattern:** The hybrid approach is most common in production. Generate a full plan for visibility and cost estimation, execute step by step, and re-plan only when a step fails or new information arrives.
+
+#### Plan Validation
+
+Before executing a plan, validate it:
+
+| Check | What it validates | Example failure |
+|-------|-------------------|-----------------|
+| **Feasibility** | All tools exist, all parameters are valid | Tool "search_flights" doesn't exist |
+| **Constraints** | Temporal ordering, resource limits | Calendaring before flights booked |
+| **Resource budget** | Total estimated cost within limit | Plan costs $0.50 but workflow budget is $0.10 |
+| **Safety** | No disallowed actions | No "delete_all_emails" action in plan |
+
+#### Re-Planning Triggers
+
+A plan may need to change during execution:
+
+| Trigger | What happens | Example |
+|---------|-------------|---------|
+| **Step failure** | Re-plan from current state | Flight search API times out → try alternative API |
+| **Constraint violation** | Re-plan with updated constraints | Desired flight is full → adjust date or route |
+| **New information** | Incorporate new data into remaining plan | User adds a +1 to dinner reservation |
+| **Context limit** | Summarize and continue with reduced context | Agent approaching 80% context window |
+| **Cost overrun** | Switch to cheaper execution path | Cascade depth exceeded → deliver current best |
+
+#### Plan Cost Estimation
+
+Estimating the cost of a plan before execution prevents surprise bills:
+
+\`\`\`text
+Plan cost = sum(cost(action) for action in plan)
+
+Each action cost = model_cost + tool_api_cost + GPU_time_cost
+
+Example:
+  search_flights → 2 calls × $0.001 (classifier) + $0.01 (API) = $0.012
+  book_flight → 1 call × $0.001 (classifier) + $0.02 (API) = $0.021
+  Total: $0.033
+
+Workflow budget: $0.05 → Plan approved ✓
+\`\`\`
+
+**Cross-reference:** See [AI Agents & Agentic AI](#ai-agents-and-agentic-ai) for the ReAct pattern. See [Cost Orchestration](#cost-orchestration) for budget management.`,
+            },
+            {
+              id: 'state-management-recovery',
+              title: 'State Management & Recovery',
+              content: `**State management** is the orchestration layer's most challenging responsibility. A workflow may run for hours or days, involve hundreds of steps, and must survive process restarts, network partitions, and partial failures.
+
+#### Where State Lives
+
+| State Type | Where Stored | Example |
+|------------|-------------|---------|
+| **Workflow state** | Orchestrator database (Temporal, Cadence) | Current step, variable values |
+| **Agent context** | Agent memory (vector store, KV cache) | Conversation history, tool results |
+| **Tool outputs** | Object store (S3, GCS) | Large documents, images, audio |
+| **Checkpoints** | Fast checkpoint storage (S3, NFS) | Model weights, optimizer state |
+| **Audit log** | Append-only log (Kafka, database) | Every state transition |
+
+#### Checkpointing Strategies
+
+| Strategy | Frequency | Storage | Recovery | Overhead |
+|----------|-----------|---------|----------|----------|
+| **Every step** | After each action | Large (10MB/checkpoint) | Instant (from exact state) | High |
+| **Every N steps** | After every 5 actions | Moderate | Replay N steps | Medium |
+| **On failure** | Only when error detected | Minimal | Restart entire workflow | Very high |
+| **Periodic** | Every T minutes | Moderate | Replay from last checkpoint | Medium |
+| **Sliding window** | Keep last K checkpoints | Bounded storage | Replay from K-checkpoints-back | Low |
+
+#### Idempotency Keys
+
+Every action that could produce side effects needs an idempotency key:
+
+\`\`\`json
+{
+  "action": "charge_payment",
+  "idempotency_key": "wf-20260709-001-step-4",
+  "parameters": { "amount": 49.99, "currency": "USD", "customer_id": "cust_123" }
+}
+\`\`\`
+
+**Exactly-once semantics:** If the orchestrator retries step 4 (e.g., due to a timeout), the payment service sees the same idempotency key and returns the previous result instead of charging again.
+
+#### Saga Pattern for Partial Failures
+
+When a workflow has compensating actions for each step:
+
+\`\`\`text
+Step 1: Book flight (compensation: cancel flight)
+Step 2: Book hotel (compensation: cancel hotel)
+Step 3: Charge card (compensation: refund)
+Step 4: Send confirmation email
+
+If step 3 fails:
+  → Execute compensations in reverse order:
+  → Cancel hotel (Step 2 compensation)
+  → Cancel flight (Step 1 compensation)
+  → Workflow enters "Failed, compensated" state
+\`\`\`
+
+| Compensation Pattern | Description | When to Use |
+|---------------------|-------------|-------------|
+| **Forward recovery** | Retry the failed step | Transient failures |
+| **Backward recovery (Saga)** | Undo completed steps, abort | Permanent failures with side effects |
+| **Hybrid** | Retry N times, then compensate | Default production pattern |
+
+**Staff+ production rule:** "If your workflow touches money, identity, or access control, it must use the Saga pattern with compensating transactions. Audit the compensation logic as carefully as the forward logic — bugs in compensation are harder to detect because they execute only on error paths."
+
+**Cross-reference:** See [Error Handling & Resilience](#error-handling-resilience) for retry strategies. See [Feedback Loop Orchestration](#feedback-loop-orchestration) for state management in continuous pipelines.`,
+            },
+            {
+              id: 'error-handling-resilience',
+              title: 'Error Handling & Resilience',
+              content: `**Error handling** is the orchestration layer's most important job. Systems fail constantly at FAANG scale — models time out, GPUs get preempted, APIs return 5xx, agents go into infinite loops. The orchestration layer must handle all of these gracefully.
+
+#### Retry Strategy Design
+
+| Strategy | Backoff Formula | Jitter | Best For |
+|----------|----------------|--------|----------|
+| **Fixed** | Wait 1s always | No | Known retry windows |
+| **Exponential** | 1s, 2s, 4s, 8s, 16s | No | Transient rate limits |
+| **Exponential + jitter** | 1s ± 0.5s, 2s ± 1s, 4s ± 2s | Yes | Production default |
+| **Immediate** | 0s wait | No | Idempotent operations |
+
+**Production retry policy:**
+
+\`\`\`text
+max_retries: 5
+initial_backoff: 1s
+backoff_multiplier: 2
+max_backoff: 60s
+jitter_factor: 0.3  // ±30% randomness
+retry_on: [TimeoutError, ServiceUnavailable, RateLimit]
+no_retry: [InvalidArgument, AuthenticationError, PermissionDenied]
+\`\`\`
+
+#### Circuit Breaker
+
+A circuit breaker prevents cascading failures by failing fast when a service is unhealthy:
+
+| State | Behavior | Transition |
+|-------|----------|------------|
+| **Closed** | Requests pass through normally | → Open: when error rate > 50% in 60s window |
+| **Open** | Requests fail immediately (fast reject) | → Half-Open: after 30s recovery timeout |
+| **Half-Open** | Send probe request to test service | → Closed: probe succeeds → Open: probe fails |
+
+**Staff+ production rule:** "Circuit breakers saved us at Uber when a single misconfigured model deployment started timing out across all workflows. Within 30 seconds, the circuit breaker opened and cut off traffic. Without it, the cascading timeouts would have taken down our entire AI platform."
+
+#### Timeout Hierarchy
+
+| Timeout Level | Typical Value | What Happens on Expiry |
+|---------------|---------------|------------------------|
+| **Per-tool call** | 10s | Retry or escalate |
+| **Per-agent step** | 30s | Escalate to supervisor |
+| **Per-workflow** | 5 min | Log failure, start compensation |
+| **Per-user session** | 15 min | Return partial results |
+| **End-to-end SLA** | 30s (sync), 1h (async) | Breach alert |
+
+#### Dead Letter Queue (DLQ)
+
+When all retries are exhausted, the failed work goes to a DLQ:
+
+\`\`\`text
+DLQ Entry:
+  workflow_id: wf-20260709-001
+  failed_step: "charge_payment" (retry 5/5)
+  error: "PaymentGatewayTimeout: upstream timeout after 30s"
+  system_state: { "flight_booked": true, "hotel_booked": true, "card_charged": false }
+  compensation_status: "ready"  // call cancel_flight + cancel_hotel
+\`\`\`
+
+DLQ monitoring: alert if DLQ depth > threshold (e.g., > 10 entries in 5 minutes). Manual review with ability to replay, skip, or force-complete.
+
+#### Partial Failure Handling
+
+Not all failures need to fail the entire workflow:
+
+| Scenario | Handling Strategy | Result |
+|----------|-------------------|--------|
+| One LLM call fails in a 10-call job | Skip that call, log error, continue | 9/10 results delivered |
+| Vector DB query times out | Return empty results, log incident | User sees fewer results |
+| Model router confidence check fails | Deliver best-effort result with disclaimer | Graceful degradation |
+| Agent loop timeout | Save partial state, notify user | "We're still working on it" |
+
+#### Bulkhead Isolation
+
+Separate tenants or workloads into isolated pools to prevent blast radius:
+
+\`\`\`text
+Bulkhead A: Free-tier users  | Max 10 concurrent workflows
+Bulkhead B: Premium users    | Max 100 concurrent workflows, priority scheduling
+Bulkhead C: Internal testing | Max 5 concurrent workflows
+\`\`\`
+
+If free-tier users overload the system, premium users are unaffected.
+
+**Cross-reference:** See [Workflow Orchestration](#workflow-orchestration) for retry in DAGs. See [Agent Orchestration](#agent-orchestration) for agent-specific error patterns.`,
+            },
+            {
+              id: 'feedback-loop-orchestration',
+              title: 'Feedback Loop Orchestration',
+              content: `**Feedback loop orchestration** — the data flywheel — is the continuous cycle of logging production data, evaluating model performance, retraining, validating, and deploying updated models. This is what separates static AI systems from self-improving AI platforms.
+
+#### The Data Flywheel
+
+<object data="assets/diagrams/feedback-flywheel.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="700" aria-label="Feedback loop data flywheel diagram showing production to evaluation to retraining to deployment"></object>
+
+#### Stage 1: Production Data Logging
+
+| What to Log | Why | Privacy Considerations |
+|-------------|-----|----------------------|
+| **Input query** | Understand user intent, detect drift | PII scrubbing, anonymization |
+| **Model output** | Evaluate quality, detect hallucinations | Content filtering before storage |
+| **Latency** | Monitor serving performance | No PII concern |
+| **Router decision** | Audit model selection, cascade depth | Metadata only |
+| **User feedback** | Thumbs up/down, ratings, corrections | Explicit consent needed |
+
+**Sampling strategies:** At FAANG scale, logging everything is impossible. Use stratified sampling: 100% of rare events, 1-10% of common events.
+
+#### Stage 2: Drift Detection → Retraining Trigger
+
+| Drift Type | What Changes | Detection Method | Action |
+|-----------|-------------|------------------|--------|
+| **Prediction drift** | Model output distribution shifts | KS test, JS divergence | Review, possibly retrain |
+| **Data drift** | Input distribution shifts | Population stability index (PSI) | Retrain on new data |
+| **Concept drift** | Input-output relationship changes | Monitor accuracy on held-out set | Urgent retrain, possible architecture change |
+
+**Automated threshold:**
+\`\`\`text
+if PSI > 0.2 or accuracy_drop > 5%:
+  trigger_retraining = true
+  priority = urgent
+  notify: ml-team + on-call
+\`\`\`
+
+#### Stage 3: Shadow Deployment & Validation
+
+Before a candidate model goes live, it runs in shadow mode:
+
+| Check | Method | Pass Criteria |
+|-------|--------|---------------|
+| **Offline eval** | Benchmark on held-out test sets | Accuracy ≥ baseline |
+| **Shadow comparison** | Run candidate alongside production, compare outputs | Agreement ≥ 95% |
+| **Latency benchmark** | Measure p50, p95, p99 latency | Within 10% of baseline |
+| **Resource usage** | GPU memory, CPU, API calls | Within budget allocation |
+| **Safety evaluation** | Run safety test suite | No regressions |
+
+#### Stage 4: Canary Analysis
+
+Automated statistical comparison between canary and baseline:
+
+\`\`\`text
+Metric: user_rating (1-5 scale)
+Baseline mean: 4.21 (n=100,000)
+Canary mean: 4.28 (n=2,000, 2% traffic)
+
+Two-sample t-test:
+  t-statistic: 2.31
+  p-value: 0.021 (< 0.05 ✓)
+  Effect size: 0.07 (small but significant)
+  Decision: PROMOTE
+
+Auto-rollback rules:
+  - If p95 latency increases > 20% → rollback immediately
+  - If error rate > 2x baseline → rollback immediately
+  - If any safety metric regresses → rollback immediately
+\`\`\`
+
+#### Stage 5: Continuous Evaluation Pipeline
+
+| Eval Frequency | What's Evaluated | Who Reviews |
+|---------------|------------------|-------------|
+| **Real-time** | Error rate, latency, throughput | Automated (SLO alerts) |
+| **Hourly** | Prediction drift, data drift | Automated (drift detection) |
+| **Daily** | Accuracy on production sample | ML team dashboard |
+| **Weekly** | Full offline eval suite | ML team review |
+| **Monthly** | Business metric impact | Product + ML stakeholders |
+
+**Staff+ insight:** "The companies that operationalize the feedback loop win. The ones that build models and leave them degrade lose. At Meta, every recommendation model was retrained within 24 hours of significant data drift detection. This was enforced by the orchestration layer — not by individual teams, who would inevitably deprioritize maintenance."
+
+**Cross-reference:** See [Model Lifecycle & Governance](#model-lifecycle-governance) for model promotion gates. See [Observability for Orchestration](#observability-orchestration) for monitoring feedback pipelines.`,
+            },
+            {
+              id: 'model-lifecycle-governance',
+              title: 'Model Lifecycle & Governance Orchestration',
+              content: `**Model lifecycle orchestration** manages models from development through production to retirement. At FAANG, this is enforced by the orchestration layer — manual processes don't scale and don't pass audits.
+
+#### The Model Staging Pipeline
+
+<object data="assets/diagrams/model-lifecycle-governance.svg" type="image/svg+xml" class="mx-auto my-6" width="900" height="600" aria-label="Model lifecycle governance pipeline showing dev to staging to canary to production"></object>
+
+#### Stage Promotion Gates
+
+| Gate | Checks Performed | Approver |
+|------|-----------------|----------|
+| **G1: Compliance** | Bias testing, safety evaluation, license check, data provenance | Automated + compliance team |
+| **G2: Performance** | Latency SLA, throughput, accuracy vs baseline, resource usage | ML engineering lead |
+| **G3: Sign-off** | Business metrics, stakeholder review, rollout plan | ML director + product manager |
+
+**Auto-promotion vs manual gates:** Low-risk models (e.g., content recommendations) can auto-promote through automated gates. High-risk models (healthcare, finance, hiring) require manual sign-off at every gate.
+
+#### Model Registry — Source of Truth
+
+The model registry holds all metadata about every model version:
+
+| Field | Example | Required |
+|-------|---------|----------|
+| **Model ID** | \`summarizer-v2.3.1-rc4\` | Yes |
+| **Status** | Canary, Production, Archived | Yes |
+| **Training data** | \`s3://training-data/v2-dataset-20260701.parquet\` | Yes |
+| **Evaluation metrics** | \`{ "rouge_l": 0.42, "bertscore": 0.91 }\` | Yes |
+| **Approval chain** | \`[compliance-pass, perf-pass, sign-off-user/mlang]\` | Yes |
+| **Deployment history** | \`[prod@2026-07-08T14:32Z, canary@2026-07-07T09:15Z]\` | Yes |
+| **Audit log** | \`[promote-v2.3.1-rc4 from staging to canary by agent-orch-system]\` | Immutable |
+
+#### Audit Trail Requirements
+
+Every model transition produces an immutable audit entry:
+
+\`\`\`json
+{
+  "timestamp": "2026-07-08T14:32:00Z",
+  "event": "model_promoted",
+  "model_id": "summarizer-v2.3.1-rc4",
+  "from_stage": "canary",
+  "to_stage": "production",
+  "initiator": "automated-canary-analysis",
+  "approval": { "type": "auto", "rules_passed": ["latency", "accuracy", "error_rate"] },
+  "previous_version": "summarizer-v2.2.0"
+}
+\`\`\`
+
+**Staff+ production rule:** "If your model governance is not enforced by the orchestration system, it doesn't exist. Manual compliance checklists fail at FAANG scale — people skip steps, forget to log, and pressure overrides process. Build the gates into the pipeline."
+
+#### Model Risk Tiering
+
+| Tier | Examples | Governance Requirements |
+|------|----------|------------------------|
+| **Tier 1: Low risk** | Content recommendations, language translation | Automated gates only |
+| **Tier 2: Medium risk** | Code generation, document summarization | Automated + peer review |
+| **Tier 3: High risk** | Healthcare diagnosis, financial advising | All gates + manual sign-off + external audit |
+| **Tier 4: Critical** | Autonomous driving, security screening | Full regulatory compliance + continuous monitoring |
+
+#### Rollback Automation
+
+A model in production can be rolled back automatically:
+
+| Trigger | Rollback Target | Time |
+|---------|----------------|------|
+| Error rate spike > 2x | Previous production version | &lt; 2 min |
+| Latency p99 > 5x baseline | Previous production version | &lt; 2 min |
+| Safety violation detected | Block traffic, escalate to human | Immediate |
+| Business metric regression &gt; 1% | Canary back to full baseline | &lt; 5 min |
+
+**Rollback is faster than fix-forward.** Have the previous version warm and ready. Practice rollbacks in production during low-traffic periods.
+
+**Cross-reference:** See [Feedback Loop Orchestration](#feedback-loop-orchestration) for the data flywheel that feeds model updates. See [Error Handling & Resilience](#error-handling-resilience) for rollback safety mechanisms.`,
+            },
+            {
+              id: 'observability-orchestration',
+              title: 'Observability for Orchestration',
+              content: `**Observability** for orchestration goes beyond standard monitoring. You need to trace decisions across agents, models, and infrastructure; understand cost per workflow; detect stuck or looping workflows; and debug non-deterministic execution.
+
+#### The Three Pillars Applied to Orchestration
+
+| Pillar | Standard | Orchestration-Specific |
+|--------|----------|------------------------|
+| **Logs** | Application logs | Workflow state transitions, routing decisions, agent thoughts |
+| **Metrics** | CPU, memory, latency | Steps-to-completion, cascade depth, cost per workflow |
+| **Traces** | Request tracing through microservices | Workflow-level trace across agents, models, APIs, GPUs |
+
+#### Distributed Tracing Across Async Workflows
+
+OpenTelemetry propagation through orchestrated workflows:
+
+\`\`\`text
+Trace: wf-20260709-001
+├── Span 1: router_classify (5ms)
+│   ├── Span 2: classify_query (3ms)
+│   └── Span 3: cost_check (2ms)
+├── Span 4: agent_search_delegate (15ms)
+│   ├── Span 5: agent_search_think (8ms)
+│   ├── Span 6: tool_call_search_api (50ms)
+│   └── Span 7: agent_search_observe (10ms)
+├── Span 8: agent_synthesize (20ms)
+│   ├── Span 9: llm_call (150ms)
+│   └── Span 10: guardrail_check (5ms)
+└── Span 11: deliver_response (2ms)
+
+Total: ~270ms  Cost: $0.0023
+\`\`\`
+
+#### Workflow-Level SLIs
+
+| SLI | Target | Alert Condition |
+|-----|--------|----------------|
+| **Success rate** | > 99.5% | < 99% over 5 min |
+| **Duration (p50)** | < 1s | > 2s over 5 min |
+| **Duration (p99)** | < 5s | > 10s over 5 min |
+| **Steps to completion** | < 10 | > 20 avg over 15 min |
+| **Cost per workflow** | < $0.01 | > $0.10 avg over 15 min |
+| **Escalation rate** | < 1% | > 5% over 1 hour |
+
+#### Stuck Workflow Detection
+
+A workflow that hasn't progressed past step N in T minutes is likely stuck:
+
+\`\`\`text
+Detection:
+  workflow.current_step = "agent_search_step"
+  last_state_change = 5 minutes ago
+  workflow.max_step_duration = 60 seconds
+  → STUCK WORKFLOW ALERT
+
+Resolution:
+  Step 1: Check if agent is in infinite loop (last 5 actions identical?)
+  Step 2: Kill the agent, preserve state
+  Step 3: Resume from last checkpoint or restart the step
+  Step 4: Log the incident with full trace for root cause analysis
+\`\`\`
+
+#### Cost-Per-Workflow Tracing
+
+Every workflow produces a cost breakdown:
+
+| Component | Cost Call | % of Total |
+|-----------|-----------|------------|
+| LLM inference | $0.00120 | 52.2% |
+| Embedding | $0.00030 | 13.0% |
+| Vector search | $0.00050 | 21.7% |
+| Router classification | $0.00015 | 6.5% |
+| Guardrail | $0.00010 | 4.3% |
+| Orchestration overhead | $0.00005 | 2.2% |
+| **Total** | **$0.00230** | **100%** |
+
+#### Debugging Non-Deterministic Orchestration
+
+At FAANG, the same input can produce different orchestration paths. Debugging requires:
+
+1. **Full trace capture:** Log every thought, action, observation, routing decision
+2. **Deterministic replay:** Use workflow-as-code engines (Temporal) to replay with same state
+3. **Statistical analysis:** Run the same workflow 100+ times, analyze distribution of paths
+4. **Diff view:** Compare two execution traces side-by-side — "why did this query go to Tier 3 yesterday but Tier 1 today?"
+5. **Feature flag override:** Temporarily force deterministic routing for debugging
+
+**Staff+ insight:** "At Google, we traced every model serving decision through a unified observability pipeline. When a production incident occurred, we could reconstruct every routing decision, every model response, and every fallback trigger for the affected requests — all through the orchestration trace. Without this, debugging a 'bad response' incident would take hours. With it, it took minutes."
+
+**Cross-reference:** See [Workflow Orchestration](#workflow-orchestration) for deterministic replay. See [Cost Orchestration](#cost-orchestration) for cost tracking integration.`,
+            },
+            {
+              id: 'faang-production-patterns',
+              title: 'FAANG Production Patterns & Anti-Patterns',
+              content: `#### Real-World Case Studies
+
+**Google: Model Serving Mesh**
+
+Google's production ML platform orchestrates thousands of model versions across a global serving mesh. Key patterns:
+- **Model router with semantic classification:** Queries classified by topic, intent, and complexity → routed to specialized models
+- **Automatic cascading:** 70% of queries served by small distilled models, 25% by medium, 5% by full-scale
+- **Global load balancing:** Queries routed to nearest data center with capacity; if one region fails, traffic shifts within 60s
+- **Continuous rollout:** New model versions are gradually ramped: 0.1% → 1% → 5% → 20% → 100% over 7 days with automatic rollback
+
+**Uber: AI Platform Orchestration**
+
+Uber's Michelangelo platform (built on their Cadence/Temporal workflow engine):
+- **Workflow-as-code for everything:** Every ML pipeline — training, evaluation, deployment — is a Temporal workflow
+- **Deterministic replay for debugging:** When a training pipeline failed after 6 hours, they replayed it locally with the exact same state to find the bug
+- **Resource orchestration at scale:** 10,000+ GPU jobs scheduled daily across multi-region Kubernetes clusters with gang scheduling and topology-aware placement
+- **Cost tracking per workflow:** Every ML pipeline had a budget, and the orchestration layer enforced cost limits
+
+**Meta: Recommendation Pipeline Orchestration**
+
+Meta's recommendation systems run continuous retraining pipelines:
+- **24-hour retrain cycle:** Every recommendation model retrains within 24 hours of data drift detection
+- **Feedback loop enforced by orchestration:** The orchestration layer monitors prediction drift, triggers retraining, runs validation, and promotes the new model — all without human intervention
+- **Canary at planet scale:** New models deployed to 1% of users, analyze 100M+ responses per hour, auto-promote or rollback based on statistical significance
+
+**Amazon: Step Functions + SageMaker**
+
+AWS's approach to ML orchestration:
+- **Step Functions as workflow orchestrator:** Serverless state machine for ML pipelines
+- **SageMaker Pipelines for model building:** Feature engineering → training → evaluation → registry
+- **Event-driven retraining:** Model quality metrics trigger retraining pipelines automatically
+
+#### Anti-Patterns
+
+| Anti-Pattern | Description | FAANG Reality |
+|-------------|-------------|---------------|
+| **YAML paralysis** | Complex YAML/JSON configs for orchestration instead of code | Use SDK-based definitions (Temporal, Prefect) — configuration is code |
+| **Over-orchestration** | Using a full workflow engine for a 2-step pipeline | "A shell script with retry is cheaper" — Staff+ rule |
+| **Brittle DAGs** | Implicit dependencies between steps not captured in the DAG | Every dependency must be explicit in the DAG structure |
+| **Ignoring cost in routing** | Routing all traffic to the most capable model | Cost-quality Pareto: route to minimum viable model |
+| **No circuit breakers** | Cascading failure takes down the entire orchestration system | Circuit breakers on every external dependency |
+| **Manual promotions** | Humans SSH into servers to deploy models | All promotions through the orchestration pipeline with audit |
+| **Coupled scaling** | Scaling models and orchestrator together | Independent scaling: orchestrator is stateless, models scale horizontally |
+| **No dead letter queue** | Failed work is silently dropped | DLQ with replay capability for every failed workflow |
+
+#### When NOT to Orchestrate
+
+| Scenario | Recommended Approach | Why |
+|----------|---------------------|-----|
+| Simple 2-step pipeline | Shell script with retry | Orchestrator overhead > task complexity |
+| Single agent with few tools | Direct function calling | Agent loop is sufficient |
+| Prototype / MVP | Static workflow definition | Speed of iteration > reliability |
+| Sync request-response (&lt;100ms) | Direct API calls | Orchestrator adds 5-50ms of routing overhead |
+| Developer tooling | Simple CLI wrapper | Orchestration is over-engineering |
+
+**Staff+ insight:** "I've seen teams spend 3 months building an 'AI orchestration platform' for a system that could have been 200 lines of Python. Before you reach for an orchestrator, ask: will this system have 5+ components, cross-team dependencies, or need recovery from failure? If no, keep it simple. Add orchestration layers one at a time, only when the pain of coordination exceeds the pain of the orchestration tax."`,
+            },
+            {
+              id: 'tools-frameworks-comparison',
+              title: 'Tools & Framework Decision Guide',
+              content: `#### Decision Matrix
+
+| Tool | Type | Language | Best For | FAANG Usage |
+|------|------|----------|----------|-------------|
+| **LangGraph** | Agent graph framework | Python | Agent orchestration, stateful multi-agent workflows | Side projects, startups |
+| **CrewAI** | Multi-agent framework | Python | Simple multi-agent delegation | Startups, prototyping |
+| **AutoGen** | Multi-agent conversation | Python | Research, complex agent conversations | Microsoft research |
+| **Temporal** | Workflow-as-code engine | Go, Java, Python, TS | Production workflow orchestration at scale | Uber, Netflix, Snap, Stripe |
+| **Airflow** | DAG scheduler | Python | Scheduled batch pipelines, ETL | Airbnb, Lyft, FAANG data teams |
+| **Prefect** | DAG-as-code engine | Python | Cloud-native ML pipelines | FAANG-adjacent |
+| **Dagster** | Asset-based orchestrator | Python | Data-intensive ML, lineage tracking | FAANG data teams |
+| **Kubeflow** | K8s-native ML platform | Python/YAML | End-to-end ML on Kubernetes | FAANG ML infra |
+| **AWS Step Functions** | Serverless state machine | JSON/Amazon States Lang | AWS-native workflows | Amazon, AWS users |
+| **Apache Beam** | Unified batch/stream | Java, Python | Large-scale data pipelines | Google Cloud Dataflow |
+
+#### When to Use What
+
+**For Agent Orchestration:**
+| Scenario | Recommended | Why |
+|----------|-------------|-----|
+| Single agent with tool use | LangGraph / direct function calling | Lightweight, full control |
+| Multi-agent with state | LangGraph | Built-in state management, graph-based |
+| Simple delegation | CrewAI | Minimal setup, fast prototyping |
+| Research / exploration | AutoGen | Flexible conversation patterns |
+| Production multi-agent at scale | LangGraph + Temporal | LangGraph for agent logic, Temporal for reliability |
+
+**For Workflow Orchestration:**
+| Scenario | Recommended | Why |
+|----------|-------------|-----|
+| Scheduled batch jobs | Airflow | Mature ecosystem, rich scheduling |
+| Cloud-native ML pipelines | Prefect | Native async, cloud integrations |
+| Data lineage is critical | Dagster | Software-defined assets, lineage tracking |
+| Long-running stateful workflows | Temporal | Deterministic replay, fault tolerance |
+| AWS-native infrastructure | Step Functions | Serverless, no infrastructure to manage |
+| Large-scale data processing | Apache Beam | Unified batch/stream, portable runners |
+
+#### Migration Path
+
+| Starting With | Pain Point | Migrate To |
+|--------------|------------|------------|
+| Shell scripts | No state recovery, no monitoring | Prefect or Airflow |
+| Airflow | Long-running workflows, reusability | Temporal |
+| LangGraph prototype | Production reliability (retry, recovery) | LangGraph + Temporal |
+| Custom orchestration code | Maintenance burden, reliability | Temporal |
+| Single model serving | Multiple models, routing, A/B | Custom model router + Temporal |
+
+#### The FAANG-Recommended Stack
+
+Based on patterns across Google, Meta, Amazon, Uber, and Netflix:
+
+\`\`\`text
+Orchestration Stack (Opinionated):
+
+1. Workflow Foundation: Temporal (or Cadence)
+   - Durable execution, deterministic replay, fault tolerance
+   - All mission-critical workflows
+
+2. Agent Framework: LangGraph + Temporal
+   - LangGraph for agent graph logic and state management
+   - Temporal for reliability, retry, recovery
+
+3. Model Router: Custom (thin service)
+   - Semantic + cost + latency routing
+   - Integrated with observability pipeline
+
+4. Resource Scheduler: Kubernetes + GPU Operator
+   - Gang scheduling, topology-aware placement
+   - Spot + on-demand mix
+
+5. Governance: MLflow / Custom Registry
+   - Model registry, audit trail, promotion pipeline
+   - Integrated with workflow orchestration
+
+6. Observability: OpenTelemetry + Custom Dashboard
+   - Distributed tracing across all layers
+   - Cost-per-workflow, stuck detection, drift monitoring
+\`\`\`
+
+**Cross-reference:** See Phase 4: [AI Agents & Tool Use](#ai-agents-and-tool-use) for agent framework details. See [Error Handling & Resilience](#error-handling-resilience) for Temporal's retry and timeout patterns.`,
+            },
+          ],
         },
       ],
     },
@@ -2065,7 +3081,7 @@ Cycle:
 
 3. *"When should you NOT use an agent?"* — When a simple RAG pipeline suffices, when deterministic rules work, when latency is critical (<100ms), when the cost of errors is unacceptable without human review.
 
-**Cross-reference:** See Phase 4: [AI Agents & Agentic AI](#ai-agents-and-agentic-ai) and [Multi-agent Systems](#multi-agent-systems) for deeper coverage.`
+**Cross-reference:** See Phase 4: [AI Agents & Agentic AI](#ai-agents-and-agentic-ai), [Multi-agent Systems](#multi-agent-systems), and [Orchestration & Workflow Systems](#orchestration-workflow-systems) for deeper coverage.`
             },
             {
               id: 'interview-rag-vs-finetuning',
@@ -2441,7 +3457,7 @@ Every loop needs **circuit breakers**:
 
 3. *"How do you handle non-determinism in loops?"* — The same input can produce different loop paths. Log full traces, run statistical analysis on 100+ runs, measure distribution of steps taken, and monitor for high-variance behavior.
 
-**Cross-reference:** See Phase 4: [AI Agents & Agentic AI](#ai-agents-and-agentic-ai), [Function Calling](#function-calling), and [Multi-agent Systems](#multi-agent-systems) for advanced loop patterns.`
+**Cross-reference:** See Phase 4: [AI Agents & Agentic AI](#ai-agents-and-agentic-ai), [Function Calling](#function-calling), [Multi-agent Systems](#multi-agent-systems), and [Orchestration & Workflow Systems](#orchestration-workflow-systems) for advanced loop and orchestration patterns.`
             }
           ]
         },
