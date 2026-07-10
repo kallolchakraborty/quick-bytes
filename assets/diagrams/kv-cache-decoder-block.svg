@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="Ubuntu, sans-serif">
+  <defs>
+    <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowDn" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L5,10 L10,0" fill="#E95420"/>
+    </marker>
+    <marker id="arrowRt" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="#E95420"/>
+    </marker>
+    <marker id="arrowLt" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M10,0 L0,5 L10,10" fill="#E95420"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="420" fill="none"/>
+
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#C34113">KV Cache in the Decoder Block</text>
+  <line x1="280" y1="38" x2="620" y2="38" stroke="#E95420" stroke-width="1" opacity="0.3"/>
+
+  <!-- ========== LEFT: Decoder Block ========== -->
+
+  <!-- Decoder Block outer -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.3s" fill="freeze"/>
+    <rect x="80" y="55" width="320" height="330" rx="12" fill="none" stroke="#E95420" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.4"/>
+    <text x="240" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#94a3b8">Decoder Block</text>
+  </g>
+
+  <!-- New token input -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.5s" fill="freeze"/>
+    <rect x="160" y="85" width="160" height="34" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="240" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">New Token (X)</text>
+  </g>
+
+  <!-- Arrow: token → projections -->
+  <line x1="240" y1="119" x2="240" y2="139" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowDn)">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="0.9s" fill="freeze"/>
+  </line>
+
+  <!-- QKV Projections -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.0s" fill="freeze"/>
+    <rect x="110" y="142" width="260" height="70" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+    <text x="240" y="162" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Linear Projections (new token only)</text>
+    <text x="170" y="182" text-anchor="middle" font-size="11" font-weight="600" fill="#c34113">Q = X · W_Q</text>
+    <text x="240" y="182" text-anchor="middle" font-size="11" font-weight="600" fill="#c34113">K = X · W_K</text>
+    <text x="310" y="182" text-anchor="middle" font-size="11" font-weight="600" fill="#c34113">V = X · W_V</text>
+    <text x="240" y="200" text-anchor="middle" font-size="9" fill="#94a3b8">Computed for current token only</text>
+  </g>
+
+  <!-- Arrow: projections → attention -->
+  <line x1="240" y1="212" x2="240" y2="232" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowDn)">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.4s" fill="freeze"/>
+  </line>
+
+  <!-- Attention block -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.5s" fill="freeze"/>
+    <rect x="130" y="235" width="220" height="50" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="stroke-width" values="2;3;2" dur="2s" begin="2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="240" y="256" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Scaled Dot-Product Attention</text>
+    <text x="240" y="274" text-anchor="middle" font-size="9" fill="#94a3b8">softmax(Q · K_cache^T / √d) · V_cache</text>
+  </g>
+
+  <!-- Arrow: attention → FFN -->
+  <line x1="240" y1="285" x2="240" y2="305" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowDn)">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.9s" fill="freeze"/>
+  </line>
+
+  <!-- FFN -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.0s" fill="freeze"/>
+    <rect x="150" y="308" width="180" height="36" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+    <text x="240" y="330" text-anchor="middle" font-size="11" font-weight="700" fill="#C34113">FFN → Output Head</text>
+  </g>
+
+  <!-- Arrow: FFN → next token -->
+  <line x1="240" y1="344" x2="240" y2="364" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowDn)">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.3s" fill="freeze"/>
+  </line>
+
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.4s" fill="freeze"/>
+    <rect x="180" y="367" width="120" height="28" rx="14" fill="#fff5eb" stroke="#E95420" stroke-width="1.5"/>
+    <text x="240" y="385" text-anchor="middle" font-size="10" font-weight="700" fill="#C34113">Next Token →</text>
+  </g>
+
+  <!-- ========== RIGHT: KV Cache ========== -->
+
+  <!-- KV Cache box -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.2s" fill="freeze"/>
+    <rect x="540" y="90" width="310" height="270" rx="12" fill="none" stroke="#f0883e" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+    <text x="695" y="110" text-anchor="middle" font-size="12" font-weight="600" fill="#94a3b8">KV Cache (persistent across steps)</text>
+  </g>
+
+  <!-- Cache label -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.4s" fill="freeze"/>
+    <rect x="570" y="120" width="100" height="28" rx="6" fill="#f0883e" opacity="0.15"/>
+    <text x="620" y="138" text-anchor="middle" font-size="10" font-weight="700" fill="#E95420">K Cache</text>
+  </g>
+
+  <!-- K blocks (animated fill) -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.6s" fill="freeze"/>
+    <rect x="560" y="158" width="60" height="30" rx="4" fill="#fff5eb" stroke="#E95420" stroke-width="1.5"/>
+    <text x="590" y="177" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">K₁</text>
+    <rect x="625" y="158" width="60" height="30" rx="4" fill="#fff5eb" stroke="#E95420" stroke-width="1.5"/>
+    <text x="655" y="177" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">K₂</text>
+    <rect x="690" y="158" width="60" height="30" rx="4" fill="#fff5eb" stroke="#E95420" stroke-width="1.5"/>
+    <text x="720" y="177" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">K₃</text>
+    <rect x="755" y="158" width="60" height="30" rx="4" fill="#E95420" opacity="0.3" stroke="#E95420" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.2;0.5;0.2" dur="1.5s" begin="2.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="785" y="177" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">K_new</text>
+  </g>
+
+  <!-- V label -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.8s" fill="freeze"/>
+    <rect x="680" y="120" width="100" height="28" rx="6" fill="#f0883e" opacity="0.15"/>
+    <text x="730" y="138" text-anchor="middle" font-size="10" font-weight="700" fill="#E95420">V Cache</text>
+  </g>
+
+  <!-- V blocks (animated fill) -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.0s" fill="freeze"/>
+    <rect x="560" y="200" width="60" height="30" rx="4" fill="#fde8dc" stroke="#E95420" stroke-width="1.5"/>
+    <text x="590" y="219" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">V₁</text>
+    <rect x="625" y="200" width="60" height="30" rx="4" fill="#fde8dc" stroke="#E95420" stroke-width="1.5"/>
+    <text x="655" y="219" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">V₂</text>
+    <rect x="690" y="200" width="60" height="30" rx="4" fill="#fde8dc" stroke="#E95420" stroke-width="1.5"/>
+    <text x="720" y="219" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">V₃</text>
+    <rect x="755" y="200" width="60" height="30" rx="4" fill="#E95420" opacity="0.3" stroke="#E95420" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.2;0.5;0.2" dur="1.5s" begin="2.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="785" y="219" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">V_new</text>
+  </g>
+
+  <!-- Cache growth arrow -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.2s" fill="freeze"/>
+    <line x1="570" y1="250" x2="820" y2="250" stroke="#E95420" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="695" y="268" text-anchor="middle" font-size="9" fill="#94a3b8">Grows with each generated token →</text>
+  </g>
+
+  <!-- Each layer note -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.5s" fill="freeze"/>
+    <rect x="570" y="290" width="250" height="50" rx="8" fill="#fde8dc" stroke="#f0883e" stroke-width="1" opacity="0.6"/>
+    <text x="695" y="310" text-anchor="middle" font-size="10" font-weight="600" fill="#c34113">32 layers × 32 heads = 1,024 caches</text>
+    <text x="695" y="326" text-anchor="middle" font-size="9" fill="#94a3b8">Each layer has its own W_K, W_V</text>
+  </g>
+
+  <!-- ========== FLOW PARTICLE: K,V append ========== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.8s" fill="freeze"/>
+    <!-- Flow particle: from projections to cache -->
+    <circle r="4" fill="#E95420" opacity="0">
+      <animate attributeName="opacity" values="0;0.9;0.9;0" dur="2s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="cx" values="370;450;540;570;570" dur="2s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="175;175;175;158;158" dur="2s" begin="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="4" fill="#f0883e" opacity="0">
+      <animate attributeName="opacity" values="0;0.9;0.9;0" dur="2s" begin="3.3s" repeatCount="indefinite"/>
+      <animate attributeName="cx" values="370;450;540;570;570" dur="2s" begin="3.3s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="190;190;190;200;200" dur="2s" begin="3.3s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Label -->
+    <text x="455" y="165" text-anchor="middle" font-size="9" font-weight="600" fill="#E95420">Append K,V →</text>
+  </g>
+
+  <!-- ========== FLOW PARTICLE: Cache → Attention ========== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3s" fill="freeze"/>
+    <circle r="3" fill="#f0883e" opacity="0">
+      <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.5s" begin="3.2s" repeatCount="indefinite"/>
+      <animate attributeName="cx" values="570;500;400;350" dur="2.5s" begin="3.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="175;200;235;260" dur="2.5s" begin="3.2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="480" y="240" text-anchor="middle" font-size="9" font-weight="600" fill="#f0883e">← Read K,V</text>
+  </g>
+
+  <!-- Legend -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.5s" fill="freeze"/>
+    <rect x="80" y="400" width="8" height="8" rx="2" fill="#E95420"/>
+    <text x="94" y="408" font-size="9" fill="#94a3b8">New token computation</text>
+    <rect x="230" y="400" width="8" height="8" rx="2" fill="#f0883e"/>
+    <text x="244" y="408" font-size="9" fill="#94a3b8">KV Cache (persistent)</text>
+    <circle cx="394" cy="404" r="3" fill="#E95420"/>
+    <text x="404" y="408" font-size="9" fill="#94a3b8">Data flow</text>
+  </g>
+</svg>

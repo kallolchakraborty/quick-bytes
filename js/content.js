@@ -936,23 +936,9 @@ The Query matrix is computed fresh each step because it represents the *current 
 
 #### KV Cache in the Decoder Block
 
-\`\`\`
-┌─────────────────────────────────┐
-│  New token embedding            │
-│         ↓                       │
-│  ┌─────────────────────────┐    │
-│  │  Q = X · W_Q  (new)     │    │
-│  │  K = X · W_K  (new)     │────┼──→ Append to KV Cache
-│  │  V = X · W_V  (new)     │    │
-│  └─────────────────────────┘    │
-│         ↓                       │
-│  Attention(Q, Cache_K, Cache_V) │
-│         ↓                       │
-│  FFN → Output → Next Token      │
-└─────────────────────────────────┘
-\`\`\`
+<object data="assets/diagrams/kv-cache-decoder-block.svg" type="image/svg+xml" width="900" height="420" class="rounded-xl shadow-lg" aria-label="KV Cache in the Decoder Block"></object>
 
-**The cache lives outside the decoder block** — it's a persistent state that survives across generation steps. Each layer has its own cache (since each layer has its own W_K and W_V projections). For a 32-layer model with 32 heads, that's 32 separate K,V caches.`
+The cache lives outside the decoder block — it's a persistent state that survives across generation steps. Each layer has its own cache (since each layer has its own W_K and W_V projections). For a 32-layer model with 32 heads, that's 32 separate K,V caches.`
             },
             {
               id: 'kv-cache-memory',
