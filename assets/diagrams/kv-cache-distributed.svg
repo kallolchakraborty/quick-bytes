@@ -1,0 +1,221 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');</style>
+  <defs>
+    <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowDn" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L5,10 L10,0" fill="#E95420"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="#E95420"/>
+    </marker>
+    <linearGradient id="gpuGrad0" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
+    </linearGradient>
+    <linearGradient id="hotGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="warmGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="coldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="480" fill="none"/>
+
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#C34113">Distributed KV Cache Across GPUs</text>
+  <line x1="210" y1="38" x2="690" y2="38" stroke="#E95420" stroke-width="1" opacity="0.3"/>
+
+  <!-- ==================== FULL KV CACHE (TOP) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.3s" fill="freeze"/>
+    <rect x="180" y="52" width="370" height="36" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)"/>
+    <text x="365" y="74" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Full KV Cache (64 heads)</text>
+    <!-- Split indicator -->
+    <text x="365" y="108" text-anchor="middle" font-size="9" fill="#475569">Split across attention heads →</text>
+    <!-- Splitting lines -->
+    <line x1="274" y1="88" x2="130" y2="145" stroke="#E95420" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6">
+      <animate attributeName="opacity" values="0;0.6" dur="0.4s" begin="0.7s" fill="freeze"/>
+    </line>
+    <line x1="320" y1="88" x2="300" y2="145" stroke="#E95420" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6">
+      <animate attributeName="opacity" values="0;0.6" dur="0.4s" begin="0.8s" fill="freeze"/>
+    </line>
+    <line x1="410" y1="88" x2="480" y2="145" stroke="#E95420" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6">
+      <animate attributeName="opacity" values="0;0.6" dur="0.4s" begin="0.9s" fill="freeze"/>
+    </line>
+    <line x1="456" y1="88" x2="660" y2="145" stroke="#E95420" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6">
+      <animate attributeName="opacity" values="0;0.6" dur="0.4s" begin="1.0s" fill="freeze"/>
+    </line>
+  </g>
+
+  <!-- ==================== GPU BOXES ==================== -->
+  <!-- GPU 0 -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.2s" fill="freeze"/>
+    <rect x="20" y="145" width="160" height="90" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="stroke-width" values="2;3;2" dur="2s" begin="1.6s" repeatCount="indefinite"/>
+    </rect>
+    <text x="100" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">GPU 0</text>
+    <text x="100" y="182" text-anchor="middle" font-size="9" fill="#475569">Heads 0–15</text>
+    <rect x="40" y="192" width="120" height="32" rx="4" fill="#E95420" opacity="0.15"/>
+    <rect x="40" y="192" width="120" height="32" rx="4" fill="none" stroke="#E95420" stroke-width="1"/>
+    <text x="100" y="212" text-anchor="middle" font-size="8" fill="#C34113" font-weight="600">KV Cache Shard</text>
+  </g>
+
+  <!-- GPU 1 -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.5s" fill="freeze"/>
+    <rect x="200" y="145" width="160" height="90" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="stroke-width" values="2;3;2" dur="2s" begin="1.9s" repeatCount="indefinite"/>
+    </rect>
+    <text x="280" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">GPU 1</text>
+    <text x="280" y="182" text-anchor="middle" font-size="9" fill="#475569">Heads 16–31</text>
+    <rect x="220" y="192" width="120" height="32" rx="4" fill="#E95420" opacity="0.15"/>
+    <rect x="220" y="192" width="120" height="32" rx="4" fill="none" stroke="#E95420" stroke-width="1"/>
+    <text x="280" y="212" text-anchor="middle" font-size="8" fill="#C34113" font-weight="600">KV Cache Shard</text>
+  </g>
+
+  <!-- GPU 2 -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1.8s" fill="freeze"/>
+    <rect x="380" y="145" width="160" height="90" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="stroke-width" values="2;3;2" dur="2s" begin="2.2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="460" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">GPU 2</text>
+    <text x="460" y="182" text-anchor="middle" font-size="9" fill="#475569">Heads 32–47</text>
+    <rect x="400" y="192" width="120" height="32" rx="4" fill="#E95420" opacity="0.15"/>
+    <rect x="400" y="192" width="120" height="32" rx="4" fill="none" stroke="#E95420" stroke-width="1"/>
+    <text x="460" y="212" text-anchor="middle" font-size="8" fill="#C34113" font-weight="600">KV Cache Shard</text>
+  </g>
+
+  <!-- GPU 3 -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.1s" fill="freeze"/>
+    <rect x="560" y="145" width="160" height="90" rx="8" fill="url(#boxGrad)" stroke="#E95420" stroke-width="2" filter="url(#shadow)">
+      <animate attributeName="stroke-width" values="2;3;2" dur="2s" begin="2.5s" repeatCount="indefinite"/>
+    </rect>
+    <text x="640" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">GPU 3</text>
+    <text x="640" y="182" text-anchor="middle" font-size="9" fill="#475569">Heads 48–63</text>
+    <rect x="580" y="192" width="120" height="32" rx="4" fill="#E95420" opacity="0.15"/>
+    <rect x="580" y="192" width="120" height="32" rx="4" fill="none" stroke="#E95420" stroke-width="1"/>
+    <text x="640" y="212" text-anchor="middle" font-size="8" fill="#C34113" font-weight="600">KV Cache Shard</text>
+  </g>
+
+  <!-- ==================== ALL-REDUCE COMMUNICATION ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.6s" fill="freeze"/>
+
+    <text x="360" y="265" text-anchor="middle" font-size="11" font-weight="700" fill="#C34113">All-Reduce Communication</text>
+
+    <!-- Bidirectional arrows between GPUs -->
+    <line x1="180" y1="278" x2="200" y2="278" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <line x1="200" y1="288" x2="180" y2="288" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <line x1="360" y1="278" x2="380" y2="278" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <line x1="380" y1="288" x2="360" y2="288" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <line x1="540" y1="278" x2="560" y2="278" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)"/>
+    <line x1="560" y1="288" x2="540" y2="288" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)"/>
+
+    <text x="100" y="305" text-anchor="middle" font-size="8" fill="#94a3b8">GPU 0</text>
+    <text x="280" y="305" text-anchor="middle" font-size="8" fill="#94a3b8">GPU 1</text>
+    <text x="460" y="305" text-anchor="middle" font-size="8" fill="#94a3b8">GPU 2</text>
+    <text x="640" y="305" text-anchor="middle" font-size="8" fill="#94a3b8">GPU 3</text>
+
+    <rect x="130" y="312" width="460" height="24" rx="4" fill="#fff5eb" stroke="#E95420" stroke-width="1"/>
+    <text x="360" y="328" text-anchor="middle" font-size="9" fill="#C34113" font-weight="600">Ring All-Reduce: each GPU sends/receives in a ring topology</text>
+  </g>
+
+  <!-- ==================== MEMORY HIERARCHY (RIGHT SIDE) ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.8s" fill="freeze"/>
+
+    <text x="810" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#C34113">Memory Hierarchy</text>
+
+    <!-- GPU HBM -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3s" fill="freeze"/>
+      <rect x="720" y="180" width="180" height="50" rx="6" fill="url(#hotGrad)" filter="url(#shadow)"/>
+      <text x="810" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">GPU HBM</text>
+      <text x="810" y="216" text-anchor="middle" font-size="8" fill="#d1fae5">Fast · Small · Hot cache</text>
+      <text x="810" y="228" text-anchor="middle" font-size="7" fill="#d1fae5">(recent tokens)</text>
+    </g>
+
+    <!-- Arrow down -->
+    <line x1="810" y1="232" x2="810" y2="248" stroke="#E95420" stroke-width="1" marker-end="url(#arrowDn)">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.2s" fill="freeze"/>
+    </line>
+
+    <!-- CPU DRAM -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.3s" fill="freeze"/>
+      <rect x="720" y="252" width="180" height="50" rx="6" fill="url(#warmGrad)" filter="url(#shadow)"/>
+      <text x="810" y="272" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">CPU DRAM</text>
+      <text x="810" y="288" text-anchor="middle" font-size="8" fill="#fef3c7">Medium speed · Warm cache</text>
+      <text x="810" y="300" text-anchor="middle" font-size="7" fill="#fef3c7">(older tokens)</text>
+    </g>
+
+    <!-- Arrow down -->
+    <line x1="810" y1="304" x2="810" y2="320" stroke="#E95420" stroke-width="1" marker-end="url(#arrowDn)">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.5s" fill="freeze"/>
+    </line>
+
+    <!-- NVMe SSD -->
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.6s" fill="freeze"/>
+      <rect x="720" y="324" width="180" height="50" rx="6" fill="url(#coldGrad)" filter="url(#shadow)"/>
+      <text x="810" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">NVMe SSD</text>
+      <text x="810" y="360" text-anchor="middle" font-size="8" fill="#e2e8f0">Slow · Large · Cold cache</text>
+      <text x="810" y="372" text-anchor="middle" font-size="7" fill="#e2e8f0">(evicted tokens)</text>
+    </g>
+
+    <!-- Speed labels -->
+    <text x="710" y="205" text-anchor="end" font-size="8" fill="#10b981" font-weight="600">100×</text>
+    <text x="710" y="277" text-anchor="end" font-size="8" fill="#f59e0b" font-weight="600">10×</text>
+    <text x="710" y="349" text-anchor="end" font-size="8" fill="#64748b" font-weight="600">1×</text>
+
+    <!-- Bandwidth arrows -->
+    <line x1="714" y1="205" x2="718" y2="205" stroke="#10b981" stroke-width="1" marker-end="url(#arrowR)"/>
+    <line x1="714" y1="277" x2="718" y2="277" stroke="#f59e0b" stroke-width="1" marker-end="url(#arrowR)"/>
+    <line x1="714" y1="349" x2="718" y2="349" stroke="#64748b" stroke-width="1" marker-end="url(#arrowR)"/>
+  </g>
+
+  <!-- ==================== BOTTOM ANNOTATION ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3.8s" fill="freeze"/>
+    <rect x="20" y="350" width="540" height="56" rx="8" fill="#fff5eb" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="290" y="372" text-anchor="middle" font-size="10" font-weight="700" fill="#C34113">Multi-Level Cache Strategy</text>
+    <text x="290" y="388" text-anchor="middle" font-size="9" fill="#475569">Hot → GPU HBM for active attention | Warm → CPU for overflow | Cold → SSD for long contexts</text>
+    <text x="290" y="402" text-anchor="middle" font-size="8" fill="#94a3b8">Automatic promotion/demotion based on token recency and access patterns</text>
+  </g>
+
+  <!-- ==================== FLOW PARTICLES ==================== -->
+  <!-- Particle moving from GPU 0 to GPU 1 -->
+  <circle r="2.5" fill="#E95420" opacity="0">
+    <animate attributeName="opacity" values="0;0.9;0.9;0;0;0;0;0;0" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="180;190;200;210;220;360;370;380;540" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="278;278;278;278;278;278;278;278;278" dur="4s" begin="2.6s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Particle moving from GPU 2 to GPU 3 -->
+  <circle r="2.5" fill="#E95420" opacity="0">
+    <animate attributeName="opacity" values="0;0.9;0.9;0;0;0;0;0;0" dur="4s" begin="2.8s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="540;550;560;570;580;640;650;660;720" dur="4s" begin="2.8s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="288;288;288;288;288;288;288;288;288" dur="4s" begin="2.8s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Particle moving up through memory hierarchy -->
+  <circle r="2" fill="#10b981" opacity="0">
+    <animate attributeName="opacity" values="0;0.8;0.8;0;0;0;0;0;0" dur="4s" begin="3.5s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="360;340;320;300;280;260;240;220;200" dur="4s" begin="3.5s" repeatCount="indefinite"/>
+    <animate attributeName="cx" values="810;810;810;810;810;810;810;810;810" dur="4s" begin="3.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

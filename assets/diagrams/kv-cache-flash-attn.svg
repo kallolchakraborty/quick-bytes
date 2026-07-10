@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="Ubuntu, sans-serif">
+  <style>@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&amp;display=swap');</style>
+  <defs>
+    <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fff5eb"/>
+    </linearGradient>
+    <linearGradient id="gpuGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f0f0"/>
+      <stop offset="100%" stop-color="#d4d4d4"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c34113" flood-opacity="0.12"/>
+    </filter>
+    <filter id="glow">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#E95420" flood-opacity="0.35"/>
+    </filter>
+    <marker id="arrowDn" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L5,10 L10,0" fill="#E95420"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10" fill="#E95420"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="480" fill="none"/>
+
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#C34113">Flash Attention vs KV Cache: Complementary Optimizations</text>
+  <line x1="230" y1="38" x2="670" y2="38" stroke="#E95420" stroke-width="1" opacity="0.3"/>
+
+  <!-- ==================== TOP SECTION: Flash Attention ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.3s" fill="freeze"/>
+    <rect x="30" y="50" width="840" height="175" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="450" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#C34113">Flash Attention (during each step)</text>
+  </g>
+
+  <!-- GPU outline -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.5s" fill="freeze"/>
+    <rect x="50" y="85" width="170" height="125" rx="6" fill="url(#gpuGrad)" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="135" y="100" text-anchor="middle" font-size="9" font-weight="600" fill="#475569">GPU</text>
+
+    <!-- SRAM (small, fast) -->
+    <rect x="60" y="108" width="60" height="40" rx="4" fill="#E95420" opacity="0.2" stroke="#E95420" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="2s" repeatCount="indefinite"/>
+    </rect>
+    <text x="90" y="125" text-anchor="middle" font-size="8" font-weight="700" fill="#C34113">SRAM</text>
+    <text x="90" y="140" text-anchor="middle" font-size="7" fill="#94a3b8">small, fast</text>
+
+    <!-- HBM (large, slow) -->
+    <rect x="130" y="108" width="80" height="80" rx="4" fill="#fff5eb" stroke="#f0883e" stroke-width="1.5"/>
+    <text x="170" y="142" text-anchor="middle" font-size="8" font-weight="700" fill="#C34113">HBM</text>
+    <text x="170" y="155" text-anchor="middle" font-size="7" fill="#94a3b8">large, slow</text>
+    <text x="170" y="168" text-anchor="middle" font-size="7" fill="#94a3b8">~100× SRAM</text>
+
+    <!-- Arrow SRAM→HBM -->
+    <line x1="122" y1="128" x2="130" y2="128" stroke="#E95420" stroke-width="1" marker-end="url(#arrowR)"/>
+  </g>
+
+  <!-- Attention matrix grid (tiling) -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="0.7s" fill="freeze"/>
+    <text x="310" y="98" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Attention Matrix (n×n)</text>
+
+    <!-- Grid background -->
+    <rect x="240" y="105" width="160" height="140" rx="4" fill="#fff5eb" stroke="#E95420" stroke-width="1"/>
+
+    <!-- Grid lines -->
+    <line x1="280" y1="105" x2="280" y2="245" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
+    <line x1="320" y1="105" x2="320" y2="245" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
+    <line x1="360" y1="105" x2="360" y2="245" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
+    <line x1="240" y1="140" x2="400" y2="140" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
+    <line x1="240" y1="175" x2="400" y2="175" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
+    <line x1="240" y1="210" x2="400" y2="210" stroke="#E95420" stroke-width="0.5" opacity="0.3"/>
+
+    <!-- Animated tiling sweep -->
+    <rect x="240" y="105" width="40" height="35" rx="2" fill="#E95420" opacity="0.35" stroke="#E95420" stroke-width="2">
+      <animate attributeName="x" values="240;280;320;360;240" dur="3s" begin="1s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="105;105;105;105;140;140;140;140;175;175;175;175;210;210;210;210" dur="3s" begin="1s" repeatCount="indefinite"/>
+    </rect>
+
+    <text x="320" y="270" text-anchor="middle" font-size="9" fill="#94a3b8">Tiles fit in SRAM → recompute on-the-fly</text>
+  </g>
+
+  <!-- Complexity labels -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="1s" fill="freeze"/>
+    <!-- O(n²) compute label -->
+    <rect x="440" y="110" width="130" height="28" rx="5" fill="#fff" stroke="#E95420" stroke-width="1.5"/>
+    <text x="505" y="128" text-anchor="middle" font-size="9" font-weight="700" fill="#C34113">O(n²) compute</text>
+
+    <!-- O(n) memory label -->
+    <rect x="440" y="148" width="130" height="28" rx="5" fill="#E95420" opacity="0.15" stroke="#E95420" stroke-width="1.5"/>
+    <text x="505" y="166" text-anchor="middle" font-size="9" font-weight="700" fill="#C34113">O(n) memory</text>
+
+    <text x="505" y="195" text-anchor="middle" font-size="8" fill="#94a3b8">Tiling avoids materializing</text>
+    <text x="505" y="208" text-anchor="middle" font-size="8" fill="#94a3b8">full n×n matrix in HBM</text>
+
+    <!-- Key insight box -->
+    <rect x="440" y="218" width="200" height="30" rx="5" fill="#fde8dc" stroke="#f0883e" stroke-width="1"/>
+    <text x="540" y="237" text-anchor="middle" font-size="9" font-weight="600" fill="#c34113">Same result, much less memory I/O</text>
+
+    <!-- Flow particle on grid -->
+    <circle r="3" fill="#E95420" opacity="0">
+      <animate attributeName="opacity" values="0;0.9;0.9;0" dur="1.5s" begin="1.5s" repeatCount="indefinite"/>
+      <animate attributeName="cx" values="260;300;340;380" dur="1.5s" begin="1.5s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="120;155;190;225" dur="1.5s" begin="1.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- ==================== DIVIDER ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.2s" fill="freeze"/>
+    <line x1="100" y1="242" x2="800" y2="242" stroke="#E95420" stroke-width="1" stroke-dasharray="6,4" opacity="0.4"/>
+    <rect x="300" y="232" width="300" height="22" rx="11" fill="#E95420"/>
+    <text x="450" y="247" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">Solve different problems → Complementary</text>
+  </g>
+
+  <!-- ==================== BOTTOM SECTION: KV Cache ==================== -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.5s" fill="freeze"/>
+    <rect x="30" y="255" width="840" height="210" rx="10" fill="url(#boxGrad)" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+    <text x="450" y="277" text-anchor="middle" font-size="13" font-weight="700" fill="#C34113">KV Cache (across steps)</text>
+  </g>
+
+  <!-- GPU outline (bottom) -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="2.7s" fill="freeze"/>
+    <rect x="50" y="290" width="170" height="110" rx="6" fill="url(#gpuGrad)" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="135" y="306" text-anchor="middle" font-size="9" font-weight="600" fill="#475569">GPU</text>
+
+    <!-- Persistent cache block -->
+    <rect x="60" y="315" width="150" height="70" rx="5" fill="#fff5eb" stroke="#E95420" stroke-width="1.5">
+      <animate attributeName="stroke-width" values="1.5;2.5;1.5" dur="2s" begin="3s" repeatCount="indefinite"/>
+    </rect>
+    <text x="135" y="330" text-anchor="middle" font-size="8" font-weight="600" fill="#C34113">KV Cache</text>
+    <text x="135" y="345" text-anchor="middle" font-size="7" fill="#94a3b8">persists across steps</text>
+  </g>
+
+  <!-- Step progression -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.4s" begin="3s" fill="freeze"/>
+
+    <!-- Step 1 -->
+    <g transform="translate(270,300)">
+      <rect x="0" y="0" width="160" height="50" rx="6" fill="#fff" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="80" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#C34113">Step 1</text>
+      <!-- Cache boxes -->
+      <rect x="15" y="24" width="30" height="18" rx="3" fill="#E95420" opacity="0.3"/>
+      <text x="30" y="37" text-anchor="middle" font-size="7" fill="#C34113">K₁V₁</text>
+      <text x="120" y="37" text-anchor="middle" font-size="8" fill="#94a3b8">cache=[1]</text>
+    </g>
+
+    <!-- Arrow step 1→2 -->
+    <line x1="430" y1="325" x2="448" y2="325" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.3s" fill="freeze"/>
+    </line>
+
+    <!-- Step 2 -->
+    <g transform="translate(455,300)">
+      <rect x="0" y="0" width="180" height="50" rx="6" fill="#fff" stroke="#E95420" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="90" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#C34113">Step 2</text>
+      <rect x="10" y="24" width="30" height="18" rx="3" fill="#E95420" opacity="0.3"/>
+      <text x="25" y="37" text-anchor="middle" font-size="7" fill="#C34113">K₁V₁</text>
+      <rect x="45" y="24" width="30" height="18" rx="3" fill="#E95420" opacity="0.4"/>
+      <text x="60" y="37" text-anchor="middle" font-size="7" fill="#C34113">K₂V₂</text>
+      <text x="140" y="37" text-anchor="middle" font-size="8" fill="#94a3b8">cache=[1,2]</text>
+    </g>
+
+    <!-- Arrow step 2→3 -->
+    <line x1="635" y1="325" x2="653" y2="325" stroke="#E95420" stroke-width="1.5" marker-end="url(#arrowR)">
+      <animate attributeName="opacity" values="0;1" dur="0.3s" begin="3.6s" fill="freeze"/>
+    </line>
+
+    <!-- Step 3 -->
+    <g transform="translate(660,300)">
+      <rect x="0" y="0" width="190" height="50" rx="6" fill="#E95420" opacity="0.08" stroke="#E95420" stroke-width="2" filter="url(#glow)"/>
+      <text x="95" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#C34113">Step 3</text>
+      <rect x="5" y="24" width="28" height="18" rx="3" fill="#E95420" opacity="0.3"/>
+      <text x="19" y="37" text-anchor="middle" font-size="6" fill="#C34113">K₁V₁</text>
+      <rect x="37" y="24" width="28" height="18" rx="3" fill="#E95420" opacity="0.35"/>
+      <text x="51" y="37" text-anchor="middle" font-size="6" fill="#C34113">K₂V₂</text>
+      <rect x="69" y="24" width="28" height="18" rx="3" fill="#E95420" opacity="0.45"/>
+      <text x="83" y="37" text-anchor="middle" font-size="6" fill="#C34113">K₃V₃</text>
+      <text x="145" y="37" text-anchor="middle" font-size="8" fill="#94a3b8">cache=[1,2,3]</text>
+    </g>
+
+    <!-- Growing cache visual (bottom) -->
+    <text x="450" y="375" text-anchor="middle" font-size="9" fill="#94a3b8">Cache grows: O(1) per new token → O(n) total</text>
+
+    <!-- Complexity labels -->
+    <rect x="340" y="385" width="220" height="28" rx="5" fill="#E95420" opacity="0.15" stroke="#E95420" stroke-width="1.5"/>
+    <text x="450" y="403" text-anchor="middle" font-size="10" font-weight="700" fill="#C34113">O(n) compute per step</text>
+
+    <!-- Summary note -->
+    <rect x="290" y="420" width="320" height="30" rx="5" fill="#fde8dc" stroke="#f0883e" stroke-width="1"/>
+    <text x="450" y="440" text-anchor="middle" font-size="9" font-weight="600" fill="#c34113">No recomputation needed — past KV is already cached</text>
+
+    <!-- Flow particle across steps -->
+    <circle r="3" fill="#E95420" opacity="0">
+      <animate attributeName="opacity" values="0;0.9;0.9;0" dur="2s" begin="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="cx" values="350;545;755" dur="2s" begin="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="325;325;325" dur="2s" begin="3.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

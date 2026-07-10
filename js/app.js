@@ -550,6 +550,9 @@ function initDocs() {
       wrapper.appendChild(table);
     });
 
+    // KV Cache step-through interactive diagram
+    initKVCacheSteps(content);
+
     // Focus management: move focus to the heading
     var firstHeading = content.querySelector('h1');
     if (firstHeading) {
@@ -762,4 +765,54 @@ function closeSearch() {
   if (modal) modal.classList.add('hidden');
   if (backdrop) backdrop.classList.add('hidden');
   document.body.style.overflow = '';
+}
+
+// KV Cache step-through interactive diagram
+function initKVCacheSteps(container) {
+  var diagram = container.querySelector('[data-kv-steps="true"]');
+  var controls = container.querySelector('[data-kv-controls="true"]');
+  if (!diagram || !controls) return;
+
+  var currentStep = 1;
+  var totalSteps = 5;
+  var prevBtn = controls.querySelector('.kv-step-prev');
+  var nextBtn = controls.querySelector('.kv-step-next');
+  var resetBtn = controls.querySelector('.kv-step-reset');
+  var currentLabel = controls.querySelector('.kv-step-current');
+
+  function getSvgDoc() {
+    try { return diagram.contentDocument; } catch(e) { return null; }
+  }
+
+  function updateVisibility() {
+    var doc = getSvgDoc();
+    if (!doc) return;
+    for (var i = 1; i <= totalSteps; i++) {
+      var group = doc.querySelector('#kv-step-' + i);
+      if (group) {
+        group.style.opacity = i <= currentStep ? '1' : '0';
+        group.style.transition = 'opacity 0.3s ease';
+      }
+    }
+    if (currentLabel) currentLabel.textContent = currentStep;
+    if (prevBtn) prevBtn.disabled = currentStep <= 1;
+    if (nextBtn) nextBtn.disabled = currentStep >= totalSteps;
+  }
+
+  if (nextBtn) nextBtn.addEventListener('click', function() {
+    if (currentStep < totalSteps) { currentStep++; updateVisibility(); }
+  });
+  if (prevBtn) prevBtn.addEventListener('click', function() {
+    if (currentStep > 1) { currentStep--; updateVisibility(); }
+  });
+  if (resetBtn) resetBtn.addEventListener('click', function() {
+    currentStep = 1; updateVisibility();
+  });
+
+  // Wait for SVG object to load before initializing
+  if (diagram.contentDocument && diagram.contentDocument.readyState === 'complete') {
+    updateVisibility();
+  } else {
+    diagram.addEventListener('load', function() { updateVisibility(); });
+  }
 }

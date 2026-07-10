@@ -2,13 +2,13 @@ const QUICK_BYTES = {
   site: {
     name: 'Quick Bytes',
     tagline: 'AI engineering \u2014 from foundations to FAANG Staff+.',
-    description: 'FAANG Staff+ AI interview prep and AI engineering references across 12 guides and 5 phases from foundations to expert.',
+    description: 'FAANG Staff+ AI interview prep and AI engineering references across 13 guides and 5 phases from foundations to expert.',
     url: 'https://kallolchakraborty.github.io/quick-bytes/',
     author: 'Kallol Chakraborty',
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 12,
+    guides: 13,
     phases: 5,
     platform: 'Engineering',
   },
@@ -849,6 +849,648 @@ The key innovations:
 5. **Monitor overthinking.** The model may generate 10,000 tokens of internal reasoning for a simple yes/no question. Set per-query token budgets and latency SLAs.
 
 **The Staff+ mental model:** Reasoning models turn compute into capability at inference time. The question is no longer "how big is the model?" but "how much compute can we afford per query?" For high-stakes tasks (medical diagnosis, legal analysis, complex code), spending $0.50-1.00 on thinking is justified. For simple chatbots, it's wasteful. Build a router that sends reasoning queries to reasoning models and simple queries to standard models.`
+            }
+          ]
+        },
+
+        // ----- Guide: KV Cache Deep Dive -----
+        {
+          id: 'kv-cache-deep-dive',
+          title: 'KV Cache Deep Dive',
+          description: 'From first principles to FAANG Staff+ mastery: why KV cache exists, how it works, memory math, eviction strategies, PagedAttention, distributed cache, speculative decoding, and interview readiness.',
+          sections: [
+            {
+              id: 'kv-cache-why',
+              title: 'Why KV Cache Exists',
+              content: `**The fundamental problem:** During autoregressive text generation, each new token must attend to *every* previous token. Without caching, we'd recompute Key and Value matrices for all previous tokens on every single step.
+
+<object data="assets/diagrams/kv-cache-why.svg" type="image/svg+xml" width="900" height="500" class="rounded-xl shadow-lg" aria-label="Why KV Cache Exists: Naive vs Cached"></object>
+
+#### Without KV Cache (Naive Approach)
+
+\`\`\`
+Step 1: Process token "The"  → compute K₁, V₁         → predict "cat"
+Step 2: Process "The cat"   → recompute K₁,K₂, V₁,V₂ → predict "sat"
+Step 3: Process "The cat    → recompute K₁,K₂,K₃,     → predict "on"
+         sat"                 V₁,V₂,V₃
+\`\`\`
+
+Each step recomputes K,V for **all** previous tokens. The work grows quadratically:
+- Step 1: 1 token's K,V
+- Step 2: 2 tokens' K,V
+- Step n: n tokens' K,V
+- **Total: 1+2+...+n = O(n²) per layer**
+
+#### With KV Cache
+
+\`\`\`
+Step 1: Process token "The"  → compute K₁, V₁, cache [K₁,V₁]   → predict "cat"
+Step 2: Process token "cat"  → compute K₂, V₂, append [K₂,V₂]  → predict "sat"
+Step 3: Process token "sat"  → compute K₃, V₃, append [K₃,V₃]  → predict "on"
+\`\`\`
+
+Each step computes K,V for **only the new token** and appends to the cache. The attention mechanism reads K,V from the cache instead of recomputing:
+- Step 1: 1 token's K,V
+- Step 2: 1 token's K,V (cache provides previous)
+- Step n: 1 token's K,V
+- **Total: n × 1 = O(n) per layer**
+
+**The 100x insight:** At 4096 tokens, naive recomputation does ~8 million multiply-adds per layer. KV cache does ~4096. That's a 2000x reduction in compute per generation step. This is why KV cache is the single most important inference optimization — without it, generating even a short paragraph would take minutes instead of milliseconds.
+
+**What gets cached:** The Key and Value matrices for each attention head in each layer. The Query matrix is NOT cached — it's only computed for the current (new) token. This asymmetry is because Q attends *to* K,V, not the other way around.`
+            },
+            {
+              id: 'kv-cache-steps',
+              title: 'How It Works: Step by Step',
+              content: `Let's walk through token-by-token generation with KV cache. The interactive diagram below advances one step at a time — click "Next Step" to see how the cache grows.
+
+<object data="assets/diagrams/kv-cache-steps.svg" type="image/svg+xml" width="900" height="550" class="rounded-xl kv-step-diagram" aria-label="KV Cache Step-by-Step Walkthrough" data-kv-steps="true"></object>
+
+<div class="kv-step-controls" data-kv-controls="true">
+  <button class="kv-step-btn kv-step-prev" disabled aria-label="Previous step">
+    <span class="material-symbols-outlined">arrow_back</span> Previous
+  </button>
+  <span class="kv-step-indicator">Step <span class="kv-step-current">1</span> / <span class="kv-step-total">5</span></span>
+  <button class="kv-step-btn kv-step-next" aria-label="Next step">
+    Next <span class="material-symbols-outlined">arrow_forward</span>
+  </button>
+  <button class="kv-step-btn kv-step-reset" aria-label="Reset">
+    <span class="material-symbols-outlined">restart_alt</span>
+  </button>
+</div>
+
+#### The Flow for Each Step
+
+1. **Input token** enters the model as a query embedding
+2. **Compute Q** for the new token only (Query = what am I looking for?)
+3. **Retrieve K,V from cache** for all previous tokens (Keys = what do I have? Values = what does it mean?)
+4. **Compute attention** = softmax(Q · K^T / √d) · V — this produces the context-aware representation
+5. **Append new K,V** to the cache — the new token's key-value pair joins the cache for future steps
+6. **Generate next token** from the attention output through the FFN and output head
+
+#### Why Only K,V and Not Q?
+
+The Query matrix is computed fresh each step because it represents the *current token's question*: "given everything I've seen, what should I focus on right now?" This question changes with every new token. The Keys and Values are properties of *previous tokens* that don't change — once a token is processed, its K and V are fixed for the rest of generation.
+
+**Interview tip:** A common follow-up is "can you cache Q too?" The answer is no — Q is only needed for the current step's attention computation. Caching it would waste memory without saving any compute.
+
+#### KV Cache in the Decoder Block
+
+\`\`\`
+┌─────────────────────────────────┐
+│  New token embedding            │
+│         ↓                       │
+│  ┌─────────────────────────┐    │
+│  │  Q = X · W_Q  (new)     │    │
+│  │  K = X · W_K  (new)     │────┼──→ Append to KV Cache
+│  │  V = X · W_V  (new)     │    │
+│  └─────────────────────────┘    │
+│         ↓                       │
+│  Attention(Q, Cache_K, Cache_V) │
+│         ↓                       │
+│  FFN → Output → Next Token      │
+└─────────────────────────────────┘
+\`\`\`
+
+**The cache lives outside the decoder block** — it's a persistent state that survives across generation steps. Each layer has its own cache (since each layer has its own W_K and W_V projections). For a 32-layer model with 32 heads, that's 32 separate K,V caches.`
+            },
+            {
+              id: 'kv-cache-memory',
+              title: 'The Memory Math',
+              content: `KV cache memory cost is the #1 interview topic for inference optimization. Master this formula.
+
+#### The Formula
+
+\`\`\`
+KV_cache_per_token = 2 × n_layers × n_heads × d_head × bytes_per_param
+\`\`\`
+
+- **2** = K and V (two matrices)
+- **n_layers** = transformer layers (e.g., 32, 80)
+- **n_heads** = attention heads per layer (e.g., 32, 64)
+- **d_head** = dimension per head (typically 128)
+- **bytes_per_param** = FP16 = 2 bytes, INT8 = 1 byte, FP8 = 1 byte
+
+<object data="assets/diagrams/kv-cache-memory.svg" type="image/svg+xml" width="900" height="420" class="rounded-xl shadow-lg" aria-label="KV Cache Memory Growth"></object>
+
+#### Worked Examples
+
+**LLaMA 3 8B:**
+- Layers: 32, Heads: 32, d_head: 128
+- Per token: 2 × 32 × 32 × 128 = 262,144 values
+- At FP16 (2 bytes): **0.5 MB per token**
+- At 8K context: **4 GB** (fits on 1 A100 80GB)
+- At 128K context: **64 GB** (nearly fills an A100)
+
+**LLaMA 3 70B:**
+- Layers: 80, Heads: 64, d_head: 128
+- Per token: 2 × 80 × 64 × 128 = 1,310,720 values
+- At FP16: **2.6 MB per token**
+- At 8K context: **21 GB**
+- At 128K context: **333 GB** — exceeds A100 80GB by 4x
+
+**GPT-4 (estimated ~1.7T params, MoE):**
+- At 128K context: **multiple TB** — requires distributed cache across GPU nodes
+
+#### The Crossover Point
+
+| Model | KV Cache at 128K | Model Weights (FP16) | Cache/Weights Ratio |
+|-------|-------------------|---------------------|---------------------|
+| LLaMA 3 8B | 64 GB | 16 GB | 4x |
+| LLaMA 3 70B | 333 GB | 140 GB | 2.4x |
+| LLaMA 3 405B | ~1.9 TB | 810 GB | 2.3x |
+
+**The critical insight:** For long contexts, the KV cache is often **larger than the model weights themselves**. At 128K tokens, LLaMA 3 8B's cache (64 GB) is 4x the model size (16 GB). This inverts the traditional assumption that model weights are the dominant memory cost. Staff+ engineers optimize for cache first, weights second.
+
+**Memory vs compute trade-off:** KV cache trades memory for compute. Without cache: O(n²) compute, O(1) memory. With cache: O(n) compute, O(n) memory. The cache grows linearly with sequence length — every new token adds a fixed amount of cache. This is why long-context models face memory pressure, not compute pressure.`
+            },
+            {
+              id: 'kv-cache-variants',
+              title: 'Attention Variants & KV Cache',
+              content: `The attention mechanism variant directly determines KV cache size. This is one of the most impactful architectural decisions for inference efficiency.
+
+<object data="assets/diagrams/kv-cache-variants.svg" type="image/svg+xml" width="900" height="520" class="rounded-xl shadow-lg" aria-label="Attention Variants and KV Cache Impact"></object>
+
+#### Multi-Head Attention (MHA)
+
+Each head has its own K and V projections. All heads' K,V are cached separately:
+
+\`\`\`
+KV cache per token = 2 × h × d_head × bytes
+\`\`\`
+
+- **Cache size:** h heads × d_head dimensions × 2 (K+V) = full cache
+- **Used in:** BERT, original Transformer, GPT-2
+- **Problem at scale:** With 64+ heads, the cache grows linearly with head count
+
+#### Multi-Query Attention (MQA)
+
+All query heads share a **single** K and V projection:
+
+\`\`\`
+KV cache per token = 2 × 1 × d_head × bytes
+\`\`\`
+
+- **Cache size:** 1/h of MHA — dramatic reduction
+- **Used in:** PaLM, Falcon
+- **Trade-off:** Slight quality loss at small scales. All heads must agree on what to attend to.
+
+#### Grouped Query Attention (GQA)
+
+Query heads are divided into g groups, each sharing one K,V projection:
+
+\`\`\`
+KV cache per token = 2 × g × d_head × bytes
+\`\`\`
+
+- **Cache size:** g/h of MHA. With h=64, g=8: **12.5% of MHA**
+- **Used in:** LLaMA 2/3, Mistral, Gemma
+- **The sweet spot:** Approaches MHA quality with near-MQA efficiency
+
+#### Multi-head Latent Attention (MLA)
+
+DeepSeek's approach: compress K,V into a low-rank latent space before caching:
+
+\`\`\`
+KV cache per token = 2 × d_latent × bytes   (where d_latent << h × d_head)
+\`\`\`
+
+- **Cache size:** ~5-10% of MHA
+- **Used in:** DeepSeek-V2, DeepSeek-V3
+- **Trade-off:** Extra decompression compute per attention step
+
+#### Head Count Impact: Real Numbers
+
+For a 70B-class model (80 layers, 64 heads, d_head=128, FP16):
+
+| Variant | KV heads | Cache per token | 128K context cache |
+|---------|----------|-----------------|---------------------|
+| MHA | 64 | 2.6 MB | 333 GB |
+| GQA (g=8) | 8 | 0.33 MB | 42 GB |
+| MQA | 1 | 0.04 MB | 5.2 GB |
+| MLA | compressed | ~0.13 MB | ~17 GB |
+
+**Staff+ insight:** The evolution MHA → MQA → GQA → MLA is driven entirely by KV cache economics. As models grew beyond 7B parameters and context lengths exceeded 4K, the cache became the dominant cost. GQA (LLaMA 2/3) proved you could cut cache by 8x with negligible quality loss. MLA (DeepSeek) pushed further by compressing into latent space. When asked "why was GQA introduced?" — the answer is always KV cache memory.`
+            },
+            {
+              id: 'kv-cache-flash-attn',
+              title: 'Flash Attention & KV Cache',
+              content: `Flash Attention and KV cache solve *different but complementary* problems. Understanding their interaction is a key Staff+ insight.
+
+<object data="assets/diagrams/kv-cache-flash-attn.svg" type="image/svg+xml" width="900" height="480" class="rounded-xl shadow-lg" aria-label="Flash Attention and KV Cache Interaction"></object>
+
+#### What Flash Attention Solves
+
+Flash Attention (Dao et al., 2022) optimizes the **attention computation itself** — specifically the O(n²) memory problem during training and the forward pass:
+
+- **Without Flash Attention:** The full n×n attention matrix is materialized in GPU HBM (high-bandwidth memory). For 4K tokens, that's 16M entries per head per layer — a massive memory footprint.
+- **With Flash Attention:** The attention matrix is computed in tiles on GPU SRAM (on-chip, ~20x faster than HBM). The full matrix is never materialized.
+
+**Flash Attention reduces peak memory from O(n²) to O(n)** — but it does NOT eliminate the need for KV cache. They solve orthogonal problems:
+
+| Problem | Solution | What it saves |
+|---------|----------|---------------|
+| O(n²) memory for attention matrix | Flash Attention (tiling on SRAM) | Compute memory during each step |
+| O(n) recompute cost across steps | KV Cache (store previous K,V) | Redundant computation across steps |
+
+#### How They Interact
+
+During **prefill** (processing the initial prompt):
+- Flash Attention shines: processes all prompt tokens in parallel, tiling the attention computation
+- KV cache is populated: K,V for all prompt tokens are computed and cached
+- This is compute-bound — Flash Attention's tiling is critical
+
+During **decoding** (generating new tokens):
+- Flash Attention still helps: each new token's attention is computed against the full KV cache
+- The cache grows with each generated token
+- This is memory-bandwidth-bound: reading the KV cache from HBM dominates
+
+\`\`\`
+Prefill phase (parallel):
+  Input: [The, cat, sat, on, the, mat]
+  → Flash Attention processes all 6 tokens simultaneously
+  → KV cache populated with 6 token entries
+  → First generated token: "The"
+
+Decoding phase (sequential):
+  Step 7:  Q_new · K_cache[1..6]^T → attention → V_cache[1..6] → append K₇,V₇
+  Step 8:  Q_new · K_cache[1..7]^T → attention → V_cache[1..7] → append K₈,V₈
+  Each step: compute 1 Q, read full KV cache, write 1 K,V pair
+\`\`\`
+
+#### Flash Attention 2 and 3
+
+- **Flash Attention 2:** Better work partitioning across GPU warps, ~2x speedup over FA1
+- **Flash Attention 3:** Uses Tensor Cores on Hopper GPUs (H100), asynchronous pipeline, ~1.5-2x over FA2
+- **FlashInfer:** Optimized for decode-phase attention with variable-length sequences, used in vLLM
+
+**Staff+ insight:** "Flash Attention and KV cache are not competing optimizations — they're complementary. Flash Attention makes each attention step cheaper; KV cache makes each generation step require only one attention step. Together, they enable the throughput we see in production LLM serving."`
+            },
+            {
+              id: 'kv-cache-eviction',
+              title: 'Cache Eviction Strategies',
+              content: `When the KV cache exceeds GPU memory, we need strategies to manage it. This is an active research area with three main approaches.
+
+<object data="assets/diagrams/kv-cache-eviction.svg" type="image/svg+xml" width="900" height="500" class="rounded-xl shadow-lg" aria-label="KV Cache Eviction Strategies"></object>
+
+#### Strategy 1: Sliding Window (StreamingLLM)
+
+Keep only the most recent W tokens in the cache. Older tokens are evicted.
+
+\`\`\`
+Cache state: [t₁, t₂, ..., tₙ]
+After eviction (W=4): [tₙ₋₃, tₙ₋₂, tₙ₋₁, tₙ]
+\`\`\`
+
+- **Used by:** Mistral (sliding window attention), LongChat
+- **Memory:** Bounded at W × per-token-cache-size
+- **Quality:** Loses long-range context. Works for chat, fails for retrieval tasks.
+
+**The StreamingLLM discovery** (Xiao et al., 2023): The first few tokens (called "attention sinks") are disproportionately important for model stability. StreamingLLM keeps a small window of initial tokens + the recent window, evicting the middle:
+
+\`\`\`
+[initial sink tokens] + [evicted middle] + [recent window]
+     t₁, t₂                  t₃...tₙ₋₄            tₙ₋₃...tₙ
+\`\`\`
+
+#### Strategy 2: Token Importance Scoring (H2O)
+
+Score each token by its accumulated attention weight and evict the least important:
+
+\`\`\`
+For each token i in cache:
+  importance[i] = sum of attention scores from all subsequent tokens
+Evict: tokens with lowest importance score
+\`\`\`
+
+- **Used by:** H2O (Heavy-Hitter Oracle, Zhang et al., 2023)
+- **Memory:** Bounded by importance threshold
+- **Quality:** Better than sliding window — preserves tokens that matter for attention
+
+**Heavy hitters:** Tokens that accumulate high attention scores across many generation steps are "heavy hitters." These are typically: (1) attention sinks, (2) key nouns/entities, (3) tokens in the instruction. Evicting these degrades quality significantly.
+
+#### Strategy 3: Dynamic NTK-Aware Scaling
+
+Instead of evicting, compress the cache by reducing the effective context window using non-uniform token sampling:
+
+- **Dynamically adjusted RoPE scaling:** Increase θ for longer contexts
+- **Key token selection:** Sample tokens non-uniformly, keeping more from recent and important positions
+- **Used in:** Some proprietary serving systems
+
+#### Comparison
+
+| Strategy | Memory | Quality | Latency | Complexity |
+|----------|--------|---------|---------|------------|
+| Sliding Window | Fixed (W tokens) | Degrades past W | Lowest | Low |
+| StreamingLLM | Fixed (sink + window) | Good for streaming | Low | Low |
+| H2O (importance) | Configurable | Better than window | Medium | Medium |
+| Dynamic NTK | Configurable | Varies | Medium | High |
+| No eviction (full cache) | Grows unbounded | Best | Highest memory | None |
+
+**Staff+ insight:** The eviction strategy choice depends on the workload. For chatbots with short conversations: sliding window is sufficient. For RAG systems where retrieved context must survive: H2O or full cache. For streaming applications with unbounded input: StreamingLLM with attention sinks. There is no universal best strategy — it's always a quality-memory-latency trade-off.`
+            },
+            {
+              id: 'kv-cache-paged',
+              title: 'PagedAttention Deep Dive',
+              content: `PagedAttention (Kwon et al., 2023) solved a critical systems problem: KV cache memory fragmentation. It applies OS virtual memory concepts to GPU memory management.
+
+<object data="assets/diagrams/kv-cache-paged.svg" type="image/svg+xml" width="900" height="520" class="rounded-xl shadow-lg" aria-label="PagedAttention: OS Virtual Memory for KV Cache"></object>
+
+#### The Problem: Contiguous Allocation Waste
+
+Traditional KV cache allocation reserves the maximum sequence length upfront:
+
+\`\`\`
+Request 1: max_len=4096, actual_len=512  → 87.5% waste
+Request 2: max_len=4096, actual_len=2048 → 50% waste
+Request 3: max_len=4096, actual_len=1024 → 75% waste
+Average waste: ~70% of reserved KV cache memory
+\`\`\`
+
+Two types of fragmentation:
+- **Internal fragmentation:** Reserved but unused memory within a request
+- **External fragmentation:** Free memory scattered in small unusable chunks across GPU memory
+
+#### The PagedAttention Solution
+
+Borrow the exact same solution OS kernels use for RAM: **paging**.
+
+| OS Concept | PagedAttention Equivalent |
+|------------|--------------------------|
+| Virtual address space | Logical KV cache (token sequence) |
+| Physical memory frames | Physical KV blocks (fixed-size chunks) |
+| Page table | Block table (logical → physical mapping) |
+| Pages (4KB) | KV blocks (16-32 tokens) |
+| Page fault | Block allocation on demand |
+| Copy-on-write (fork) | Shared prefix across requests |
+
+#### How It Works
+
+1. **Block allocation:** KV cache is divided into fixed-size blocks (typically 16-32 tokens each)
+2. **On-demand:** Blocks are allocated only when tokens actually use them
+3. **Non-contiguous mapping:** Logical consecutive tokens can map to physically non-consecutive blocks
+4. **Block table:** Maintains the mapping from logical position to physical block
+
+\`\`\`
+Logical cache:  [token₁...token₁₆] [token₁₇...token₃₂] [token₃₃...token₄₈]
+                  ↓                    ↓                    ↓
+Physical GPU:   Block 7              Block 2              Block 15
+                (non-contiguous!)
+\`\`\`
+
+#### Copy-on-Write for Shared Prefixes
+
+When multiple requests share the same system prompt, PagedAttention enables **copy-on-write**:
+
+\`\`\`
+Request A: [System prompt (100 tokens)] + [User query A]
+Request B: [System prompt (100 tokens)] + [User query B]
+
+Without CoW: Each request has its own copy → 200 tokens of KV cache for the prompt
+With CoW: Both share the same blocks for tokens 1-100 → 100 tokens of KV cache for the prompt
+\`\`\`
+
+This is identical to how fork() in Unix shares memory pages until one process writes to them.
+
+#### Performance Impact
+
+| Metric | Contiguous | PagedAttention |
+|--------|------------|----------------|
+| Memory utilization | 20-40% | 95-99% |
+| Throughput (tokens/sec) | Baseline | 2-4x |
+| Requests per GPU | 1-4 (large models) | 4-10x more |
+| Prefix sharing | Not possible | Automatic via CoW |
+
+#### vLLM: The Reference Implementation
+
+[vLLM](https://github.com/vllm-project/vllm) is the open-source inference engine built on PagedAttention:
+
+- **Continuous batching:** New requests join ongoing batches without flushing the cache
+- **Prefix caching:** Shared system prompts reuse KV cache blocks across requests
+- **Speculative decoding:** Draft tokens use separate cache, verified tokens write to main cache
+- **Tensor parallelism:** KV cache blocks distributed across GPUs
+
+**Staff+ insight:** "PagedAttention is not an attention algorithm — it's a memory management system. The breakthrough was recognizing that LLM inference memory management is the same problem OS kernels solved 50 years ago with virtual memory. When you're interviewed on this topic, the key differentiator is drawing that cross-domain analogy and explaining *why* it maps perfectly."`
+            },
+            {
+              id: 'kv-cache-distributed',
+              title: 'Distributed KV Cache',
+              content: `At 70B+ parameters, the KV cache must be distributed across multiple GPUs. This introduces new complexity in cache management.
+
+<object data="assets/diagrams/kv-cache-distributed.svg" type="image/svg+xml" width="900" height="480" class="rounded-xl shadow-lg" aria-label="Distributed KV Cache Across GPUs"></object>
+
+#### Why Distribution is Necessary
+
+For LLaMA 3 70B at 128K context:
+- Model weights: 140 GB (FP16) → requires 2× A100 80GB with tensor parallelism
+- KV cache: 333 GB → requires 5× A100 80GB minimum
+- **Total: 7+ A100 GPUs** just for a single request
+
+Without distribution, serving 70B+ models with long contexts is impossible on a single node.
+
+#### Tensor Parallelism for KV Cache
+
+The most common approach: split KV cache heads across GPUs.
+
+\`\`\`
+GPU 0: Heads 0-15  → K[0:16], V[0:16]   (25% of cache)
+GPU 1: Heads 16-31 → K[16:32], V[16:32] (25% of cache)
+GPU 2: Heads 32-47 → K[32:48], V[32:48] (25% of cache)
+GPU 3: Heads 48-63 → K[48:64], V[48:64] (25% of cache)
+\`\`\`
+
+Each GPU holds a subset of heads. During attention, each GPU computes its heads' attention independently, then results are combined via all-reduce.
+
+**With GQA (8 groups, 64 heads):**
+- 8 KV groups → 8 cache blocks
+- Distribute across 8 GPUs (or fewer with replication)
+- 8× memory savings from GQA × N× from distribution
+
+#### Sequence Parallelism
+
+Alternative: split the sequence dimension across GPUs.
+
+\`\`\`
+GPU 0: Tokens 0-1023     → full K,V for first 1024 tokens
+GPU 1: Tokens 1024-2047  → full K,V for next 1024 tokens
+GPU 2: Tokens 2048-3071  → full K,V for next 1024 tokens
+GPU 3: Tokens 3072-4095  → full K,V for last 1024 tokens
+\`\`\`
+
+Used with **Ring Attention** for training with very long sequences. Each GPU attends to its local tokens, then communicates boundary K,V values to neighbors.
+
+#### Hybrid Approaches
+
+Production systems combine both:
+
+| Component | Strategy | Example |
+|-----------|----------|---------|
+| Model weights | Tensor parallel (TP=4) | Split across 4 GPUs |
+| KV cache | TP for heads + sequence for length | Split heads × split sequence |
+| Expert routing (MoE) | Expert parallel | Different experts on different GPUs |
+| Activations | Pipeline parallel | Different layers on different GPUs |
+
+#### KV Cache Offloading
+
+When GPU memory is insufficient:
+1. **CPU offloading:** Move least-recently-used cache blocks to CPU DRAM
+2. **SSD offloading:** For extreme long-context (1M+ tokens), cache to NVMe SSD
+3. **PagedAttention + unified memory:** vLLM uses CUDA unified memory to auto-page between GPU and CPU
+
+\`\`\`
+GPU HBM: [hot cache (recent tokens)] → fast access (<1μs)
+CPU DRAM: [warm cache (older tokens)] → slower (10-100μs)
+NVMe SSD: [cold cache (evicted)] → much slower (100μs-1ms)
+\`\`\`
+
+**Staff+ insight:** "Distributed KV cache is not just about splitting a tensor — it's about managing a distributed state machine. The cache must be consistent across GPUs, blocks must be allocated/deallocated atomically, and latency from cross-GPU communication must be hidden behind compute. This is why production LLM serving is a systems engineering problem, not just a machine learning problem."`
+            },
+            {
+              id: 'kv-cache-speculative',
+              title: 'Speculative Decoding & KV Cache',
+              content: `Speculative decoding (Leviathan et al., 2023; Chen et al., 2023) uses a small "draft" model to generate candidate tokens that a larger "target" model verifies in parallel. This has significant implications for KV cache management.
+
+<object data="assets/diagrams/kv-cache-speculative.svg" type="image/svg+xml" width="900" height="480" class="rounded-xl shadow-lg" aria-label="Speculative Decoding and KV Cache"></object>
+
+#### How Speculative Decoding Works
+
+1. **Draft model** (small, fast) generates γ candidate tokens autoregressively
+2. **Target model** (large, accurate) verifies all γ tokens in ONE forward pass
+3. **Accept** tokens where draft and target agree; **reject** at first mismatch
+4. **Accepted tokens:** 1-γ tokens produced per target forward pass (vs 1 in normal decoding)
+
+\`\`\`
+Draft model (7B):   "The" "cat" "sat" "on" → 4 candidate tokens
+Target model (70B): verifies all 4 in parallel
+  → "The" ✓, "cat" ✓, "sat" ✗ (target wants "is")
+  → Accept 2 tokens: "The cat"
+  → Resample from target distribution: "is"
+  → Net: 3 tokens in 2 forward passes (vs 3 passes normally)
+\`\`\`
+
+#### KV Cache Management
+
+Speculative decoding requires managing **two KV caches** simultaneously:
+
+\`\`\`
+┌─────────────────────────────────────┐
+│  KV Cache Layout                    │
+│                                     │
+│  [System + Prompt tokens]           │ ← Shared prefix (read-only)
+│  [Accepted tokens from previous]    │ ← Verified cache (grows)  
+│  [Draft tokens being verified]      │ ← Temporary (may be rejected)
+└─────────────────────────────────────┘
+\`\`\`
+
+**The challenge:**
+- Draft model has its own smaller KV cache (different architecture)
+- Target model's cache must handle **rejection**: rejected tokens' K,V entries are discarded
+- After acceptance: cache must be updated atomically — accepted tokens stay, rejected are replaced
+
+#### Rejection Handling
+
+When the target model rejects a draft token at position i:
+- All tokens from i+1 to γ are also rejected
+- The cache is truncated back to position i-1
+- The target model's token at position i is used instead
+- New K,V for the correct token is appended to the cache
+
+\`\`\`
+Before verification:
+  Cache: [..., K₁, K₂, K₃, K₄]  (4 draft tokens)
+After verification (reject at position 3):
+  Cache: [..., K₁, K₂, K₃_target]  (truncate K₄, replace K₃)
+\`\`\`
+
+#### Batched Speculative Decoding
+
+In batch serving, multiple requests share the verification step:
+- All requests' draft tokens are batched into the target model's forward pass
+- Each request's cache is updated independently
+- **Cache allocation:** Need space for draft tokens + verified tokens per request
+- **PagedAttention helps:** Draft token blocks are allocated temporarily, freed on rejection
+
+#### Acceptance Rate and Efficiency
+
+The speedup depends on the **acceptance rate** (how often draft matches target):
+
+| Acceptance Rate | Speedup | Effective Tokens/Step |
+|-----------------|---------|----------------------|
+| 50% | ~1.5x | 1.5 |
+| 70% | ~2.3x | 2.3 |
+| 85% | ~3.5x | 3.5 |
+| 95% | ~5.5x | 5.5 |
+
+Higher acceptance rates occur when:
+- Draft model is similar to target (e.g., distilled from same model)
+- Task is predictable (code completion, structured output)
+- Temperature is low (less randomness)
+
+**Staff+ insight:** "Speculative decoding turns compute into throughput by using a cheap draft model to predict, and an expensive target model to verify. The KV cache complexity comes from handling rejection — you must be able to efficiently truncate and replace cache entries. This is where PagedAttention shines: draft token blocks are just temporary allocations that can be freed on rejection without moving data."`
+            },
+            {
+              id: 'kv-cache-interview',
+              title: 'Staff+ Interview Playbook',
+              content: `KV Cache is one of the most frequently tested topics in FAANG Staff+ interviews. Here's how to structure your answers.
+
+#### The Core Framework
+
+Every KV cache answer should cover three layers:
+
+1. **What:** KV cache stores Key and Value matrices from previous tokens to avoid redundant recomputation during autoregressive generation
+2. **Why:** Reduces per-step compute from O(n²) to O(n), enabling real-time inference
+3. **Trade-off:** Memory grows linearly with sequence length, becoming the dominant memory cost at long contexts
+
+#### Common Questions and Answer Structure
+
+**Q: "How does the KV cache work?"**
+
+Start with the problem (recomputation), explain the solution (caching K,V), quantify the savings (O(n²) → O(n)), then mention the memory cost formula. End with the insight that cache often exceeds model weights.
+
+**Q: "What are the memory implications?"**
+
+Give the formula: 2 × layers × heads × d_head × seq_len × bytes. Work through a real example (LLaMA 3 70B at 128K = 333 GB). Compare to model weights. Explain why this drives the need for GQA, PagedAttention, and eviction.
+
+**Q: "How do you optimize KV cache?"**
+
+Present the optimization stack:
+1. **Architecture:** GQA (8x savings), MLA (20x savings)
+2. **Memory management:** PagedAttention (2-4x throughput)
+3. **Precision:** KV cache quantization (2x with INT8)
+4. **Eviction:** Sliding window, H2O, StreamingLLM
+5. **Distribution:** Tensor parallelism for cache across GPUs
+6. **System:** Prefix caching, continuous batching
+
+**Q: "Explain PagedAttention"**
+
+Use the OS virtual memory analogy. Map each concept: page table → block table, pages → KV blocks, copy-on-write → shared prefixes. Emphasize that it's a *systems* insight, not an *algorithm* insight.
+
+#### The Staff+ Differentiator
+
+What separates a strong answer from a great one:
+
+1. **Quantify everything.** Don't say "the cache is large" — say "LLaMA 3 70B at 128K uses 333 GB for KV cache, which is 2.4x the model weights."
+
+2. **Draw cross-domain analogies.** PagedAttention is OS virtual memory. Prefix caching is shared memory pages. Eviction is LRU cache. These analogies show systems thinking.
+
+3. **Discuss trade-offs explicitly.** Every optimization has a cost. GQA reduces quality slightly. PagedAttention adds kernel complexity. Eviction loses context. Name the trade-off.
+
+4. **Connect to production.** "In production, we used vLLM with PagedAttention, GQA (8 groups), and prefix caching. This let us serve 10x more requests per GPU while maintaining quality SLAs."
+
+5. **Mention the ecosystem.** vLLM, TensorRT-LLM, SGLang, TGI — know which uses what optimization and why.
+
+#### Quick Reference
+
+| Topic | Key Numbers | Key Insight |
+|-------|-------------|-------------|
+| Cache formula | 2 × L × H × d × S × B | Cache > weights at long context |
+| GQA savings | 8x (g=8, h=64) | Best quality/efficiency trade-off |
+| PagedAttention | 2-4x throughput | OS virtual memory analogy |
+| StreamingLLM | Fixed window + sinks | Attention sinks are critical |
+| Speculative | 2-5x speedup | Rejection needs cache truncation |
+| Distributed | TP for heads, SP for length | Cache is a distributed state machine |
+
+**Cross-references:** See Phase 5: [KV Cache](#interview-kv-cache) for the interview-framed deep-dive. See [PagedAttention](#interview-paged-attention) for the systems-level comparison. See [GQA & Attention Variants](#interview-gqa-and-attention-variants) for the architecture evolution.`
             }
           ]
         },
