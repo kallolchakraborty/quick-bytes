@@ -4,28 +4,6 @@ var _scrollSpyCleanup = null;
 var _mdCache = {};
 var _searchIndex = null;
 
-function injectThemeIntoSVG(obj) {
-  try {
-    var doc = obj.contentDocument;
-    if (!doc) return;
-    var isDark = document.documentElement.classList.contains('dark');
-    var root = doc.documentElement;
-    if (isDark) {
-      root.style.setProperty('--bg-default', '#1a1a1a');
-      root.style.setProperty('--bg-subtle', '#111111');
-      root.style.setProperty('--text-default', '#e8e8e8');
-      root.style.setProperty('--text-muted', '#94a3b8');
-      root.style.setProperty('--border-default', 'rgba(255,255,255,0.08)');
-    } else {
-      root.style.setProperty('--bg-default', '#ffffff');
-      root.style.setProperty('--bg-subtle', '#f8fafc');
-      root.style.setProperty('--text-default', '#0f172a');
-      root.style.setProperty('--text-muted', '#64748b');
-      root.style.setProperty('--border-default', '#e2e8f0');
-    }
-  } catch(e) { /* silently fail for cross-origin or inaccessible documents */ }
-}
-
 function sanitizeHtml(html) {
   html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
   html = html.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
@@ -58,8 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var isDark = document.documentElement.classList.toggle('dark');
       localStorage.setItem('qb-theme', isDark ? 'dark' : 'light');
       updateThemeIcon();
-      // Re-inject theme into all loaded SVG objects
-      document.querySelectorAll('.diagram-wrapper object').forEach(injectThemeIntoSVG);
     });
   }
 
@@ -261,62 +237,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (shareClose) shareClose.addEventListener('click', closeShare);
   if (shareBackdrop) shareBackdrop.addEventListener('click', closeShare);
 
-  // Diagram fullscreen modal
-  var diagramModal = document.getElementById('diagram-modal');
-  var diagramClose = document.getElementById('diagram-modal-close');
-  var diagramContent = document.getElementById('diagram-modal-content');
-
-  function openDiagram(src) {
-    if (!diagramModal || !diagramContent) return;
-    diagramContent.innerHTML = '';
-    var obj = document.createElement('object');
-    obj.type = 'image/svg+xml';
-    obj.data = src;
-    obj.setAttribute('aria-label', 'Diagram fullscreen view');
-    obj.addEventListener('load', function() { injectThemeIntoSVG(obj); });
-    diagramContent.appendChild(obj);
-    diagramModal.classList.remove('hidden');
-    diagramModal.classList.add('flex');
-    diagramModal.animate([
-      { opacity: 0 },
-      { opacity: 1 }
-    ], { duration: 200, easing: 'ease' });
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeDiagram() {
-    if (!diagramModal) return;
-    diagramModal.classList.add('hidden');
-    diagramModal.classList.remove('flex');
-    document.body.style.overflow = '';
-    setTimeout(function() { if (diagramContent) diagramContent.innerHTML = ''; }, 200);
-  }
-
-  if (diagramClose) diagramClose.addEventListener('click', closeDiagram);
-  if (diagramModal) {
-    diagramModal.addEventListener('click', function(e) {
-      if (e.target === diagramModal) closeDiagram();
-    });
-  }
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && diagramModal && !diagramModal.classList.contains('hidden')) {
-      closeDiagram();
-    }
-  });
-
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.diagram-expand-btn');
-    if (!btn) return;
-    e.preventDefault();
-    var wrapper = btn.closest('.diagram-wrapper');
-    if (!wrapper) return;
-    var obj = wrapper.querySelector('object');
-    if (!obj) return;
-    var src = obj.getAttribute('data');
-    if (src) openDiagram(src);
-  });
-
   var copyLinkBtn = document.getElementById('copy-link-btn');
   if (copyLinkBtn) {
     copyLinkBtn.addEventListener('click', function() {
@@ -491,15 +411,6 @@ function initDocs() {
     html += '</div>';
     content.innerHTML = html;
 
-    // Inject theme into inline SVG objects (CSS variables don't cascade into <object>)
-    content.querySelectorAll('object').forEach(function(obj) {
-      if (obj.contentDocument && obj.contentDocument.readyState === 'complete') {
-        injectThemeIntoSVG(obj);
-      } else {
-        obj.addEventListener('load', function() { injectThemeIntoSVG(obj); });
-      }
-    });
-
     // Attach bookmark click handler (no inline onclick)
     var bookmarkBtn = document.getElementById('bookmark-btn-' + guideId);
     if (bookmarkBtn) {
@@ -549,10 +460,6 @@ function initDocs() {
       table.parentNode.insertBefore(wrapper, table);
       wrapper.appendChild(table);
     });
-
-    // KV Cache step-through interactive diagram
-    initKVCacheSteps(content);
-
     // Focus management: move focus to the heading
     var firstHeading = content.querySelector('h1');
     if (firstHeading) {
@@ -570,8 +477,6 @@ function initDocs() {
     try {
       var html = marked.parse(text);
       html = sanitizeHtml(html);
-      html = html.replace(/<p>\s*(<object\b[\s\S]*?<\/object>)\s*<\/p>/gi, '$1');
-      html = html.replace(/<object\b([^>]*)><\/object>/gi, '<div class="diagram-wrapper"><object $1></object><button class="diagram-expand-btn" aria-label="View fullscreen"><span class="material-symbols-outlined">fullscreen</span><span>View fullscreen</span></button></div>');
       _mdCache[text] = html;
       return html;
     } catch(e) {
@@ -765,54 +670,4 @@ function closeSearch() {
   if (modal) modal.classList.add('hidden');
   if (backdrop) backdrop.classList.add('hidden');
   document.body.style.overflow = '';
-}
-
-// KV Cache step-through interactive diagram
-function initKVCacheSteps(container) {
-  var diagram = container.querySelector('[data-kv-steps="true"]');
-  var controls = container.querySelector('[data-kv-controls="true"]');
-  if (!diagram || !controls) return;
-
-  var currentStep = 1;
-  var totalSteps = 5;
-  var prevBtn = controls.querySelector('.kv-step-prev');
-  var nextBtn = controls.querySelector('.kv-step-next');
-  var resetBtn = controls.querySelector('.kv-step-reset');
-  var currentLabel = controls.querySelector('.kv-step-current');
-
-  function getSvgDoc() {
-    try { return diagram.contentDocument; } catch(e) { return null; }
-  }
-
-  function updateVisibility() {
-    var doc = getSvgDoc();
-    if (!doc) return;
-    for (var i = 1; i <= totalSteps; i++) {
-      var group = doc.querySelector('#kv-step-' + i);
-      if (group) {
-        group.style.opacity = i <= currentStep ? '1' : '0';
-        group.style.transition = 'opacity 0.3s ease';
-      }
-    }
-    if (currentLabel) currentLabel.textContent = currentStep;
-    if (prevBtn) prevBtn.disabled = currentStep <= 1;
-    if (nextBtn) nextBtn.disabled = currentStep >= totalSteps;
-  }
-
-  if (nextBtn) nextBtn.addEventListener('click', function() {
-    if (currentStep < totalSteps) { currentStep++; updateVisibility(); }
-  });
-  if (prevBtn) prevBtn.addEventListener('click', function() {
-    if (currentStep > 1) { currentStep--; updateVisibility(); }
-  });
-  if (resetBtn) resetBtn.addEventListener('click', function() {
-    currentStep = 1; updateVisibility();
-  });
-
-  // Wait for SVG object to load before initializing
-  if (diagram.contentDocument && diagram.contentDocument.readyState === 'complete') {
-    updateVisibility();
-  } else {
-    diagram.addEventListener('load', function() { updateVisibility(); });
-  }
 }
