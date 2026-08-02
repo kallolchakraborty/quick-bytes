@@ -411,6 +411,10 @@ function initDocs() {
     html += '</div>';
     content.innerHTML = html;
 
+    // Highlight code blocks in the freshly rendered guide (content is injected
+    // after Prism's initial DOMContentLoaded pass, so highlight it manually)
+    if (window.Prism) Prism.highlightAllUnder(content);
+
     // Attach bookmark click handler (no inline onclick)
     var bookmarkBtn = document.getElementById('bookmark-btn-' + guideId);
     if (bookmarkBtn) {
