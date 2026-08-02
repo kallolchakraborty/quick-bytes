@@ -518,6 +518,57 @@ body {
   background: rgba(233, 84, 32, 0.1);
 }
 
+/* Dark-mode syntax highlighting (Prism default theme is light-only) */
+.dark .content-section pre code {
+  color: #e6edf3;
+}
+
+.dark .content-section pre code .token.comment,
+.dark .content-section pre code .token.prolog,
+.dark .content-section pre code .token.cdata,
+.dark .content-section pre code .token.doctype {
+  color: #8b949e;
+}
+.dark .content-section pre code .token.punctuation {
+  color: #8b949e;
+}
+.dark .content-section pre code .token.keyword,
+.dark .content-section pre code .token.atrule,
+.dark .content-section pre code .token.rule {
+  color: #ff7b72;
+}
+.dark .content-section pre code .token.string,
+.dark .content-section pre code .token.attr-value,
+.dark .content-section pre code .token.char,
+.dark .content-section pre code .token.regex {
+  color: #a5d6ff;
+}
+.dark .content-section pre code .token.number,
+.dark .content-section pre code .token.constant,
+.dark .content-section pre code .token.symbol,
+.dark .content-section pre code .token.boolean {
+  color: #79c0ff;
+}
+.dark .content-section pre code .token.function,
+.dark .content-section pre code .token.function-variable {
+  color: #d2a8ff;
+}
+.dark .content-section pre code .token.class-name,
+.dark .content-section pre code .token.builtin,
+.dark .content-section pre code .token.attr-name,
+.dark .content-section pre code .token.property {
+  color: #ffa657;
+}
+.dark .content-section pre code .token.operator,
+.dark .content-section pre code .token.entity {
+  color: #ff7b72;
+}
+.dark .content-section pre code .token.important,
+.dark .content-section pre code .token.selector {
+  color: #ff7b72;
+  font-weight: bold;
+}
+
 /* ---- Copy Button ---- */
 
 .copy-btn {

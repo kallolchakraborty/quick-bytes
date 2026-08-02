@@ -127,5 +127,10 @@
 
   <script src="js/content.js?v=20260709"></script>
   <script src="js/app.js?v=20260709"></script>
+  <script>
+    document.querySelectorAll('img[src*="logo.svg"]').forEach(function(img) {
+      img.src = 'assets/logo.svg?v=' + Date.now();
+    });
+  </script>
 </body>
 </html>
