@@ -1,7 +1,7 @@
 {
   "name": "Quick Bytes",
   "short_name": "Quick Bytes",
-  "description": "Software engineering quick references — from fundamentals to staff+.",
+  "description": "Compact, interview-ready SAP RAP reference — determinations & validations with ABAP code.",
   "start_url": "index.html",
   "scope": "/quick-bytes/",
   "display": "standalone",

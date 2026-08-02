@@ -2,7 +2,7 @@
   "name": "quick-bytes",
   "version": "1.0.0",
   "private": true,
-  "description": "Software engineering quick references — from fundamentals to staff+.",
+  "description": "Compact, interview-ready SAP RAP reference — determinations & validations with ABAP code.",
   "scripts": {
     "dev": "tailwindcss -i css/main.css -o css/tailwind.css --watch",
     "build": "tailwindcss -i css/main.css -o css/tailwind.css --minify"

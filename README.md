@@ -1,6 +1,6 @@
 # Quick Bytes
 
-Concise technical references, software engineering guides, and engineering career resources.
+Compact, interview-ready technical references — built to clear FAANG interviews.
 
 **Site:** https://kallolchakraborty.github.io/quick-bytes/
 
@@ -8,60 +8,24 @@ Concise technical references, software engineering guides, and engineering caree
 
 ## Overview
 
-Quick Bytes is a static documentation site focused on Large Language Models (LLMs). It features **31 animated SVG diagrams** that explain core concepts visually, with all animations implemented as pure SMIL (no JavaScript dependencies).
+Quick Bytes is a static documentation site. It is a hash-routed single-page application: content is authored in a JavaScript data file (`js/content.js`), rendered via Markdown at runtime, and navigated through a sidebar-driven UI.
 
-The site is a hash-routed single-page application — content is authored in a JavaScript data file (`js/content.js`), rendered via Markdown at runtime, and navigated through a sidebar-driven UI.
+**Current content:** a single SAP RAP guide — *Determinations & Validations in RAP* — with ABAP code examples, execution-order cheatsheet, and detailed interview Q&A.
 
 ---
 
 ## Features
 
-- **31 animated SVG diagrams** — tokenization, embeddings, self-attention, transformer architecture, FFN, normalization, training pipeline, encoder-only (BERT), decoder-only (GPT), encoder-decoder (T5), dense vs sparse (MoE) models, decision framework, model architectures (GPT-4, Claude 3, Gemini, LLaMA 3, Mistral, BERT, T5), prompt anatomy, prompt production pipeline, context window anatomy, attention patterns, lost in the middle, memory systems, context optimization workflow, and more
-- **SMIL animations** — all diagram motion uses SVG-native animation (cross-browser, no JS)
 - **Markdown-rendered content** via [marked](https://marked.js.org/) with output sanitization
-- **Syntax highlighting** via [Prism.js](https://prismjs.com/)
-- **Dark mode** with system preference detection and manual toggle
-- **Full-text search** — pre-built index, O(1) queries (not per-keystroke scan)
+- **ABAP syntax highlighting** via [Prism.js](https://prismjs.com/) (light + dark themes)
+- **Dark/light theme** — manual toggle, defaults to light
+- **Full-text search** — pre-built index, cached
 - **Reading time estimation** (200 wpm, cached per guide)
 - **Bookmarking** persisted to `localStorage`
 - **Mark-as-complete** progress tracking
-- **Browser back/forward** — popstate handler enables proper navigation
-- **Focus management** — keyboard focus moves to content heading on guide switch
-- **Error boundaries** — graceful fallback UI on render failures
-- **Responsive layout** with collapsible sidebar, scrollspy-driven table of contents, and glass-morphism nav
-- **PWA-ready** — manifest.json for installability, .nojekyll for reliable GitHub Pages deployment
-- **SEO metadata** with JSON-LD structured data, canonical URLs, and Open Graph / Twitter Card support
-
----
-
-## Animated Diagrams
-
-| Diagram | File | Covers |
-|---------|------|--------|
-| LLM Evolution Timeline | `assets/diagrams/llm-evolution.svg` | 5-era timeline from transformers to modern MoE models |
-| Tokenization | `assets/diagrams/tokenization.svg` | BPE algorithm — character split, merge steps, token IDs |
-| Token & Positional Embeddings | `assets/diagrams/embeddings.svg` | Embedding lookup, embedding matrix, positional encoding variants |
-| Transformer Architecture | `assets/diagrams/transformer-architecture.svg` | Full end-to-end data flow from text to output |
-| Self-Attention Mechanism | `assets/diagrams/self-attention.svg` | QKV computation, attention matrix, multi-head, variants |
-| Feed-Forward Network | `assets/diagrams/ffn.svg` | Up/down projection, ReLU/GELU/SwiGLU activation function cards |
-| Normalization & Residuals | `assets/diagrams/norm-residual.svg` | Residual skip path, LayerNorm, Pre-LN vs Post-LN, RMSNorm |
-| Full Transformer Block | `assets/diagrams/transformer-block.svg` | Complete decoder layer: Norm → Attn → + → Norm → FFN → + |
-| Training Pipeline | `assets/diagrams/training-pipeline.svg` | 3-stage pipeline: pretraining, SFT, RLHF/DPO |
-| Inference Optimizations | `assets/diagrams/inference-optimizations.svg` | KV-Cache, speculative decoding, quantization, Flash Attention, continuous batching |
-| Types of LLMs | `assets/diagrams/types-of-llms.svg` | 5-axis categorization — architecture, context, modality, access, size |
-| Encoder-Only (BERT) | `assets/diagrams/encoder-only-bert.svg` | Bidirectional self-attention, MLM training, downstream tasks |
-| Decoder-Only (GPT) | `assets/diagrams/decoder-only-gpt.svg` | Causal attention mask, autoregressive generation, KV-cache |
-| Encoder-Decoder (T5) | `assets/diagrams/encoder-decoder-t5.svg` | Bidirectional encoder + causal decoder with cross-attention |
-| Dense Models | `assets/diagrams/dense-models.svg` | All-neurons-active FFN, full capacity per token |
-| Sparse Models (MoE) | `assets/diagrams/sparse-models-moe.svg` | Router/gate, top-k expert selection, weighted sum |
-| Decision Framework | `assets/diagrams/decision-framework.svg` | When to use which model — 3-column decision tree |
-| Context Window Anatomy | `assets/diagrams/context-window-anatomy.svg` | Token sequence, position indices, attention range, KV cache |
-| Attention Patterns | `assets/diagrams/attention-patterns.svg` | Full vs sliding window vs sparse vs global+sliding attention matrices |
-| Lost in the Middle | `assets/diagrams/lost-in-the-middle.svg` | U-shaped performance curve across document position |
-| Memory Systems | `assets/diagrams/context-memory-systems.svg` | Three-tier memory: working → semantic → skill |
-| Context Optimization | `assets/diagrams/context-optimization-workflow.svg` | End-to-end pipeline: document → chunk → embed → retrieve → rerank → compress → LLM |
-
-All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from Google Fonts, and are embedded via `<object>` tags so external fonts render correctly.
+- **Browser back/forward** — popstate handler
+- **Responsive layout** with collapsible sidebar, scrollspy table of contents, glass-morphism nav
+- **PWA-ready** — `manifest.json`, `.nojekyll` for reliable GitHub Pages deployment
 
 ---
 
@@ -74,12 +38,10 @@ All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from 
 | **Markdown** | [marked](https://marked.js.org/) with HTML sanitization |
 | **Syntax Highlighting** | [Prism](https://prismjs.com/) |
 | **Routing** | Hash-based SPA with popstate handler |
-| **State** | localStorage with decoupled read/write |
+| **State** | localStorage |
 | **Font** | Ubuntu + Ubuntu Mono (Google Fonts) |
-| **Icons** | Material Symbols Outlined |
-| **Theme** | Orange brand (#E95420) — matching git-bytes design system |
+| **Theme** | Orange brand (#E95420) |
 | **Hosting** | GitHub Pages |
-| **CI/CD** | GitHub Actions |
 
 ---
 
@@ -87,21 +49,21 @@ All diagrams use `font-family="Ubuntu, sans-serif"` with `@import` loading from 
 
 ```
 .
-├── index.html                  # Landing page with hero, search, stats
+├── index.html                  # Landing page
 ├── docs.html                   # Documentation viewer with sidebar + outline
 ├── 404.html                    # Custom error page
 ├── manifest.json               # PWA manifest
 ├── .nojekyll                   # Disables GitHub Pages Jekyll processing
 ├── css/
 │   ├── main.css                # Tailwind input source (CSS variables, custom styles)
-│   └── tailwind.css            # Compiled Tailwind output (gitignored)
+│   └── tailwind.css            # Compiled Tailwind output (gitignored, built in CI)
 ├── js/
-│   ├── content.js              # Content data — phases, guides, sections, all text + diagram refs
-│   ├── app.js                  # Application logic — rendering, search, bookmarks, progress, routing
-│   └── theme.js                # Dark mode toggle and system preference detection
+│   ├── content.js              # Content data — phases, guides, sections (all text + code)
+│   ├── app.js                  # Application logic — rendering, search, bookmarks, progress
+│   └── theme.js                # Theme toggle (defaults to light)
 ├── assets/
-│   ├── logo.svg                # Animated SMIL logo (hamburger → checkmark with pulse ring)
-│   └── diagrams/               # 31 animated SVG diagrams (see table above)
+│   ├── logo.svg                # Animated SMIL logo (hamburger → checkmark)
+│   └── favicon.svg
 ├── tailwind.config.js          # Tailwind config — orange palette, Ubuntu fonts
 ├── package.json                # npm scripts (build)
 ├── .github/workflows/deploy.yml # GitHub Actions deployment
@@ -125,24 +87,24 @@ QUICK_BYTES
         └── sections — array of sections (id, title, content as Markdown)
 ```
 
-The `docs.html` page renders the active guide's sections. Each section's `content` is parsed through `marked.parse()` with output sanitization (strips `<script>`, `on*` handlers, `javascript:` protocol). Diagrams are inserted inline as `<object>` tags within the Markdown. Parsed output is cached per content string — switching guides is O(1) after first render.
-
-The search index is built once on first interaction and cached — subsequent searches query the pre-built index rather than scanning content.
+The `docs.html` page renders the active guide's sections. Each section's `content` is parsed through `marked.parse()` with output sanitization (strips `<script>`, `on*` handlers, `javascript:` protocol). Parsed output is cached per content string.
 
 ---
 
-## Architectural Decisions
+## Adding Content
 
-| Decision | Rationale |
-|----------|-----------|
-| Hash-based routing | GitHub Pages only serves static files — no server-side rewrite support |
-| SMIL over JS animations | Cross-browser SVG animation without JavaScript dependency |
-| `<object>` over `<img>` for SVGs | External fonts load correctly only in `<object>` tags |
-| Pre-built search index | Avoids O(n) scan on every keystroke — builds once on first search |
-| Markdown output sanitization | Strips script tags and event handlers before `innerHTML` injection |
-| Scrollspy with cleanup | Named listener function prevents memory leak on repeated guide switches |
-| Popstate handler | Enables browser back/forward navigation in SPA |
-| Focus management | Moves keyboard focus to content heading on guide switch for a11y |
+1. Add a phase (or reuse `sap-rap`) and a guide with sections to `js/content.js`.
+2. Section `content` is Markdown. Use fenced code blocks for ABAP:
+
+   ```abap
+   METHOD my_determination.
+     " code
+   ENDMETHOD.
+   ```
+
+   Inside the JS template literal, escape code-fence backticks as `\`\`\``.
+3. Update `stats.guides` / `stats.phases` to match.
+4. Verify: `node --check js/content.js`.
 
 ---
 
@@ -155,40 +117,24 @@ npm install
 # Build Tailwind CSS (compiles css/main.css → css/tailwind.css)
 npm run build
 
-# Open index.html in browser (no dev server required)
-open index.html
+# Serve locally
+python3 -m http.server 8000
 ```
 
-**Note:** The site is pure static HTML — no build step beyond Tailwind is needed. The `marked`, `prism`, and `Material Symbols` libraries are loaded from CDN.
-
----
-
-## Adding a New Diagram
-
-1. Create an SVG file in `assets/diagrams/` using the existing diagrams as style reference (Ubuntu font, orange brand colors, `<object>`-safe `@import` for fonts)
-2. Add an `<object>` tag referencing the diagram at the appropriate location in a section's `content` string in `js/content.js`
-3. Verify no duplicate references exist (`rg 'your-diagram-name' js/content.js`)
-4. Run `npm run build` if Tailwind classes were added
+**Note:** The site is pure static HTML — no build step beyond Tailwind. `marked`, `prism`, and `Material Symbols` are loaded from CDN.
 
 ---
 
 ## Deployment
 
-Pushing to `main` triggers the GitHub Actions workflow (`.github/workflows/deploy.yml`), which:
+Pushing to `main` triggers the GitHub Actions workflow (`.github/workflows/deploy.yml`):
 
 1. Checks out the repository
 2. Installs npm dependencies
 3. Builds Tailwind CSS
-4. Removes `node_modules/`
-5. Deploys to GitHub Pages
+4. Deploys to GitHub Pages
 
-The live site is at: https://kallolchakraborty.github.io/quick-bytes/
-
----
-
-## Browser Support
-
-All modern browsers (Chrome, Firefox, Safari, Edge). The SVG animations use SMIL, which is supported in all modern browsers. Internet Explorer is not supported.
+**Requirement:** GitHub Pages must be enabled on the repo with source **"GitHub Actions"** (Settings → Pages).
 
 ---
 
