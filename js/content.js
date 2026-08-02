@@ -22,7 +22,7 @@ const QUICK_BYTES = {
         {
           id: 'sap-rap-determinations-validations',
           title: 'Determinations vs Validations',
-          description: 'Last-minute cheat sheet: the difference at a glance, interaction phases, minimal ABAP, and rapid-fire Q&A.',
+          description: 'Last-minute cheat sheet: the difference at a glance, interaction phases, and minimal ABAP.',
           sections: [
             {
               id: 'cheat-sheet',
@@ -102,61 +102,6 @@ ENDCLASS.
 \`\`\`
 
 Rules: always **\`IN LOCAL MODE\`**, never \`SELECT\` (entity buffer, draft semantics, locks); process **all instances in one statement**; only touch fields in your declaration; \`%tky\` in \`reported\` is mandatory.`
-            },
-            {
-              id: 'interview-qa',
-              title: 'Rapid-fire Q&A',
-              content: `**Q: What is the difference between a determination and a validation?**
-
-**A:** Determinations compute and write field values; validations check values and never write. Neither is called by the caller — the framework fires both.
-
----
-
-**Q: What is the execution order?**
-
-**A:** \`AD → D → V → A → S\`. ADR run automatically; A and S run only if ADR passed.
-
----
-
-**Q: Why do validations always see the determined values?**
-
-**A:** Because V always runs after D.
-
----
-
-**Q: Early vs late numbering?**
-
-**A:** Early = key assigned first in D (the default — draft rows need an identity). Late = key assigned on save (per-customer sequences).
-
----
-
-**Q: How does a validation block saving?**
-
-**A:** Fill \`failed\` for each broken instance and \`reported\` with error severity and a mandatory \`%tky\`.
-
----
-
-**Q: Can a determination run twice in one interaction?**
-
-**A:** Yes — \`on modify\` fires per change. Keep it idempotent and cause-aware: gate on \`%c-<field>\` before recomputing.
-
----
-
-**Q: Why \`IN LOCAL MODE\` and never \`SELECT\`?**
-
-**A:** \`SELECT\` bypasses the entity buffer — stale data, broken draft semantics, and deadlocks against the instance lock.
-
----
-
-**Q: Can two determinations set the same field?**
-
-**A:** No — one field belongs to one determination per trigger. Validations may check any field.
-
----
-
-**Q: Error severity vs warning?**
-
-**A:** Error aborts the operation; warning lets the user continue.`
             },
           ],
         },
