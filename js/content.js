@@ -2,7 +2,7 @@ const QUICK_BYTES = {
   site: {
     name: 'Quick Bytes',
     tagline: 'SAP RAP interview prep.',
-    description: 'Determinations and Validations in SAP RAP — compact cheatsheet with ABAP code, made to clear FAANG interviews.',
+    description: 'Determinations and Validations in SAP RAP — beginner-friendly intro with ABAP code, plus interview prep.',
     url: 'https://kallolchakraborty.github.io/quick-bytes/',
     author: 'Kallol Chakraborty',
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
@@ -16,147 +16,201 @@ const QUICK_BYTES = {
     {
       id: 'sap-rap',
       title: 'SAP RAP',
-      level: 'Advanced',
-      description: 'Determinations & Validations — the automatic behavior-model methods. High-yield, interview-ready.',
+      level: 'Beginner',
+      description: 'Determinations & Validations explained from scratch — no prior RAP knowledge needed. Code examples and interview prep included.',
       guides: [
         {
           id: 'sap-rap-determinations-validations',
           title: 'Determinations & Validations in RAP',
-          description: 'Interview cheatsheet: definitions, execution order, ABAP, and common FAANG questions.',
+          description: 'A beginner-friendly walkthrough: what RAP is, what determinations and validations do, and how to write them — plus interview Q&A.',
           sections: [
             {
-              id: 'cheatsheet',
-              title: 'Cheatsheet',
-              content: `**Determination** = framework auto-*sets* field values. **Validation** = framework auto-*checks* values and reports \`failed\` / \`reported\`. Neither is ever called by the caller — the framework fires them in interaction phases.
+              id: 'what-is-rap',
+              title: 'What is RAP?',
+              content: `**RAP** (ABAP RESTful Application Programming Model) is SAP's modern way to build business applications in ABAP. Think of it as a production line with three parts:
+
+1. **Data model (CDS views)** — defines what data the app stores (like a database schema).
+2. **Behavior definition (BDEF, a \`.behavior\` file)** — declares what the app can *do* with the data: create, update, delete, custom actions — and the **rules** that run automatically.
+3. **Behavior implementation (ABAP classes)** — the actual ABAP code behind those rules.
+
+The central idea is the **business object** — a real-world thing the app manages (like a travel booking), combining its data with its behavior.
+
+Determinations and validations live in **part 3** (the behavior implementation). They are *rules* that the framework fires automatically — you never call them from your code; the framework runs them for you.
+
+\`\`\`
+CDS data model      →  defines the data
+BDEF behavior file  →  declares the rules (determinations, validations, actions)
+behavior pool class →  ABAP code that implements those rules
+\`\`\`
+
+**Don't worry if the pieces seem abstract** — the next sections build them up one by one.`
+            },
+            {
+              id: 'what-are-dets-and-vals',
+              title: 'What are Determinations & Validations?',
+              content: `Imagine booking a trip in a travel app:
+
+- When you open a **new** booking, the app *auto-fills* fields for you — today's date, status "New", a booking number. That is a **determination**: the system computes or sets values so the user doesn't have to.
+- When you submit, the app *checks* the form — "Is the end date after the begin date?" If not, it shows an error and stops you. That is a **validation**: the system checks values against business rules and reports problems.
+
+**Plain English:**
+
+- **Determination** = the system fills in / computes values automatically.
+- **Validation** = the system checks values and reports errors or warnings.
+
+Neither is triggered by the user directly — the **framework** decides when to run them.
 
 | | Determination | Validation |
 |---|---|---|
-| Job | Set / derive fields | Check fields |
-| Writes? | Yes (declared fields only) | No (read-only) |
-| Reports | \`mapped\` | \`failed\` + \`reported\` |
-| Triggers | \`on create\` / \`on modify\` / \`on save\` | \`on save\` / on demand |
-| Phase | D | V |
-| Typical use | Numbering, defaults, totals | Consistency rules |
+| Job | Set / derive field values | Check field values |
+| Can it write? | Yes (declared fields) | No — read-only |
+| What it reports | \`mapped\` (changes made) | \`failed\` + \`reported\` (errors) |
+| When it runs | \`on create\` / \`on modify\` / \`on save\` | \`on save\` (or on demand) |
 
-**BDEF → behavior pool:**
+**Declared in the behavior definition (BDEF):**
 
 \`\`\`abap
 behavior for ZRAP_TRAVEL alias travel
-  persistent table zrap_travel
-  draft table zrap_travel_d
-  etag master last_changed_at
 
-  determination numbering on create { field TravelId; }
   determination set_defaults on create { field Status; field BookingDate; }
-  determination compute_total on modify { field TotalPrice; }
-
-  validation check_dates on save { field BeginDate; field EndDate; }
+  validation     check_dates    on save  { field BeginDate; field EndDate; }
 \`\`\`
 
-Implemented in \`CLASS IMPLEMENTATION FOR BEHAVIOR OF zrap_travel\`. Method name = \`<determination>_<trigger>\`, snake_case (e.g. \`set_defaults_on_create\`).`
+**Implemented in the behavior pool** — a class whose methods mirror those declarations. Method name = declaration name + trigger, snake_case:
+
+\`\`\`abap
+CLASS IMPLEMENTATION FOR BEHAVIOR OF zrap_travel.
+  METHOD set_defaults_on_create.   " runs automatically on create
+  METHOD check_dates_on_save.      " runs automatically before save
+ENDCLASS.
+\`\`\``
             },
             {
               id: 'execution-order',
-              title: 'Execution Order',
-              content: `**Interaction phases (in order):**
+              title: 'When do they run? The interaction phases',
+              content: `Every operation (create, update, delete) runs through a fixed order of steps — the **interaction phases**:
 
-\`AD → D → V → A → S\`
+\`\`\`
+AD → D → V → A → S
+\`\`\`
 
-1. **AD** — Activation determinations (on create/enable)
-2. **D** — Determinations (derive values)
-3. **V** — Validations (check values)
-4. **A** — Actions (explicit calls)
-5. **S** — Save sequence: \`finalize → check_before_save → save (draft activation) → cleanup\`
+1. **AD — Activation**: prepares the instance when it is created or enabled.
+2. **D — Determinations**: fill/compute values (e.g. set the status, compute a total).
+3. **V — Validations**: check values against the rules (e.g. dates make sense).
+4. **A — Actions**: operations the user explicitly triggered (e.g. "Confirm booking").
+5. **S — Save**: write to the database.
 
-**Rules that get asked:**
+**Why the order matters:**
 
-- **ADR** = the 3 *automatic* phases. Actions and Save only run if ADR passed.
-- Validation error (\`failed\`) aborts the whole interaction — no actions, no save.
-- **Early numbering** (\`numbering on create\`) runs *first* in D, so later create logic sees the key.
-- Within D, methods run in BDEF declaration order.
-- **One field = at most one determination per trigger.** Two determinations on the same field/trigger fail the build.
-- \`on modify\` fires per field change; its **field list** controls which changes trigger it.`
+- Determinations run **before** validations, so validations always check the *final, filled-in* values. Checking before the defaults were set would produce wrong errors.
+- If a validation raises an error, **everything stops** — no actions run, nothing is saved, and the user gets a message.
+
+**A simple way to remember it:**
+
+> Determinations *do the work* (fill values), validations *do the checking* (find problems) — and both happen before anything is saved.
+
+Within step 2 there are two more rules worth knowing:
+
+- **Numbering runs first** — a determination that assigns keys (\`numbering on create\`) runs before other create determinations, so later logic can use the key.
+- **One field, one determination** — a field may be set by at most one determination per trigger, which keeps responsibilities clean.`
             },
             {
               id: 'determinations-in-abap',
-              title: 'Determinations in ABAP',
-              content: `**Defaults on create:**
+              title: 'A simple Determination — step by step',
+              content: `**Goal:** when a new travel booking is created, automatically set \`Status\` to 'NEW' and \`BookingDate\` to today's date.
+
+**1. Declare it in the BDEF:**
+
+\`\`\`abap
+behavior for ZRAP_TRAVEL alias travel
+
+  determination set_defaults on create { field Status; field BookingDate; }
+\`\`\`
+
+**2. Implement it in the behavior pool:**
 
 \`\`\`abap
 METHOD set_defaults_on_create.
+  " 1) Read the instances being created (the framework passes their keys)
   READ ENTITIES OF zrap_travel IN LOCAL MODE
     ENTITY travel
-    FIELDS ( TravelId )
-    WITH CORRESPONDING #( keys ) RESULT DATA(lt_travels).
+    FIELDS ( TravelId )           " read only what we need
+    WITH CORRESPONDING #( keys )  " 'keys' = the new bookings
+    RESULT DATA(lt_travels).      " result stored in table lt_travels
 
+  " 2) Set the default values on every instance
   MODIFY ENTITIES OF zrap_travel IN LOCAL MODE
     ENTITY travel
     UPDATE FIELDS ( Status BookingDate )
     WITH VALUE #( FOR ls IN lt_travels
-                  ( %tky = ls-%tky Status = 'NEW' BookingDate = sy-datum ) ).
+                  ( %tky        = ls-%tky
+                    Status      = 'NEW'
+                    BookingDate = sy-datum ) ).
 ENDMETHOD.
 \`\`\`
 
-**Numbering (early key assignment):**
+**Plain English:** "For every new booking, set \`Status\` to NEW and \`BookingDate\` to today." Two blocks do all the work:
 
-\`\`\`abap
-METHOD numbering_on_create.
-  READ ENTITIES OF zrap_travel IN LOCAL MODE
-    ENTITY travel FIELDS ( TravelId )
-    WITH CORRESPONDING #( keys ) RESULT DATA(lt_travels).
+- **READ ENTITIES** — loads the instances (from the in-memory entity buffer, not the database).
+- **MODIFY ENTITIES** — applies the changes.
+- **\`%tky\`** — the key that identifies each instance (the framework uses it to know *which* booking you mean).
+- **\`sy-datum\`** — ABAP's built-in "today's date".
 
-  LOOP AT lt_travels INTO DATA(ls).
-    MODIFY ENTITIES OF zrap_travel IN LOCAL MODE
-      ENTITY travel UPDATE FIELDS ( TravelId )
-      WITH VALUE #( ( %tky = ls-%tky TravelId = zcl_numbering=>next( ) ) ).
-  ENDLOOP.
-ENDMETHOD.
-\`\`\`
+**Three rules to remember:**
 
-**Golden rules:**
-
-- Use **\`READ ENTITIES / MODIFY ENTITIES … IN LOCAL MODE\`** — never \`SELECT\` (bypasses the entity buffer, breaks draft semantics).
-- **\`%c\` cause param** — for \`on modify\`, \`IF %c-Currency IS NOT INITIAL\` tells you which field triggered it. Skip work when irrelevant.
-- Process **all keys in one statement** — never loop with per-row reads.
-- Write only fields in your BDEF field list.`
+- Always use **\`READ ENTITIES / MODIFY ENTITIES … IN LOCAL MODE\`** — never \`SELECT\` from the database here. RAP already holds the data in a buffer; \`SELECT\` would read stale, unsaved data.
+- Process **all instances in one statement** (the \`FOR ls IN …\` pattern), not one row at a time.
+- You can only change fields listed in your BDEF declaration.`
             },
             {
               id: 'validations-in-abap',
-              title: 'Validations in ABAP',
-              content: `**Check + report:**
+              title: 'A simple Validation — step by step',
+              content: `**Goal:** reject a booking whose end date comes before its begin date, and show the user why.
+
+**1. Declare it in the BDEF:**
+
+\`\`\`abap
+behavior for ZRAP_TRAVEL alias travel
+
+  validation check_dates on save { field BeginDate; field EndDate; }
+\`\`\`
+
+**2. Implement it in the behavior pool:**
 
 \`\`\`abap
 METHOD check_dates_on_save.
+  " 1) Read the instances that were changed
   READ ENTITIES OF zrap_travel IN LOCAL MODE
-    ENTITY travel FIELDS ( BeginDate EndDate )
+    ENTITY travel
+    FIELDS ( BeginDate EndDate )
     WITH CORRESPONDING #( keys ) RESULT DATA(lt_travels).
 
+  " 2) For every instance where the dates are wrong:
   LOOP AT lt_travels INTO DATA(ls)
        WHERE BeginDate > EndDate.
+
+    " mark the instance as failed (stops the operation)
     APPEND VALUE #( %tky = ls-%tky ) TO failed-travel.
-    APPEND VALUE #( %tky       = ls-%tky
-                    %state_area = 'CHECK_DATES'
+
+    " send a message that the user will see
+    APPEND VALUE #( %tky = ls-%tky
                     %msg = cl_abap_behv=>new_message_with_text(
                       severity = if_abap_behv_message=>severity-error
-                      text     = 'Begin date must be <= end date' ) )
+                      text     = 'End date must not be before begin date' ) )
            TO reported-travel.
   ENDLOOP.
 ENDMETHOD.
 \`\`\`
 
-**Must-knows:**
+**Plain English:** "For each booking where BeginDate is after EndDate, mark it failed and tell the user."
 
-- **\`%tky\` in \`reported\` is mandatory** — a message without a key cannot attach to the UI row.
-- \`failed\` + severity-error = interaction aborts. Warning severity = user can continue.
-- **\`%state_area\`** groups messages so \`REPORTED\` cleanup works.
-- **On-demand trigger** from an action (validation cause):
-\`\`\`abap
-MODIFY ENTITIES OF zrap_travel IN LOCAL MODE
-  ENTITY travel UPDATE FIELDS ( BeginDate )
-  WITH VALUE #( ( %tky = keys[ 1 ]-%tky
-                  %control-BeginDate = if_abap_behv=>mk-on ) ).
-\`\`\`
-- **Draft:** \`on save\` validations run at save/activation — the gate before an invalid draft is activated.`
+**The two output tables:**
+
+- **\`failed\`** — "this instance is wrong, stop the operation." One entry per broken instance.
+- **\`reported\`** — the messages shown to the user. **\`%tky\` is mandatory here** — without it the message cannot be attached to the right row.
+- **Severity:** \`severity-error\` blocks the save; \`severity-warning\` lets the user continue with a notice.
+
+**When it runs:** because it is declared \`on save\`, it fires automatically when the user saves. You can also trigger a validation earlier (e.g. inside an action) — covered in the Q&A below.`
             },
             {
               id: 'interview-qa',
