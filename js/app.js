@@ -436,13 +436,21 @@ function initDocs() {
     buildOutline();
     initScrollSpy();
 
-    // Add copy buttons to code blocks
+    // Add code block header (language label + traffic lights) and copy button
     document.querySelectorAll('.content-section pre').forEach(function(pre) {
+      var code = pre.querySelector('code');
+      var header = document.createElement('div');
+      header.className = 'code-block-header';
+      var lang = code && (code.className.match(/language-(\w+)/) || [])[1];
+      header.innerHTML = '<span class="code-block-dots"><span></span><span></span><span></span></span>' +
+        '<span class="code-block-lang">' + (lang ? lang.toUpperCase() : 'CODE') + '</span>';
+      pre.insertBefore(header, pre.firstChild);
+      pre.classList.add('has-header');
+
       var btn = document.createElement('button');
       btn.className = 'copy-btn';
       btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">content_copy</span> Copy';
       btn.addEventListener('click', function() {
-        var code = pre.querySelector('code');
         if (!code) return;
         navigator.clipboard.writeText(code.textContent).then(function() {
           btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span> Copied';

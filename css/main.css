@@ -401,23 +401,57 @@ body {
 
 .content-section pre {
   margin: 1.25rem 0;
-  border-radius: 0.5rem;
+  border-radius: 0.625rem;
   overflow: hidden;
   position: relative;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-md);
   background: var(--bg-subtle);
   padding: 0;
 }
 
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.875rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.code-block-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.code-block-dots span {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+}
+
+.code-block-dots span:nth-child(1) { background: #ff5f57; }
+.code-block-dots span:nth-child(2) { background: #febc2e; }
+.code-block-dots span:nth-child(3) { background: #28c840; }
+
+.code-block-lang {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
 .content-section pre code {
   display: block;
-  padding: 1.25rem 1.25rem;
+  padding: 1.25rem;
   font-size: 0.8125rem;
   line-height: 1.65;
   background: var(--bg-subtle);
-  border-radius: 0.5rem;
   color: var(--text-default);
   font-family: 'Ubuntu Mono', 'SF Mono', 'Fira Code', monospace;
+  overflow-x: auto;
 }
 
 .content-section code:not(pre code) {
@@ -435,7 +469,50 @@ body {
   background: rgba(233, 84, 32, 0.1);
 }
 
-/* Dark-mode syntax highlighting (Prism default theme is light-only) */
+/* Syntax highlighting — light mode (overrides Prism default) */
+.content-section pre code .token.comment,
+.content-section pre code .token.prolog,
+.content-section pre code .token.cdata,
+.content-section pre code .token.doctype {
+  color: #6e7781;
+  font-style: italic;
+}
+.content-section pre code .token.punctuation {
+  color: #57606a;
+}
+.content-section pre code .token.keyword,
+.content-section pre code .token.atrule,
+.content-section pre code .token.rule,
+.content-section pre code .token.operator,
+.content-section pre code .token.entity,
+.content-section pre code .token.important,
+.content-section pre code .token.selector {
+  color: #cf222e;
+}
+.content-section pre code .token.string,
+.content-section pre code .token.attr-value,
+.content-section pre code .token.char,
+.content-section pre code .token.regex {
+  color: #0a3069;
+}
+.content-section pre code .token.number,
+.content-section pre code .token.constant,
+.content-section pre code .token.symbol,
+.content-section pre code .token.boolean {
+  color: #0550ae;
+}
+.content-section pre code .token.function,
+.content-section pre code .token.function-variable {
+  color: #8250df;
+}
+.content-section pre code .token.class-name,
+.content-section pre code .token.builtin,
+.content-section pre code .token.attr-name,
+.content-section pre code .token.property {
+  color: #0550ae;
+}
+
+/* Dark-mode syntax highlighting */
 .dark .content-section pre code {
   color: #e6edf3;
 }
@@ -445,6 +522,7 @@ body {
 .dark .content-section pre code .token.cdata,
 .dark .content-section pre code .token.doctype {
   color: #8b949e;
+  font-style: italic;
 }
 .dark .content-section pre code .token.punctuation {
   color: #8b949e;
@@ -506,6 +584,10 @@ body {
   gap: 0.25rem;
   z-index: 2;
   box-shadow: var(--shadow-sm);
+}
+
+.content-section pre.has-header .copy-btn {
+  top: 2.375rem;
 }
 
 .content-section pre:hover .copy-btn,
