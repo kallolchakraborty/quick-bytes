@@ -389,6 +389,48 @@ The **tool interface + eval harness**. Without clean tool schemas and a way to m
 **Autoregression:** one token at a time, each conditioned on all previous. That's why cost scales with output length, and why generation is inherently sequential (parallelism limited on decode).`
             },
             {
+              id: 'transformers-explained',
+              title: 'Transformers, Explained',
+              content: `The transformer is the architecture behind every modern LLM ("Attention Is All You Need", 2017). Know it layer by layer.
+
+**The big idea:** instead of reading text left-to-right like RNNs, the transformer processes *all tokens in parallel* and figures out relevance via **attention**. Parallelism + long-range context = training at scale became feasible.
+
+**The components (decoder stack, what LLMs use):**
+
+| Component | Job |
+|---|---|
+| **Embedding** | Token ID → vector |
+| **Multi-head attention** | Each token looks at others, weights relevance |
+| **Feed-forward (MLP)** | Processes each token's info, adds capacity |
+| **Residual connections + LayerNorm** | Stable training, deep stacks trainable |
+| **Unembed + softmax** | Vector → probability over vocabulary |
+
+**Attention in one formula:**
+
+\`\`\`text
+Attention(Q, K, V) = softmax(Q·Kᵀ / √d) · V
+\`\`\`
+
+- Each token produces a **Query** ("what am I looking for"), **Key** ("what do I offer"), **Value** ("what I contain").
+- Q·Kᵀ scores how relevant every other token is; softmax normalizes to weights; multiply by V to blend.
+- Divide by **√d** (√dimension) to stop scores from exploding.
+
+**Multi-head:** run this several times in parallel with different learned projections, concatenate. Heads specialize — one tracks syntax, another anaphora ("it" → noun), another positions. That's why one attention layer "understands" so much.
+
+**Why it's called a *stack*:** layers run sequentially — layer 1 finds words, layers deepen into phrases, semantics, and abstract reasoning. Depth = abstraction.
+
+**Positional encoding (the twist):** attention has no sense of order — "dog bites man" = "man bites dog" to a plain attention layer. Positional encodings add position-aware signal so ordering matters.
+
+**Masked attention (the decoder secret):** during training, each token may *only* attend to tokens before it — otherwise the model would just copy the answer. This is what enforces next-token prediction.
+
+**Interview black-belt answers:**
+- *Why transformers beat RNNs?* Parallel training + no vanishing gradient over long sequences — attention is O(n²) in compute but trains on GPUs in parallel; RNNs force sequential passes.
+- *Why O(n²)?* Every token attends to every token — n tokens → n×n attention scores. That's the root cost of long contexts and why long-context LLMs are expensive.
+- *What's the attention bottleneck?* The **KV cache**: remembering past keys/values grows linearly with context, so long outputs eat memory.
+
+**Golden rule:** attention = relevance weighting, done in parallel, learned from data. Everything else — positions, residual connections, layer count — exists to make that attention work at scale. If you can explain Q, K, V and why O(n²), you've passed the transformer test.`
+            },
+            {
               id: 'training-pipeline',
               title: 'The Training Pipeline',
               content: `LLMs aren't trained in one shot. Three stages, each with a distinct goal:
