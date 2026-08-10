@@ -103,7 +103,7 @@
         </div>
         <h1 class="text-3xl sm:text-4xl font-bold mb-2">Quick Bytes</h1>
         <p class="text-base theme-text-muted mb-6 max-w-xl mx-auto">Last-minute SAP RAP notes before the interview. Tap a note to read it.</p>
-        <button class="open-search-btn w-full max-w-lg border-2 theme-border hover:border-brand-500 theme-bg text-left px-5 py-3.5 rounded-xl shadow-lg shadow-slate-100 dark:shadow-slate-900 flex items-center justify-between text-slate-400 font-medium text-sm transition-all group">
+        <button class="open-search-btn mx-auto w-full max-w-lg border-2 theme-border hover:border-brand-500 theme-bg text-left px-5 py-3.5 rounded-xl shadow-lg shadow-slate-100 dark:shadow-slate-900 flex items-center justify-between text-slate-400 font-medium text-sm transition-all group">
           <div class="flex items-center gap-3">
             <span class="material-symbols-outlined text-slate-400 group-hover:text-brand-500 transition-colors">search</span>
             <span>Search notes...</span>
@@ -115,11 +115,6 @@
         </button>
       </div>
 
-      <div class="flex items-center justify-between mb-5">
-        <h2 class="text-lg font-semibold" id="notes-heading">Notes</h2>
-        <a href="docs.html" class="text-sm text-brand-500 hover:text-brand-600 font-medium transition-colors">Open full guide &rarr;</a>
-      </div>
-      <div id="notes-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
     </div>
   </main>
 
@@ -131,40 +126,6 @@
 
   <script src="js/content.js?v=20260709"></script>
   <script src="js/app.js?v=20260709"></script>
-  <script>
-    (function() {
-      var grid = document.getElementById('notes-grid');
-      if (!grid || typeof QUICK_BYTES === 'undefined') return;
-      var phases = QUICK_BYTES.phases || [];
-      var count = 0;
-      var html = '';
-      phases.forEach(function(phase) {
-        (phase.guides || []).forEach(function(guide) {
-          (guide.sections || []).forEach(function(note) {
-            count++;
-            var words = (note.content || '').split(/\s+/).filter(Boolean).length;
-            var mins = Math.max(1, Math.round(words / 200));
-            var snippet = (note.content || '')
-              .replace(/```[\s\S]*?```/g, ' ')
-              .replace(/`([^`]*)`/g, '$1')
-              .replace(/[#*|>_\[\]()\-]/g, ' ')
-              .replace(/\s+/g, ' ').trim();
-            html += '<a href="docs.html#' + note.id + '" class="group block theme-bg rounded-xl border theme-border shadow-sm hover:shadow-md hover:border-brand-500 transition-all p-5">';
-            html += '<div class="flex items-center justify-between mb-2.5">';
-            html += '<span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300">' + phase.title + '</span>';
-            html += '<span class="text-[10px] theme-text-muted flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">schedule</span>' + mins + ' min</span>';
-            html += '</div>';
-            html += '<h3 class="text-[15px] font-semibold theme-text group-hover:text-brand-500 transition-colors mb-1.5 leading-snug">' + note.title + '</h3>';
-            html += '<p class="text-[13px] theme-text-muted leading-relaxed line-clamp-3">' + snippet.slice(0, 160) + '&hellip;</p>';
-            html += '</a>';
-          });
-        });
-      });
-      grid.innerHTML = html;
-      var heading = document.getElementById('notes-heading');
-      if (heading) heading.textContent = 'Notes (' + count + ')';
-    })();
-  </script>
   <script>
     document.querySelectorAll('img[src*="logo.svg"]').forEach(function(img) {
       img.src = 'assets/logo.svg?v=' + Date.now();
