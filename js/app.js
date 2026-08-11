@@ -122,19 +122,25 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       var index = buildSearchIndex();
       var matches = [];
+      var shown = {};
       index.forEach(function(entry) {
         var guide = entry.guide;
         var section = entry.section;
-        var match = guide.title.toLowerCase().includes(query) ||
+        var key = section ? section.id : guide.id;
+        if (shown[key]) return;
+        var guideMatch = guide.title.toLowerCase().includes(query) ||
           (guide.description || '').toLowerCase().includes(query) ||
           entry.phase.title.toLowerCase().includes(query);
-        if (!match && section) {
-          match = section.title.toLowerCase().includes(query) ||
+        if (section) {
+          if (guideMatch) return;
+          var secMatch = section.title.toLowerCase().includes(query) ||
             (section.content && section.content.toLowerCase().includes(query));
+          if (!secMatch) return;
+        } else if (!guideMatch) {
+          return;
         }
-        if (match) {
-          matches.push(entry);
-        }
+        shown[key] = true;
+        matches.push(entry);
       });
       if (matches.length === 0) {
         results.innerHTML = '<div class="p-4 text-sm theme-text-muted text-center">No guides found for "' + query + '"</div>';
