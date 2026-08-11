@@ -8,8 +8,8 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 3,
-    phases: 3,
+    guides: 4,
+    phases: 4,
     platform: 'Engineering',
   },
   phases: [
@@ -571,6 +571,174 @@ You don't retrain — you inject knowledge at inference time with RAG, or use fi
 
 **12. What's a good mental model for explaining LLMs to a non-technical person?**
 An autocomplete engine trained on the entire internet, that you steer with a prompt. The better the prompt (the more relevant context), the better the completion. Everything else — agents, RAG, fine-tuning — is steering.`
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'agent-skills',
+      title: 'Agent Skills',
+      level: 'FAANG Interview',
+      description: 'Agent skills are how you give models capabilities without retraining — reusable prompt + code bundles that make agents reliably do complex tasks. Know what they are, how they work, and how to build one.',
+      guides: [
+        {
+          id: 'agent-skills-guide',
+          title: 'The Agent Skills Interview Guide',
+          description: 'Compact, interview-ready. Skills vs tools vs fine-tuning, anatomy of a skill, when to use them, and the questions interviewers ask.',
+          sections: [
+            {
+              id: 'what-are-agent-skills',
+              title: 'What are Agent Skills?',
+              content: `An **agent skill** is a reusable bundle of instructions (prompt) plus optional code that gives an LLM a specific capability on demand. The model pulls the skill into its context *when the task needs it* — the skill isn't always loaded, so the model isn't carrying 50 specialties around at once.
+
+**The core idea:** instead of cramming every instruction into the system prompt or retraining the model, skills are *loaded lazily*. Context stays lean; capability is on tap.
+
+**Skills vs tools vs fine-tuning — the ladder:**
+
+| | Skill | Tool | Fine-tuning |
+|---|---|---|---|
+| What it is | Prompt + code bundle | Executable function | Weight updates |
+| Loads | On demand, into context | At call time | Always (baked in) |
+| Best for | *How to do* a task | *Doing* an action | Locked-in behavior/format |
+| Changes | Prompt text | Runtime logic | Model weights |
+| Cost | Context tokens | Compute | Training |
+| Example | "Write a PDF report" workflow | \`search(query)\`, \`send_email()\` | Model that always answers in JSON |
+
+**Skill vs tool (the distinction to nail):** a tool *does* something (an action with a return value). A skill *shows how* — it's guidance, sometimes with helpers. A skill can orchestrate multiple tools; a tool is one atomic action.
+
+**Why skills exist (interview-ready):** models are generalists; skills make them specialists on request, without the context bloat of loading every specialty up front and without the cost/rigidity of fine-tuning. They also let you change behavior by editing a file — no training run.`
+            },
+            {
+              id: 'anatomy-of-a-skill',
+              title: 'Anatomy of a Skill',
+              content: `A skill is a folder with a **SKILL.md** (instructions) plus optional helper files. The model reads SKILL.md when it decides the skill applies.
+
+**Minimal structure:**
+
+\`\`\`text
+my-skill/
+├── SKILL.md          # instructions the model reads
+├── reference.md      # optional: deep docs, examples
+├── scripts/          # optional: helper code
+└── resources/        # optional: data, templates
+\`\`\`
+
+**What SKILL.md must contain (the parts interviewers test):**
+
+| Part | Purpose |
+|---|---|
+| **Trigger / description** | When the model should invoke the skill |
+| **Instructions** | Step-by-step *how to do the task* — the skill's body |
+| **Rules / constraints** | What to never do, edge cases |
+| **Examples** | Few-shot demonstrations of correct output |
+| **References** | Pointers to helper docs and scripts |
+| **Verification** | How to check the output is correct |
+
+**Golden rule of skill design:** SKILL.md is instructions for the *model*, not for a human developer. Write it as a playbook: trigger conditions, exact steps, allowed inputs/outputs, failure handling — not as a README.
+
+**A skill loads like this:**
+
+\`\`\`text
+1. Model receives user request.
+2. Model detects the task matches a skill (description).
+3. Runtime injects SKILL.md (and referenced files) into context.
+4. Model executes the instructions, using scripts/tools as needed.
+5. On completion the skill context is dropped (until needed again).
+\`\`\`
+
+**Interview sharpener:** "A skill is to a system prompt what a lazy-loaded module is to a monolith" — loaded on demand, kept small, easily swapped.`
+            },
+            {
+              id: 'designing-good-skills',
+              title: 'Designing Good Skills',
+              content: `Bad skills are the #1 way agent demos die in production. Know what makes one strong.
+
+**The checklist (interview gold):**
+
+1. **One job per skill.** A "do everything" skill defeats the point — same as tools. Split by task.
+2. **Narrow trigger, clear description.** The model decides *when* to load a skill by reading its description. Vague description = wrong/no invocation.
+3. **Explicit steps, not vibes.** Numbered instructions the model can follow deterministically. Include decision points ("if X, do Y").
+4. **Input/output contracts.** State what the skill takes and what it must return — ideally with a schema.
+5. **Examples beat adjectives.** Two good examples outperform "be careful and thorough." Few-shot is the most reliable lever.
+6. **Failure handling.** Tell the model what to do when a step fails (retry, fall back, ask the user). Silence = confident wrong output.
+7. **Size matters.** Keep the skill small enough to fit comfortably in context with the task at hand. Bloat degrades attention on the actual work.
+
+**Tuning a skill (the iterative loop):**
+- Run it on real or realistic inputs → observe where it breaks → tighten instructions → re-run. 
+- Add the failure cases to the skill as new rules — that's how skills harden over time.
+- Measure: task success rate before/after each edit. If it doesn't move, the edit isn't the problem.
+
+**The trap interviewers probe:** skills are instructions, not guarantees. A skill makes a model *more likely* to succeed — it cannot enforce correctness. If you need guarantees (exact formats, security boundaries), enforce in **code**, not prose.
+
+**Golden rule:** the skill does the *thinking* setup; the code does the *enforcement*. Instructions for behavior, scripts for correctness.`
+            },
+            {
+              id: 'skills-in-practice',
+              title: 'Skills in Practice',
+              content: `Where skills fit in real agent systems and how they combine with everything else.
+
+**Skill discovery (how the model picks one):**
+- **Descriptions:** each skill has a one-line summary; the model matches the task against them (can be model-picked or routed).
+- **Routers:** a cheap classifier or rule layer picks the skill before the LLM runs — fast, deterministic.
+- **Nested skills:** a skill can reference other skills (a "build a service" skill invoking "write tests" and "dockerize" skills) — composition, not hierarchy.
+
+**Skills + RAG:** skills carry *procedure* (how to do), RAG carries *facts* (what's true). A support agent: RAG retrieves the refund policy, a "handle refunds" skill runs the process. Don't stuff facts into skills — that's what retrieval is for.
+
+**Skills + tools:** skills decide the *strategy* and call tools as steps. "The report skill uses \`search\`, \`read_file\`, \`write_file\`, \`send_email\` in order." A skill can be the glue that turns raw tools into a workflow.
+
+**Versioning & lifecycle:**
+- Skills are files → they live in version control, get reviewed, get tested — like code.
+- Swapping a skill = pointing at a new version, no model retraining. That's the operational win.
+
+**When NOT to use a skill:**
+- One-line capability → put it in the system prompt.
+- Deterministic, must-always-run logic → plain code.
+- Behavior that must never change → fine-tuning.
+- Atomic action with a side effect → a tool.
+
+**The cost side (interviewer bait):** loading a skill spends context tokens and adds latency. Many tiny skills = discovery overhead and context thrash. Curate a lean, battle-tested set.
+
+**Golden rule:** skills shine at *soft, multi-step expertise* — writing, analysis, workflows. Hard guarantees belong in tools and code. Mix all four levers (skill + tool + RAG + fine-tune) and you can explain any production agent architecture.`
+            },
+            {
+              id: 'skills-rapid-fire',
+              title: 'Skills Rapid-Fire Q&A',
+              content: `**1. What is an agent skill in one sentence?**
+A reusable prompt-plus-code bundle that gives an LLM a specific capability, loaded into context only when the task needs it.
+
+**2. Skill vs tool?**
+A tool performs one atomic action and returns a result; a skill teaches *how to accomplish a task* — it can orchestrate many tools. Skill = strategy + guidance; tool = action.
+
+**3. Why not just put everything in the system prompt?**
+Context bloat: every extra instruction dilutes attention and costs tokens on *every* request. Skills load lazily, so the model only pays for the specialty it's actually using.
+
+**4. Why not just fine-tune instead?**
+Fine-tuning bakes behavior into weights: expensive to produce, slow to change, risky (catastrophic forgetting). A skill is a file — edit, test, deploy in minutes, no training run.
+
+**5. How does the model know which skill to use?**
+Each skill has a description. The model (or a router) matches the task to the description and triggers the right skill. Vague descriptions are the top cause of wrong/no invocation.
+
+**6. What's the most common failure mode of skills?**
+Silent failure — a step goes wrong, the skill has no failure-handling instructions, and the model returns confidently wrong output. Every skill needs explicit "what to do when this fails" guidance.
+
+**7. Can a skill call a tool?**
+Yes — that's the point. Skills are the glue: they sequence tools (\`search\` → \`write_file\` → \`send_email\`) into a reliable workflow.
+
+**8. Where do skills live in the codebase?**
+As version-controlled files (a folder per skill with SKILL.md + helpers), reviewed and tested like code. That's the operational advantage: behavior changes without model changes.
+
+**9. What separates a good skill from a bad one?**
+Narrow scope, a precise trigger, explicit numbered steps, input/output contracts, few-shot examples, and explicit failure handling. Bad skills: broad, vague, example-free, and silent on errors.
+
+**10. What would you build first when adding skills to an agent?**
+The **trigger/description layer and a test set** — you need reliable invocation and a way to measure whether each skill actually improves task success before investing in more skills.
+
+**11. Skills vs RAG?**
+Procedure vs facts. Skills tell the model *how to do*; RAG supplies *what's true*. A "handle refunds" skill + a retrieved refund-policy doc is the classic combination.
+
+**12. What's the trap in "a skill that guarantees correctness"?**
+Skills are instructions — they raise the probability of a right answer, they can't enforce it. Guarantees (format, security, validity) must be enforced in code and tooling, never left to prose.`
             },
           ],
         },
