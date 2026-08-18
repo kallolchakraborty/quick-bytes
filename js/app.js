@@ -396,7 +396,9 @@ function initDocs() {
     if (found.guide.sections && found.guide.sections.length) {
       found.guide.sections.forEach(function(s) {
         html += '<h2 id="' + s.id + '">' + s.title + '</h2>';
-        if (s.content) {
+        if (s.tree) {
+          html += '<div class="markdown-content ai-tree-wrap">' + renderTree(s.tree) + '</div>';
+        } else if (s.content) {
           html += '<div class="markdown-content">' + renderMarkdown(s.content) + '</div>';
         }
       });
@@ -501,6 +503,37 @@ function initDocs() {
       console.error('Markdown render error:', e);
       return '<div class="p-4 border border-red-300 dark:border-red-700 rounded-lg text-red-500 text-sm">Content rendering error. Please try refreshing.</div>';
     }
+  }
+
+  function renderTree(treeData) {
+    if (!treeData) return '';
+    var html = '<ul class="ai-tree" role="tree">';
+    html += renderTreeNode(treeData, 0, 0);
+    html += '</ul>';
+    return html;
+  }
+
+  function renderTreeNode(node, depth, index) {
+    if (!node) return '';
+    var hasChildren = node.children && node.children.length > 0;
+    var iconHtml = node.icon ? '<span class="material-symbols-outlined ai-tree-icon">' + node.icon + '</span>' : '';
+    var html = '<li class="ai-tree-node" style="--depth:' + depth + ';--delay:' + (depth * 0.12 + index * 0.05).toFixed(2) + 's">';
+    html += '<div class="ai-tree-card">';
+    html += iconHtml;
+    html += '<div class="ai-tree-text">';
+    html += '<span class="ai-tree-label">' + node.label + '</span>';
+    if (node.note) html += '<span class="ai-tree-note">' + node.note + '</span>';
+    html += '</div>';
+    html += '</div>';
+    if (hasChildren) {
+      html += '<ul class="ai-tree-children">';
+      node.children.forEach(function(child, i) {
+        html += renderTreeNode(child, depth + 1, i);
+      });
+      html += '</ul>';
+    }
+    html += '</li>';
+    return html;
   }
 
   function addHeadingAnchors() {

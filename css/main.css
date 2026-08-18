@@ -792,3 +792,118 @@ input:focus:not(:focus-visible) {
     margin: 2cm;
   }
 }
+
+/* ---- AI Tree View ---- */
+
+.ai-tree-wrap {
+  margin: 1.5rem 0;
+}
+
+.ai-tree,
+.ai-tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ai-tree-node {
+  position: relative;
+  padding-left: 1.75rem;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: treeNodeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.ai-tree-node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0.65rem;
+  width: 1px;
+  background: var(--border-default);
+}
+
+.ai-tree-node::after {
+  content: '';
+  position: absolute;
+  top: 1.65rem;
+  left: 0.65rem;
+  width: 1rem;
+  height: 1px;
+  background: var(--border-default);
+}
+
+.ai-tree-node:last-child::before {
+  bottom: auto;
+  height: 1.65rem;
+}
+
+.ai-tree > .ai-tree-node {
+  padding-left: 0;
+}
+
+.ai-tree > .ai-tree-node::before,
+.ai-tree > .ai-tree-node::after {
+  display: none;
+}
+
+.ai-tree-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.55rem 0.875rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 0.625rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  max-width: 100%;
+}
+
+.ai-tree-card:hover {
+  transform: translateX(3px);
+  border-color: var(--brand-default);
+  box-shadow: var(--shadow-md);
+}
+
+.ai-tree-icon {
+  font-size: 1.15rem;
+  color: var(--brand-default);
+  flex-shrink: 0;
+}
+
+.ai-tree-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.ai-tree-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-default);
+}
+
+.ai-tree-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+@keyframes treeNodeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-tree-node {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
