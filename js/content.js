@@ -8,7 +8,7 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 7,
+    guides: 8,
     phases: 1,
     platform: 'Engineering',
   },
@@ -661,6 +661,162 @@ Where:
 - **Data hungry:** requires massive datasets to reach peak performance.
 
 **Golden rule:** Transformers win because they are parallel, scalable, and flexible. Their quadratic attention cost is the main limitation — which is why research focuses on efficient attention, KV caching, and alternative architectures.`
+            },
+          ],
+        },
+        {
+          id: 'caching',
+          title: 'Caching',
+          icon: 'memory',
+          description: 'What caching is, why it matters, and the types of caching in LLMs (KV cache, prompt cache, model cache).',
+          sections: [
+            {
+              id: 'what-is-caching',
+              title: 'What is Caching?',
+              icon: 'memory',
+              content: `Caching is the storage of intermediate computations or results to avoid redundant work. In LLMs, caching is crucial for performance and cost optimization.
+
+**Why caching matters:**
+- **Speed:** skip repeated computation, get instant results on cache hits.
+- **Cost:** fewer GPU cycles = lower electricity and compute dollars.
+- **Scalability:** enables serving many concurrent requests efficiently.
+
+**Golden rule:** cache what is expensive to compute and stable across requests. Never cache what changes frequently.
+
+**Types of caching in LLMs:**
+- **KV cache:** keys/values from attention layers during generation (the most impactful).
+- **Prompt cache:** embeddings of static prompt components.
+- **Model cache:** intermediate layers or weights for fast inference.
+- **Tokenizer cache:** tokenization results for repeated text segments.`
+            },
+            {
+              id: 'kv-cache-overview',
+              title: 'KV Cache Overview',
+              icon: 'layers',
+              content: `The **KV cache** (Key-Value cache) is the most critical caching mechanism in Transformers for autoregressive generation. It stores the Q, K, and V projections computed during the attention operation.
+
+**How it works:**
+1. During prefill (prompt processing), compute K and V for each prompt token.
+2. During decode (generation), compute K and V for each new token.
+3. All K and V pairs are stored in the cache for future steps.
+
+**Attention step with cache:**
+> Output = softmax(Q · Kᵀ / √dₖ) · V
+> Where K and V come from the cache, not recomputed.
+
+**KV cache size:**
+> cache_size = 2 (K + V) × sequence_length × num_layers × num_heads × head_dim
+
+**What gets cached:**
+- Keys and values are the *heavy* parts to compute (O(n²) attention complexity).
+- They are *stable* across generation steps (once computed, they never change).
+- Embedding lookups and FFN computations are cheaper (O(n) per token).
+
+**Golden rule:** the KV cache trades *memory* for *compute*. It's why decoding a 1000-token response uses far less compute than recomputing everything from scratch each step.`
+            },
+            {
+              id: 'caching-architecture',
+              title: 'Caching Architecture (Interactive)',
+              icon: 'account_tree',
+              pipeline: {
+                stages: [
+                  { icon: 'text_fields', label: 'Input Tokens', note: 'Raw text is tokenized. For each token: compute embedding + position encoding.' },
+                  { icon: 'mode_comment', label: 'Compute Q, K, V', note: 'Projection matrices W_Q, W_K, W_V applied to embeddings. Expensive matrix multiplies (O(n²)).' },
+                  { icon: 'memory', label: 'KV Cache Storage', note: 'Store computed K and V pairs per layer. Grows linearly with sequence length, quadratically with model size.' },
+                  { icon: 'repeat', label: 'Prefill Phase', note: 'All prompt tokens processed in one batched forward pass. Fill entire KV cache up front. Heavy compute, one-time cost.' },
+                  { icon: 'repeat', label: 'Decode Phase', note: 'Each generation step: compute fresh K,V for NEW token → append to cache. Subsequent steps read from cache only.' },
+                  { icon: 'bolt', label: 'Attention with Cache', note: 'QKᵀ uses cached keys; softmax weighted sum uses cached values. No recomputation of prompt token K/V pairs.' },
+                  { icon: 'functions', label: 'Output + Cache Growth', note: 'Generate next token → append its K,V to cache. Cache size increases by one slot per generated token.' }
+                ]
+              }
+            },
+            {
+              id: 'cache-strategies',
+              title: 'Caching Strategies',
+              icon: 'layers_clear',
+              content: `Different caching approaches optimize for speed, memory, or cost:
+
+**1. Full KV Cache**
+- Store ALL keys and values for the entire sequence.
+- **Pros:** fastest generation, simplest implementation.
+- **Cons:** memory-heavy; O(n) memory growth per generated token.
+
+**2. Sliding Window Cache**
+- Keep only the most recent N tokens in cache.
+- **Pros:** constant memory regardless of sequence length.
+- **Cons:** cannot attend to tokens older than window (loss of long context).
+
+**3. Block-wise / Paged Cache**
+- Partition cache into blocks; evict least-recently-used.
+- **Pros:** fine-grained control over memory budget.
+- **Cons:** more complex eviction logic, higher overhead.
+
+**4. Grouped-Query Attention (GQA)**
+- Share keys/values across multiple attention heads.
+- **Pros:** reduces KV cache memory by factor of heads.
+- **Cons:** trades off expressivity; heads compete for same information.
+
+**5. Multi-Head Latent Attention (MLA)**
+- Compress K and V representations; store compressed versions.
+- **Pros:** drastically smaller cache footprint.
+- **Cons:** extra compression/decompression cost; approximation error.
+
+**Golden rule:** choose cache strategy based on your use case:
+- **Real-time chat:** full KV cache (speed is king).
+- **Long-context summarization:** sliding window + attention mechanisms.
+- **Cost-sensitive deployment:** GQA/MLA with careful tuning.
+- **Research/innovation:** experiment with new cache eviction policies.`
+            },
+            {
+              id: 'caching-optimization',
+              title: 'Caching Optimization',
+              icon: 'tune',
+              content: `Caching works, but optimizations can make it dramatically more efficient:
+
+**1. Prompt Caching**
+- Cache embeddings of static prompt components (system prompt, few-shot examples).
+- **Benefit:** identical prompts in different requests skip embedding lookup.
+- **Implementation:** mark parts of prompt as "cacheable" at application level.
+
+**2. FlashAttention**
+- Reorder computation to maximize GPU utilization.
+- **Benefit:** faster attention with lower memory footprint.
+- **Compatibility:** works with KV cache — same keys/values, faster access.
+
+**3. KV Cache Offloading**
+- Move less-used cache entries to CPU RAM or disk.
+- **Benefit:** larger effective cache size, cheaper memory tier.
+- **Trade-off:** increased latency on cache misses.
+
+**4. Quantization**
+- Store K/V values in lower-precision (e.g., 8-bit instead of float16).
+- **Benefit:** 2–4× smaller cache memory.
+- **Consideration:** reduced accuracy, need fine-tuning.
+
+**5. Attention Sink / Alibi**
+- Special tokens (e.g., <sink>) stay in cache across many steps.
+- **Benefit:** maintains context for long-range dependencies.
+- **Use case:** long conversation handling, retrieval-augmented generation.
+
+**Golden rule:** caching is optimization, not magic. Profile your workload: where are the cache hits? Where are the misses? That's where to optimize next.`
+            },
+            {
+              id: 'caching-summary',
+              title: 'Caching Summary',
+              icon: 'summarize',
+              content: `Caching transforms the O(n³) attention computation across tokens into O(n) per step — the single biggest performance win in modern LLMs. It enables everything from real-time chat to billion-parameter model serving.
+
+**The three caching pillars:**
+1. **KV Cache:** attention keys and values (the heavyweight, stable data).
+2. **Prompt Cache:** static embedding components (the repeatable input).
+3. **Model Cache:** intermediate representations (the reusable computations).
+
+**Key insights:**
+- Caching is always beneficial: it trades memory for compute.
+- The right cache strategy depends on latency, memory, and cost constraints.
+- Advanced techniques (quantization, offloading, attention variants) keep pushing the frontier.
+
+**Golden rule:** start simple (full KV cache). Optimize based on bottlenecks: sliding window for memory, quantization for cost, offloading for scale. Measure cache hit rates — they tell you exactly where optimization is needed.`
             },
           ],
         },
