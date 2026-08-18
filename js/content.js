@@ -22,11 +22,13 @@ const QUICK_BYTES = {
         {
           id: 'what-are-llms',
           title: 'What is LLMs, Types & Examples',
+          icon: 'auto_awesome',
           description: 'A concise guide to understanding AI models and LLMs — their types, a tree view of the landscape, and real-world implementations.',
           sections: [
             {
               id: 'what-is-ai-model',
               title: 'What is an AI Model?',
+              icon: 'psychology',
               content: `An **AI model** is a mathematical system trained on data to perform a task that normally requires human intelligence — recognizing patterns, making predictions, or generating content. It learns a *function* that maps inputs to outputs, parameterized by weights learned during training.
 
 **Core idea:** you give the model examples (data), it learns the underlying pattern, and then generalizes to new, unseen inputs.
@@ -43,6 +45,7 @@ const QUICK_BYTES = {
             {
               id: 'types-of-ai-models',
               title: 'Types of AI Models',
+              icon: 'category',
               content: `AI models are grouped by *how they learn* and *what they produce*. The interactive tree view below shows the landscape at a glance.
 
 | Type | Core idea | Learns from | Strengths | Weaknesses |
@@ -59,6 +62,7 @@ const QUICK_BYTES = {
             {
               id: 'ai-landscape-tree',
               title: 'AI Model Landscape (Tree View)',
+              icon: 'account_tree',
               tree: {
                 label: 'AI Model',
                 note: 'A system that learns patterns from data to perform intelligent tasks.',
@@ -79,6 +83,7 @@ const QUICK_BYTES = {
             {
               id: 'what-is-llm',
               title: 'What is an LLM?',
+              icon: 'chat',
               content: `A **Large Language Model (LLM)** is a deep learning model — a *type of generative AI model* — trained on massive amounts of text to understand and generate human-like language. Built on the **Transformer architecture**, it learns patterns, grammar, facts, and reasoning by predicting the next token in a sequence.
 
 **Where it sits:** LLMs are the *language* branch of the **Generative** family of AI models.
@@ -94,6 +99,7 @@ const QUICK_BYTES = {
             {
               id: 'types-of-llms',
               title: 'Types of LLMs',
+              icon: 'schema',
               content: `Within generative AI, LLMs are categorized by their **transformer architecture** and training objective.
 
 | Type | Architecture | Strengths | Weaknesses | Examples |
@@ -113,6 +119,7 @@ const QUICK_BYTES = {
             {
               id: 'examples-of-llms',
               title: 'Examples of LLMs',
+              icon: 'apps',
               content: `**Popular Large Language Models** (the language branch of generative AI):
 
 | Model | Developer | Type | Parameters | Notable use |

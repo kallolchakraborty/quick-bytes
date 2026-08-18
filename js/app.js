@@ -395,7 +395,7 @@ function initDocs() {
 
     if (found.guide.sections && found.guide.sections.length) {
       found.guide.sections.forEach(function(s) {
-        html += '<h2 id="' + s.id + '">' + s.title + '</h2>';
+        html += '<h2 id="' + s.id + '"><span class="material-symbols-outlined section-icon" aria-hidden="true">' + (s.icon || 'article') + '</span>' + s.title + '</h2>';
         if (s.tree) {
           html += '<div class="markdown-content ai-tree-wrap">' + renderTree(s.tree) + '</div>';
         } else if (s.content) {
@@ -565,9 +565,13 @@ function initDocs() {
     var html = '<div class="table-of-contents">';
     headings.forEach(function(h) {
       if (!h.id) return;
+      var clone = h.cloneNode(true);
+      var ic = clone.querySelector('.section-icon'); if (ic) ic.remove();
+      var an = clone.querySelector('.heading-anchor'); if (an) an.remove();
+      var label = clone.textContent.trim();
       var tag = h.tagName.toLowerCase();
       var indent = tag === 'h3' ? ' style="padding-left:1.25rem"' : tag === 'h4' ? ' style="padding-left:2.25rem;font-size:0.75rem"' : '';
-      html += '<a href="#' + h.id + '" data-heading="' + h.id + '"' + indent + '>' + h.textContent + '</a>';
+      html += '<a href="#' + h.id + '" data-heading="' + h.id + '"' + indent + '>' + label + '</a>';
     });
     html += '</div>';
     outline.innerHTML = html;

@@ -907,3 +907,44 @@ input:focus:not(:focus-visible) {
     transform: none;
   }
 }
+
+/* ---- Section heading icons ---- */
+.content-section h2 .section-icon {
+  font-size: 1.3rem;
+  color: var(--brand-default);
+  margin-right: 0.45rem;
+  vertical-align: middle;
+}
+
+/* ---- Sidebar link icons ---- */
+.sidebar-link-icon {
+  font-size: 1rem;
+  color: var(--brand-default);
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ---- Landing topic chips ---- */
+.topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.topic-chip:hover {
+  color: var(--brand-default);
+  border-color: var(--brand-default);
+  background: var(--brand-light);
+  transform: translateY(-1px);
+}
+.topic-chip .material-symbols-outlined {
+  font-size: 1.05rem;
+}

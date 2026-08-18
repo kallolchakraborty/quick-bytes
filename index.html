@@ -30,8 +30,8 @@
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <link rel="preload" href="css/tailwind.css" as="style" />
-  <script src="js/theme.js?v=20260818"></script>
-  <link href="css/tailwind.css?v=20260818" rel="stylesheet" />
+  <script src="js/theme.js?v=20260819"></script>
+  <link href="css/tailwind.css?v=20260819" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" /></noscript>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
@@ -117,6 +117,7 @@
           Explore all notes
           <span class="material-symbols-outlined text-[16px] leading-none">arrow_forward</span>
         </a>
+        <div id="topic-chips" class="mt-8 flex flex-wrap justify-center gap-2 max-w-2xl mx-auto"></div>
       </div>
 
     </div>
@@ -128,8 +129,26 @@
     </div>
   </footer>
 
-  <script src="js/content.js?v=20260818"></script>
-  <script src="js/app.js?v=20260818"></script>
+  <script src="js/content.js?v=20260819"></script>
+  <script src="js/app.js?v=20260819"></script>
+  <script>
+    (function() {
+      if (typeof QUICK_BYTES === 'undefined') return;
+      var chips = document.getElementById('topic-chips');
+      if (!chips) return;
+      var html = '';
+      (QUICK_BYTES.phases || []).forEach(function(p) {
+        (p.guides || []).forEach(function(g) {
+          (g.sections || []).forEach(function(s) {
+            html += '<a href="docs.html#' + s.id + '" class="topic-chip">'
+              + '<span class="material-symbols-outlined" aria-hidden="true">' + (s.icon || 'article') + '</span>'
+              + '<span>' + s.title + '</span></a>';
+          });
+        });
+      });
+      chips.innerHTML = html;
+    })();
+  </script>
   <script>
     document.querySelectorAll('img[src*="logo.svg"]').forEach(function(img) {
       img.src = 'assets/logo.svg?v=' + Date.now();
