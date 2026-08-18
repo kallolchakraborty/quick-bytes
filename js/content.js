@@ -532,25 +532,6 @@ Then the gradients for the weights:
                 ]
               }
             },
-            {
-              id: 'forward-vs-backward-comparison',
-              title: 'Forward vs Backprop',
-              icon: 'compare',
-              content: `A side-by-side of the two phases:
-
-| Aspect | Forward Pass | Backward Pass |
-|---|---|---|
-| Direction | Input → Output | Output → Input (gradients) |
-| Purpose | Compute prediction/loss | Compute weight gradients |
-| Updates weights? | No | Yes (via optimizer) |
-| Runs in | Inference & Training | Training only |
-| Memory pattern | KV cache reused | All activations stored |
-| Latency | Real-time friendly | ~2–3× slower than forward |
-
-**Key insight:** Training does a full forward pass to get a loss, then a backward pass to compute gradients, then repeats (multiple mini-batches, epochs). In production, only the forward pass matters.
-
-**Golden rule:** forward = predict, backward = learn, optimizer = update. Master these three to understand both inference and training.`
-            },
           ],
         },
       ],
