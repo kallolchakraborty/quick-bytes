@@ -8,7 +8,7 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 4,
+    guides: 5,
     phases: 1,
     platform: 'Engineering',
   },
@@ -378,6 +378,89 @@ const QUICK_BYTES = {
 - **Guardrails & validation:** validate the output (schema, filters) rather than stuffing more instructions into the prompt.
 
 **Golden rule:** shrink what is stable (and cache it), retrieve only what is needed (do not dump everything), and measure — most "better prompting" is really better compression and better evaluation.`
+            },
+          ],
+        },
+        {
+          id: 'forward-propagation',
+          title: 'Forward Propagation',
+          icon: 'forward',
+          description: 'What forward propagation is, how it works in neural networks and transformers, an interactive architecture diagram, and the difference from backpropagation.',
+          sections: [
+            {
+              id: 'what-is-forward-propagation',
+              title: 'What is Forward Propagation?',
+              icon: 'forward',
+              content: `A **forward pass** (or forward propagation) is the computation of output data through a neural network when given an input. It proceeds layer by layer — from input to output — applying each layer's weights and activation functions, but **never updating any parameter**: it only computes predictions.
+
+**Why it matters:**
+- **Inference is 100% forward.** Every time you query an LLM, it runs a forward pass over the prompt (plus cached KV states for prior tokens).
+- **Training needs two phases:** first forward (to get the loss) then backward (to compute gradients). Forward alone does nothing to learn.
+
+> In a transformer:  
+> Input → Embedding → Attention → FFN → LayerNorm → Output
+
+**Golden rule:** forward propagation is a *deterministic pipeline*. Same input + same weights = same output. No learning happens during the forward pass itself.
+`
+            },
+            {
+              id: 'how-forward-works',
+              title: 'How Forward Propagation Works',
+              icon: 'sync',
+              content: `A single layer transforms its input as:
+
+> z = W × x + b      (linear: weight matrix × input + bias)  
+> a = activation(z)  (non-linear: ReLU, GELU, softmax)
+
+After the first layer's activation becomes the input to the second layer, and so on until the final output.
+
+**In a Transformer block** (the architecture used by every modern LLM), one forward step does:
+
+1. **Multi-Head Attention:** compute queries (Q), keys (K), values (V) for all tokens, apply scaled dot-product attention, then concatenate heads. Output = attention weights × V.
+2. **Add & Norm:** add the residual (original input) to the attention output, then apply layer normalization.
+3. **Feed-Forward Network (FFN):** apply a small MLP — up-project (W₁), non-linearity (GELU), down-project (W₂). Position-wise: each token transformed independently.
+4. **Add & Norm:** another residual connection + normalization.
+
+**Stacking layers:** N identical blocks are stacked. The output of block L feeds block L+1. This depth is what gives transformers their representational power.
+
+**Cost:** each layer performs O(seq_len² × d) for attention (with seq_len = token count, d = hidden size) and O(seq_len × d × 4) for the feed-forward. Why compute-bound prefill vs memory-bound decode.`
+            },
+            {
+              id: 'forward-architecture-diagram',
+              title: 'Forward Architecture (Interactive)',
+              icon: 'account_tree',
+              pipeline: {
+                stages: [
+                  { icon: 'text_fields', label: 'Input Tokens', note: 'Token IDs and positions enter. For inference: prompt tokens plus any cached KV history.' },
+                  { icon: 'grid_on', label: 'Embedding + Position', note: 'Token IDs become dense vectors. Positional encodings inject order so the model knows sequence.' },
+                  { icon: 'mode_comment', label: 'Attention Layer', note: 'Q, K, V projections → scaled dot-product → weighted values. Output combines information from other tokens.' },
+                  { icon: 'add', label: 'Add & Norm', note: 'Residual connection adds input back (gradient flow). LayerNorm stabilizes deep stacking.' },
+                  { icon: 'layers', label: 'Feed-Forward (FFN)', note: 'Up-project (d → 4d), GELU non-linearity, down-project (4d → d). Position-wise MLP per token.' },
+                  { icon: 'add', label: 'Add & Norm', note: 'Second residual + norm after FFN. Completes one Transformer block. Repeat N times.' },
+                  { icon: 'functions', label: 'Output Logits', note: 'Final linear projection to vocabulary-sized logits — the raw scores for the next token.' }
+                ]
+              }
+            },
+            {
+              id: 'forward-vs-backpropagation',
+              title: 'Forward vs Backprop',
+              icon: 'swap_vert',
+              content: `A simple comparison of the two core phases in training:
+
+| | Forward Propagation | Backpropagation |
+|---|---|---|
+| Direction | Input → output | Output → input |
+| Computes | Predictions, loss | Gradients of loss w.r.t. weights |
+| Updates weights? | No | Yes (via optimizer) |
+| Runs during | Inference AND training | Training only |
+| Relative cost | ~1× | ~2–3× (forward + backward) |
+
+**Why you mostly care about forward:** in production you only run forward passes. Optimizing forward latency, memory, and KV cache reuse (see the Inference guide) is what makes LLMs fast and cheap.
+
+**Key insight:** the weights learned during training define the *forward function* that gives the model its abilities. Inference just applies that function.
+
+**Golden rule:** forward = predict, backward = learn. Ship fast forward passes; training happens offline.
+`
             },
           ],
         },
