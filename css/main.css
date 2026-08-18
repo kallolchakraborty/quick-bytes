@@ -937,7 +937,11 @@ input:focus:not(:focus-visible) {
   border: 1px solid var(--border-default);
   border-radius: 9999px;
   text-decoration: none;
-  transition: all 0.15s ease;
+  white-space: nowrap;
+  opacity: 0;
+  animation: chipIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--delay, 0s);
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
 .topic-chip:hover {
   color: var(--brand-default);
@@ -947,4 +951,16 @@ input:focus:not(:focus-visible) {
 }
 .topic-chip .material-symbols-outlined {
   font-size: 1.05rem;
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-chip {
+    animation: none;
+    opacity: 1;
+  }
 }
