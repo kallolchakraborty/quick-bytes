@@ -5,6 +5,7 @@ var _mdCache = {};
 var _searchIndex = null;
 var _kvData = {};
 var _pipeData = {};
+var _pendingScrollId = null;
 
 function sanitizeHtml(html) {
   html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
@@ -290,6 +291,23 @@ function updateBookmarksSidebar() {
 }
 
 // Docs-specific logic
+  function resolveHashToGuide(hash) {
+    if (!hash) return null;
+    var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
+    var guideId = null;
+    var sectionId = null;
+    phases.forEach(function(p) {
+      (p.guides || []).forEach(function(g) {
+        if (g.id === hash) guideId = g.id;
+        (g.sections || []).forEach(function(s) {
+          if (s.id === hash) { guideId = g.id; sectionId = s.id; }
+        });
+      });
+    });
+    if (!guideId) return null;
+    return sectionId ? { guideId: guideId, sectionId: sectionId } : { guideId: guideId };
+  }
+
 function initDocs() {
   var currentGuide = null;
   var sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -509,6 +527,15 @@ function initDocs() {
 
     updateProgress();
     updateBookmarksSidebar();
+    if (_pendingScrollId) {
+      var pendingEl = document.getElementById(_pendingScrollId);
+      if (pendingEl) {
+        setTimeout(function() { pendingEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+        _pendingScrollId = null;
+        return;
+      }
+      _pendingScrollId = null;
+    }
     scrollToHash();
   }
 
@@ -723,6 +750,17 @@ function initDocs() {
     });
     html += '</div>';
     outline.innerHTML = html;
+    outline.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        var id = a.getAttribute('data-heading');
+        var el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (history.replaceState) history.replaceState(null, '', '#' + id);
+        }
+      });
+    });
   }
 
   function initScrollSpy() {
@@ -783,22 +821,25 @@ function initDocs() {
   }
 
   // Handle sidebar link clicks
-  sidebarLinks.forEach(function(link) {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      var href = this.getAttribute('href');
-      if (href && href.startsWith('#')) {
-        loadGuide(href.substring(1));
-      }
+    sidebarLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var href = this.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          _pendingScrollId = null;
+          loadGuide(href.substring(1));
+        }
+      });
     });
-  });
 
   // popstate handler for browser back/forward
   window.addEventListener('popstate', function() {
     var hash = window.location.hash.substring(1);
-    if (hash) {
-      if (hash !== currentGuide) {
-        loadGuide(hash);
+    var resolved = resolveHashToGuide(hash);
+    if (resolved) {
+      if (resolved.sectionId) _pendingScrollId = resolved.sectionId;
+      if (resolved.guideId !== currentGuide) {
+        loadGuide(resolved.guideId);
       } else {
         scrollToHash();
       }
@@ -807,8 +848,10 @@ function initDocs() {
 
   // Load initial guide from hash or first available
   var initialHash = window.location.hash.substring(1);
-  if (initialHash) {
-    loadGuide(initialHash);
+  var resolved = resolveHashToGuide(initialHash);
+  if (resolved) {
+    if (resolved.sectionId) _pendingScrollId = resolved.sectionId;
+    loadGuide(resolved.guideId);
   } else {
     var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
     var first = null;
