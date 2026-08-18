@@ -8,7 +8,7 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 6,
+    guides: 7,
     phases: 1,
     platform: 'Engineering',
   },
@@ -531,6 +531,136 @@ Then the gradients for the weights:
                   { icon: 'text_fields', label: 'Input Tokens', note: 'Final gradient w.r.t. input tokens. Used in adversarial training, gradient-based attacks, or input embedding analysis.' }
                 ]
               }
+            },
+          ],
+        },
+        {
+          id: 'transformers',
+          title: 'Transformers',
+          icon: 'account_tree',
+          description: 'What the Transformer architecture is, how attention works, and why it dominates modern LLMs.',
+          sections: [
+            {
+              id: 'what-is-transformer',
+              title: 'What is a Transformer?',
+              icon: 'account_tree',
+              content: `A **Transformer** is a neural network architecture introduced in 2017 ("Attention Is All You Need") that relies entirely on **self-attention** mechanisms to model relationships between tokens in a sequence. Unlike recurrent networks (RNNs, LSTMs), Transformers process all tokens in parallel, making them dramatically faster and more scalable.
+
+**Why it matters:** virtually every modern LLM — GPT, Claude, Llama, Gemini, Mistral — is built on the Transformer architecture. Understanding Transformers means understanding how today's AI actually works.
+
+**Key characteristics:**
+- **Parallel processing:** all tokens processed simultaneously during training (not sequentially like RNNs).
+- **Self-attention:** each token attends to every other token, capturing context regardless of distance.
+- **Multi-head attention:** multiple attention heads run in parallel, each learning different relationships (syntax, semantics, coreference).
+- **Positional encoding:** since there's no recurrence, position information is injected via sinusoidal or learned encodings.
+- **Scalable:** the architecture scales well with more data, more parameters, and longer sequences.
+
+**Golden rule:** Transformers are not "intelligent" — they are sophisticated pattern matchers that use attention to weigh the importance of every token in context. Their power comes from scale, not from understanding.`
+            },
+            {
+              id: 'how-attention-works',
+              title: 'How Self-Attention Works',
+              icon: 'sync',
+              content: `Self-attention is the core mechanism of the Transformer. It allows each token to dynamically focus on relevant tokens in the sequence.
+
+**The three vectors:**
+For each token, the model computes three vectors:
+- **Query (Q):** "What am I looking for?"
+- **Key (K):** "What do I contain?"
+- **Value (V):** "What information do I offer?"
+
+**Attention formula:**
+> Attention(Q, K, V) = softmax(QKᵀ / √dₖ) V
+
+Where:
+- **QKᵀ:** measures similarity between every query and every key
+- **√dₖ:** scaling factor (prevents dot products from growing too large)
+- **softmax:** converts similarities to probabilities (weights)
+- **V:** weighted sum of values (the actual output)
+
+**Step by step:**
+1. Compute Q, K, V for every token via learned linear projections.
+2. Compute attention scores: Q × Kᵀ for every pair of tokens.
+3. Scale scores by 1/√dₖ.
+4. Apply softmax to get attention weights (probabilities).
+5. Multiply weights by V and sum — each token's output is a weighted mix of all tokens' values.
+
+**Multi-head attention:** instead of one attention function, run h parallel "heads" with different learned projections, then concatenate and project. Each head can learn different relationships — one might track subject-verb agreement, another might resolve pronouns.
+
+**Golden rule:** attention is a *weighted average*. Every token's output is a blend of information from the entire sequence, weighted by relevance. The model learns what to attend to.`
+            },
+            {
+              id: 'transformer-architecture-diagram',
+              title: 'Transformer Architecture (Interactive)',
+              icon: 'account_tree',
+              pipeline: {
+                stages: [
+                  { icon: 'text_fields', label: 'Input Tokens', note: 'Raw text is tokenized into integer IDs. Each token becomes a dense vector via embedding.' },
+                  { icon: 'grid_on', label: 'Token + Position Embedding', note: 'Token embeddings capture meaning; positional encodings inject order information. Since Transformers have no recurrence, position is essential.' },
+                  { icon: 'mode_comment', label: 'Multi-Head Self-Attention', note: 'Each token computes Q, K, V and attends to every other token. Multiple heads run in parallel, each learning different relationships (syntax, semantics, coreference).' },
+                  { icon: 'add', label: 'Add & Norm (Residual)', note: 'Attention output is added to the original input (residual connection), then normalized. This stabilizes training and allows gradients to flow through deep stacks.' },
+                  { icon: 'layers', label: 'Feed-Forward Network (FFN)', note: 'Position-wise MLP: up-project to 4× hidden size, apply GELU non-linearity, down-project back. Each token transformed independently — this is where "knowledge" is stored.' },
+                  { icon: 'add', label: 'Add & Norm (Residual)', note: 'Second residual + LayerNorm after FFN. One complete Transformer block.' },
+                  { icon: 'repeat', label: 'Repeat N times', note: 'Typical LLMs stack 12–96+ identical blocks. Deeper stacking = more capacity. The output of block L feeds block L+1.' },
+                  { icon: 'functions', label: 'Final LayerNorm + LM Head', note: 'Final normalization, then linear projection to vocabulary size. Output: logits — raw scores for every possible next token.' },
+                  { icon: 'tune', label: 'Sampling → Output', note: 'Convert logits to probabilities via softmax, then sample (greedy, temperature, top-p, top-k). Emit token, append to sequence, repeat for autoregressive generation.' }
+                ]
+              }
+            },
+            {
+              id: 'encoder-vs-decoder',
+              title: 'Encoder vs Decoder Architectures',
+              icon: 'compare',
+              content: `Transformers come in three architectural flavors, each suited to different tasks:
+
+**1. Encoder-only (e.g., BERT, RoBERTa)**
+- Processes input bidirectionally — each token attends to ALL other tokens (both left and right).
+- No generation capability (no autoregressive decoding).
+- **Best for:** classification, sentiment analysis, named entity recognition, search ranking.
+- **How it works:** input → Transformer encoder stack → [CLS] token or pooled output → task head.
+
+**2. Decoder-only (e.g., GPT, Llama, Claude)**
+- Processes tokens left-to-right (causal attention). Each token can only attend to previous tokens.
+- Autoregressive: generates one token at a time, feeding output back as input.
+- **Best for:** text generation, dialogue, code completion, open-ended tasks.
+- **How it works:** input → Transformer decoder stack → logits → sample next token → append → repeat.
+
+**3. Encoder-Decoder (e.g., T5, BART)**
+- Full encoder (bidirectional) processes input, then full decoder (causal) generates output.
+- Cross-attention connects encoder output to decoder layers.
+- **Best for:** translation, summarization, structured input→output tasks.
+- **How it works:** input → encoder → context vectors → decoder (with cross-attention) → output tokens.
+
+**Golden rule:** decoder-only for generation, encoder-only for understanding, encoder-decoder when you need both. Most modern LLMs use decoder-only because generation is the dominant use case.`
+            },
+            {
+              id: 'why-transformers-win',
+              title: 'Why Transformers Dominate',
+              icon: 'trending_up',
+              content: `Before Transformers (pre-2017), the dominant architectures were RNNs, LSTMs, and GRUs. Transformers displaced them for several reasons:
+
+**1. Parallelization**
+- RNNs process tokens sequentially — token t must finish before token t+1 begins.
+- Transformers process all tokens simultaneously. Training is dramatically faster on GPUs/TPUs.
+
+**2. Long-range dependencies**
+- RNNs struggle to connect distant tokens (vanishing gradients).
+- Every token attends directly to every other token in O(1) path length.
+
+**3. Scalability**
+- The architecture is simple and uniform — just stacked attention + FFN blocks.
+- Scales well with more data, more parameters, and longer sequences (with optimizations).
+
+**4. Flexibility**
+- Pre-train once on massive text, then fine-tune or prompt for any task.
+- The same architecture handles classification, generation, translation, summarization, and more.
+
+**The trade-offs:**
+- **Quadratic complexity:** self-attention is O(n²) in sequence length. Long sequences are expensive (mitigated by KV cache, FlashAttention, sliding window, etc.).
+- **Memory:** storing all activations during training is memory-heavy (see Backward Propagation guide).
+- **Data hungry:** requires massive datasets to reach peak performance.
+
+**Golden rule:** Transformers win because they are parallel, scalable, and flexible. Their quadratic attention cost is the main limitation — which is why research focuses on efficient attention, KV caching, and alternative architectures.`
             },
           ],
         },
