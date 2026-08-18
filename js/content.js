@@ -385,7 +385,7 @@ const QUICK_BYTES = {
           id: 'forward-propagation',
           title: 'Forward Propagation',
           icon: 'forward',
-          description: 'What forward propagation is, how it works in neural networks and transformers, an interactive architecture diagram, and the difference from backpropagation.',
+          description: 'What forward propagation is, how it works in neural networks and transformers, an interactive architecture diagram, and the difference from backward propagation.',
           sections: [
             {
               id: 'what-is-forward-propagation',
@@ -447,7 +447,7 @@ After the first layer's activation becomes the input to the second layer, and so
               icon: 'swap_vert',
               content: `A simple comparison of the two core phases in training:
 
-| | Forward Propagation | Backpropagation |
+| | Forward Propagation | Backward Propagation |
 |---|---|---|
 | Direction | Input → output | Output → input |
 | Computes | Predictions, loss | Gradients of loss w.r.t. weights |
@@ -462,17 +462,19 @@ After the first layer's activation becomes the input to the second layer, and so
 **Golden rule:** forward = predict, backward = learn. Ship fast forward passes; training happens offline.
 `
             },
+          ],
+        },
+        {
+          id: 'backward-propagation',
+          title: 'Backward Propagation',
+          icon: 'reverse',
+          description: 'What backward propagation is, how it works through the chain rule, and its role in training neural networks.',
+          sections: [
             {
-              id: 'backward-propagation',
-              title: 'Backward Propagation',
+              id: 'what-is-backward-propagation',
+              title: 'What is Backward Propagation?',
               icon: 'reverse',
-              description: 'What backward propagation is, how it works through the chain rule, and its role in training neural networks.',
-              sections: [
-                {
-                  id: 'what-is-backward-propagation',
-                  title: 'What is Backward Propagation?',
-                  icon: 'reverse',
-                  content: `Backward propagation (backprop) is the algorithm that computes gradients of the loss function with respect to every weight in the neural network. It runs *after* the forward pass and enables the model to learn by updating its weights via gradient descent.
+              content: `Backward propagation (backprop) is the algorithm that computes gradients of the loss function with respect to every weight in the neural network. It runs *after* the forward pass and enables the model to learn by updating its weights via gradient descent.
 
 **Why it exists:** an LLM (or any neural net) has billions of parameters. To make those parameters useful, they must be updated based on how wrong the forward pass was. Backprop tells us precisely how much to change each weight.
 
@@ -484,12 +486,12 @@ After the first layer's activation becomes the input to the second layer, and so
 **Golden rule:** you can only backpropagate through operations whose gradients are defined (no non-differentiable jumps like if-statements on values).
 
 **Why the term "backprop":** gradients flow backward through the network (from loss to input layer), but the weight updates improve the forward pass for future data.`
-                },
-                {
-                  id: 'how-backward-works',
-                  title: 'How Backward Propagation Works',
-                  icon: 'sync',
-                  content: `Given a loss L (e.g., cross-entropy), backprop computes ∂L/∂θ for every weight θ in the network.
+            },
+            {
+              id: 'how-backward-works',
+              title: 'How Backward Propagation Works',
+              icon: 'sync',
+              content: `Given a loss L (e.g., cross-entropy), backprop computes ∂L/∂θ for every weight θ in the network.
 
 **The chain rule in action:**
 For a multi-layer network, denote Layer ℓ's output as aℓ, weight as Wℓ, activation as σ (e.g., ReLU):
@@ -513,28 +515,28 @@ Then the gradients for the weights:
 - Attention: gradients flow through softmax and dot-product; must remember QKᵀ scale.
 - KV cache: during backprop, gradients accumulate for all positions (no caching benefits).
 - The backward pass is why Transformers are memory-heavy: we need to store all activations for the gradient computation.`
-                },
-                {
-                  id: 'backward-architecture-diagram',
-                  title: 'Backward Architecture (Interactive)',
-                  icon: 'account_tree',
-                  pipeline: {
-                    stages: [
-                      { icon: 'functions', label: 'Loss L', note: 'The objective function (e.g., cross-entropy). Higher loss = more wrong predictions.' },
-                      { icon: 'sync', label: 'Upstream Gradient', note: '∂L/∂logits flows backward from the loss into the network.' },
-                      { icon: 'layers', label: 'Layer N (FFN)', note: 'Apply chain rule: d = d_past * W^T * ReLU(z). Compute gradients for weights and bias.' },
-                      { icon: 'add', label: 'Add & Norm', note: 'Gradients split: one for residual path, one for LayerNorm. Sum and normalize.' },
-                      { icon: 'mode_comment', label: 'Attention Block', note: 'Backprop through softmax (softmax × (input - sumsoftmax)). Compute QK/V gradients.' },
-                      { icon: 'grid_on', label: 'Embedding', note: 'Embedding gradients sum over all token positions they appear in. Rare tokens get bigger updates.' },
-                      { icon: 'text_fields', label: 'Input Tokens', note: 'Final gradient w.r.t. input tokens. Used in adversarial training, gradient-based attacks, or input embedding analysis.' }
-                    ]
-                  }
-                },
-                {
-                  id: 'forward-vs-backward-comparison',
-                  title: 'Forward vs Backprop',
-                  icon: 'compare',
-                  content: `A side-by-side of the two phases:
+            },
+            {
+              id: 'backward-architecture-diagram',
+              title: 'Backward Architecture (Interactive)',
+              icon: 'account_tree',
+              pipeline: {
+                stages: [
+                  { icon: 'functions', label: 'Loss L', note: 'The objective function (e.g., cross-entropy). Higher loss = more wrong predictions.' },
+                  { icon: 'sync', label: 'Upstream Gradient', note: '∂L/∂logits flows backward from the loss into the network.' },
+                  { icon: 'layers', label: 'Layer N (FFN)', note: 'Apply chain rule: d = d_past * W^T * ReLU(z). Compute gradients for weights and bias.' },
+                  { icon: 'add', label: 'Add & Norm', note: 'Gradients split: one for residual path, one for LayerNorm. Sum and normalize.' },
+                  { icon: 'mode_comment', label: 'Attention Block', note: 'Backprop through softmax (softmax × (input - sumsoftmax)). Compute QK/V gradients.' },
+                  { icon: 'grid_on', label: 'Embedding', note: 'Embedding gradients sum over all token positions they appear in. Rare tokens get bigger updates.' },
+                  { icon: 'text_fields', label: 'Input Tokens', note: 'Final gradient w.r.t. input tokens. Used in adversarial training, gradient-based attacks, or input embedding analysis.' }
+                ]
+              }
+            },
+            {
+              id: 'forward-vs-backward-comparison',
+              title: 'Forward vs Backprop',
+              icon: 'compare',
+              content: `A side-by-side of the two phases:
 
 | Aspect | Forward Pass | Backward Pass |
 |---|---|---|
@@ -548,8 +550,6 @@ Then the gradients for the weights:
 **Key insight:** Training does a full forward pass to get a loss, then a backward pass to compute gradients, then repeats (multiple mini-batches, epochs). In production, only the forward pass matters.
 
 **Golden rule:** forward = predict, backward = learn, optimizer = update. Master these three to understand both inference and training.`
-                },
-              ],
             },
           ],
         },
