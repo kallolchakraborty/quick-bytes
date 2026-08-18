@@ -467,13 +467,13 @@ After the first layer's activation becomes the input to the second layer, and so
         {
           id: 'backward-propagation',
           title: 'Backward Propagation',
-          icon: 'reverse',
+          icon: 'arrow_back',
           description: 'What backward propagation is, how it works through the chain rule, and its role in training neural networks.',
           sections: [
             {
               id: 'what-is-backward-propagation',
               title: 'What is Backward Propagation?',
-              icon: 'reverse',
+              icon: 'arrow_back',
               content: `Backward propagation (backprop) is the algorithm that computes gradients of the loss function with respect to every weight in the neural network. It runs *after* the forward pass and enables the model to learn by updating its weights via gradient descent.
 
 **Why it exists:** an LLM (or any neural net) has billions of parameters. To make those parameters useful, they must be updated based on how wrong the forward pass was. Backprop tells us precisely how much to change each weight.
