@@ -239,7 +239,7 @@ const QUICK_BYTES = {
               icon: 'account_tree',
               pipeline: {
                 stages: [
-                  { icon: 'text_fields', label: 'Input Prompt', note: 'Raw user text, e.g. "Translate to French: Hello". Untokenized text enters the system.' },
+                  { icon: 'text_fields', label: 'Input Prompt', note: 'Raw, untokenized user text enters the system. For example, a prompt like Translate to French: Hello is still just a string of characters here, with no tokenization yet.' },
                   { icon: 'token', label: 'Tokenizer', note: 'Splits text into subword tokens (e.g. BPE). Each token maps to an integer ID. Roughly 1 token ≈ 4 characters of English.' },
                   { icon: 'grid_on', label: 'Embedding', note: 'Token IDs are mapped to dense vectors that capture meaning. Positional encodings are added so token order is preserved.' },
                   { icon: 'account_tree', label: 'Transformer (Prefill + Decode)', note: 'Prefill: process the whole prompt in parallel and fill the KV cache. Decode: generate one token at a time, reusing the cache (see the KV Cache guide).' },
