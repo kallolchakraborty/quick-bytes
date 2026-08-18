@@ -8,7 +8,7 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 3,
+    guides: 4,
     phases: 1,
     platform: 'Engineering',
   },
@@ -248,6 +248,87 @@ const QUICK_BYTES = {
                   { icon: 'output', label: 'Output Token → Loop', note: 'The chosen token is emitted, appended to the sequence, and fed back in for the next decode step until an end token or max length.' }
                 ]
               }
+            },
+          ],
+        },
+        {
+          id: 'prompt',
+          title: 'Prompt',
+          icon: 'edit_note',
+          description: 'What a prompt is, the main types of prompts, the architecture of a well-structured prompt, and concrete examples.',
+          sections: [
+            {
+              id: 'what-is-prompt',
+              title: 'What is a Prompt?',
+              icon: 'chat',
+              content: `A **prompt** is the input you give an LLM to elicit a desired response — natural-language (and sometimes structured) instructions, context, and examples. Prompting is how you *steer* a model without retraining: the model's behavior is largely determined by what you put in the prompt.
+
+**Why prompting matters:** an LLM is a frozen, next-token predictor. The prompt is the only live lever you have at inference time to control task, format, tone, and correctness. Small prompt changes can mean the difference between a useless answer and a great one.
+
+**Key concepts:**
+- **Prompt ≠ fine-tuning:** prompting changes input, not weights.
+- **Context window:** everything you put in consumes tokens (and memory via the KV cache).
+- **Determinism vs sampling:** same prompt + low temperature → stable output; high temperature → varied.
+
+**Golden rule:** a prompt is a contract with the model. Be explicit about role, task, format, and constraints, and the model will meet you halfway.`
+            },
+            {
+              id: 'types-of-prompts',
+              title: 'Types of Prompts',
+              icon: 'category',
+              content: `Prompts come in families. Know the main ones:
+
+| Type | What it is | When to use |
+|---|---|---|
+| **Zero-shot** | Ask directly, no examples | Simple, well-defined tasks |
+| **Few-shot** | Give 1+ input→output examples | When format/style must be demonstrated |
+| **System / Role** | Set persona + rules up front | Define behavior across a session |
+| **Instruction** | Step-by-step commands | Multi-step or precise tasks |
+| **Chain-of-Thought** | "Think step by step" | Reasoning, math, logic |
+| **Contextual / RAG** | Inject retrieved docs | Grounding on private/live data |
+| **Negative** | State what NOT to do | Avoid known failure modes |
+
+**Zero-shot vs few-shot:** zero-shot relies on the model's priors; few-shot *shows* the pattern, which dramatically improves consistency on structured or unusual tasks.
+
+**Golden rule:** start zero-shot, add few-shot examples when the format is fragile, and use Chain-of-Thought only when reasoning is the bottleneck.`
+            },
+            {
+              id: 'prompt-architecture',
+              title: 'Prompt Architecture (Interactive)',
+              icon: 'account_tree',
+              pipeline: {
+                stages: [
+                  { icon: 'shield_person', label: 'System Message', note: 'Sets the model role/persona and global rules (tone, safety, constraints). Persists across the conversation.' },
+                  { icon: 'history', label: 'Context', note: 'Retrieved documents or prior conversation turns (RAG). Grounds the answer in real, current data.' },
+                  { icon: 'list_alt', label: 'Instruction', note: 'The actual task: what to do, step by step. The clearest instruction wins even on a weak model.' },
+                  { icon: 'format_quote', label: 'Few-shot Examples', note: 'Demonstration input→output pairs that show the desired pattern and format. Powerful for structured tasks.' },
+                  { icon: 'chat', label: 'User Input', note: 'The live query. Combined with everything above, this is what the model actually responds to.' },
+                  { icon: 'code', label: 'Output Format', note: 'Constraints on the response: JSON schema, length, style, or citation rules. Forces machine-readable, parseable output.' }
+                ]
+              }
+            },
+            {
+              id: 'examples-of-prompts',
+              title: 'Examples of Prompts',
+              icon: 'apps',
+              content: `**1. Zero-shot classification**
+> Classify the sentiment of this review as Positive, Negative, or Neutral: "The battery died after two weeks." → Answer:
+
+**2. Few-shot extraction (JSON)**
+> Extract entities as JSON.
+> Example: "Apple bought a startup in Seattle." → {"org":"Apple","city":"Seattle"}
+> Text: "OpenAI hired a researcher from London." →
+
+**3. Chain-of-Thought math**
+> A train travels 60 km in 45 minutes. What is its speed in km/h? Think step by step.
+
+**4. RAG grounded answer**
+> Using the provided policy document, answer: what is the refund window? Only use the document.
+
+**5. System + negative constraint**
+> You are a senior Rust reviewer. Explain the bug. Do NOT rewrite the whole file; only show the minimal fix.
+
+**Golden rule:** show, don't just tell — few-shot examples and explicit output formats beat long paragraphs of instructions.`
             },
           ],
         },
