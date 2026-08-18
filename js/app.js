@@ -3,6 +3,7 @@
 var _scrollSpyCleanup = null;
 var _mdCache = {};
 var _searchIndex = null;
+var _kvData = {};
 
 function sanitizeHtml(html) {
   html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
@@ -393,10 +394,15 @@ function initDocs() {
       html += '<p class="text-base theme-text-muted mb-8 leading-relaxed">' + found.guide.description + '</p>';
     }
 
+    var kvSeq = 0;
     if (found.guide.sections && found.guide.sections.length) {
       found.guide.sections.forEach(function(s) {
         html += '<h2 id="' + s.id + '"><span class="material-symbols-outlined section-icon" aria-hidden="true">' + (s.icon || 'article') + '</span>' + s.title + '</h2>';
-        if (s.tree) {
+        if (s.kv) {
+          var kid = 'kv' + (kvSeq++);
+          _kvData[kid] = s.kv;
+          html += '<div class="markdown-content"><div class="kv-diagram" data-kvid="' + kid + '">' + renderKV() + '</div></div>';
+        } else if (s.tree) {
           html += '<div class="markdown-content ai-tree-wrap">' + renderTree(s.tree) + '</div>';
         } else if (s.content) {
           html += '<div class="markdown-content">' + renderMarkdown(s.content) + '</div>';
@@ -422,6 +428,11 @@ function initDocs() {
     // Highlight code blocks in the freshly rendered guide (content is injected
     // after Prism's initial DOMContentLoaded pass, so highlight it manually)
     if (window.Prism) Prism.highlightAllUnder(content);
+
+    content.querySelectorAll('.kv-diagram').forEach(function(d) {
+      var id = d.getAttribute('data-kvid');
+      if (id && _kvData[id]) initKVStep(d, _kvData[id]);
+    });
 
     // Attach bookmark click handler (no inline onclick)
     var bookmarkBtn = document.getElementById('bookmark-btn-' + guideId);
@@ -534,6 +545,84 @@ function initDocs() {
     }
     html += '</li>';
     return html;
+  }
+
+  function renderKV() {
+    var html = '<div class="kv-stage">';
+    html += '<div class="kv-col"><div class="kv-col-label">Input sequence</div><div class="kv-tokens"></div></div>';
+    html += '<div class="kv-col"><div class="kv-col-label">KV Cache</div><div class="kv-cache"></div></div>';
+    html += '</div>';
+    html += '<div class="kv-note"></div>';
+    html += '<div class="kv-step-controls">';
+    html += '<button class="kv-step-btn" data-act="prev"><span class="material-symbols-outlined">chevron_left</span> Prev</button>';
+    html += '<span class="kv-step-indicator"></span>';
+    html += '<button class="kv-step-btn" data-act="next">Next <span class="material-symbols-outlined">chevron_right</span></button>';
+    html += '<button class="kv-step-btn kv-step-reset" data-act="reset"><span class="material-symbols-outlined">restart_alt</span> Reset</button>';
+    html += '</div>';
+    return html;
+  }
+
+  function initKVStep(wrapper, kv) {
+    var prompt = kv.prompt || [];
+    var frames = kv.frames || [];
+    var genTotal = frames.length ? frames[frames.length - 1].gen.length : 0;
+    var total = prompt.length + genTotal;
+    var totalSteps = Math.max(0, frames.length - 1);
+    var tokensEl = wrapper.querySelector('.kv-tokens');
+    var cacheEl = wrapper.querySelector('.kv-cache');
+    var noteEl = wrapper.querySelector('.kv-note');
+    var indicatorEl = wrapper.querySelector('.kv-step-indicator');
+
+    var tokenHtml = '';
+    prompt.forEach(function(t, i) {
+      tokenHtml += '<div class="kv-token kv-token-prompt" data-idx="' + i + '"><span class="kv-token-idx">' + i + '</span><span class="kv-token-text">' + t + '</span></div>';
+    });
+    for (var g = 0; g < genTotal; g++) {
+      var idx = prompt.length + g;
+      tokenHtml += '<div class="kv-token kv-token-gen" data-idx="' + idx + '"><span class="kv-token-idx">' + idx + '</span><span class="kv-token-text">' + (frames.length ? frames[frames.length - 1].gen[g] : '') + '</span></div>';
+    }
+    tokensEl.innerHTML = tokenHtml;
+
+    var slotHtml = '';
+    for (var c = 0; c < total; c++) {
+      slotHtml += '<div class="kv-slot" data-slot="' + c + '"><span>K<sub>' + c + '</sub></span><span>V<sub>' + c + '</sub></span></div>';
+    }
+    cacheEl.innerHTML = slotHtml;
+
+    var tokens = tokensEl.querySelectorAll('.kv-token');
+    var slots = cacheEl.querySelectorAll('.kv-slot');
+    var step = 0;
+
+    function update(s) {
+      step = Math.max(0, Math.min(totalSteps, s));
+      var filled = prompt.length + step;
+      var newIdx = filled - 1;
+      tokens.forEach(function(tok) {
+        var i = parseInt(tok.getAttribute('data-idx'), 10);
+        var shown = i < filled;
+        tok.style.display = shown ? '' : 'none';
+        tok.classList.toggle('idx-new', shown && step > 0 && i === newIdx);
+      });
+      slots.forEach(function(sl) {
+        var i = parseInt(sl.getAttribute('data-slot'), 10);
+        var filledSlot = i < filled;
+        sl.classList.toggle('filled', filledSlot);
+        sl.classList.toggle('slot-new', filledSlot && step > 0 && i === newIdx);
+      });
+      if (noteEl) noteEl.textContent = (step === 0 ? (frames[0] ? frames[0].note : '') : (frames[step - 1] ? frames[step - 1].note : ''));
+      if (indicatorEl) indicatorEl.textContent = 'Step ' + step + ' / ' + totalSteps;
+    }
+
+    wrapper.querySelectorAll('.kv-step-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var act = btn.getAttribute('data-act');
+        if (act === 'prev') update(step - 1);
+        else if (act === 'next') update(step + 1);
+        else if (act === 'reset') update(0);
+      });
+    });
+
+    update(0);
   }
 
   function addHeadingAnchors() {
