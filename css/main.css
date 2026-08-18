@@ -938,7 +938,6 @@ input:focus:not(:focus-visible) {
   border-radius: 9999px;
   text-decoration: none;
   white-space: nowrap;
-  opacity: 0;
   animation: chipIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: var(--delay, 0s);
   transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
@@ -1083,8 +1082,6 @@ input:focus:not(:focus-visible) {
   border-radius: 0.6rem;
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
-  opacity: 0;
-  transform: translateY(8px);
   animation: pipeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   animation-delay: var(--delay, 0s);
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
