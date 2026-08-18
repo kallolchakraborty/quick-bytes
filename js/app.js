@@ -4,6 +4,7 @@ var _scrollSpyCleanup = null;
 var _mdCache = {};
 var _searchIndex = null;
 var _kvData = {};
+var _pipeData = {};
 
 function sanitizeHtml(html) {
   html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
@@ -395,10 +396,15 @@ function initDocs() {
     }
 
     var kvSeq = 0;
+    var pipeSeq = 0;
     if (found.guide.sections && found.guide.sections.length) {
       found.guide.sections.forEach(function(s) {
         html += '<h2 id="' + s.id + '"><span class="material-symbols-outlined section-icon" aria-hidden="true">' + (s.icon || 'article') + '</span>' + s.title + '</h2>';
-        if (s.kv) {
+        if (s.pipeline) {
+          var pid = 'pipe' + (pipeSeq++);
+          _pipeData[pid] = s.pipeline;
+          html += '<div class="markdown-content"><div class="pipe-diagram" data-pid="' + pid + '">' + renderPipeline() + '</div></div>';
+        } else if (s.kv) {
           var kid = 'kv' + (kvSeq++);
           _kvData[kid] = s.kv;
           html += '<div class="markdown-content"><div class="kv-diagram" data-kvid="' + kid + '">' + renderKV() + '</div></div>';
@@ -432,6 +438,10 @@ function initDocs() {
     content.querySelectorAll('.kv-diagram').forEach(function(d) {
       var id = d.getAttribute('data-kvid');
       if (id && _kvData[id]) initKVStep(d, _kvData[id]);
+    });
+    content.querySelectorAll('.pipe-diagram').forEach(function(d) {
+      var id = d.getAttribute('data-pid');
+      if (id && _pipeData[id]) initPipeline(d, _pipeData[id]);
     });
 
     // Attach bookmark click handler (no inline onclick)
@@ -622,6 +632,55 @@ function initDocs() {
       });
     });
 
+    update(0);
+  }
+
+  function renderPipeline() {
+    var html = '<div class="pipe-stages"></div>';
+    html += '<div class="kv-note pipe-note"></div>';
+    html += '<div class="kv-step-controls">';
+    html += '<button class="kv-step-btn" data-act="prev"><span class="material-symbols-outlined">chevron_left</span> Prev</button>';
+    html += '<span class="kv-step-indicator"></span>';
+    html += '<button class="kv-step-btn" data-act="next">Next <span class="material-symbols-outlined">chevron_right</span></button>';
+    html += '<button class="kv-step-btn kv-step-reset" data-act="reset"><span class="material-symbols-outlined">restart_alt</span> Reset</button>';
+    html += '</div>';
+    return html;
+  }
+
+  function initPipeline(wrapper, data) {
+    var stages = data.stages || [];
+    var stagesEl = wrapper.querySelector('.pipe-stages');
+    var noteEl = wrapper.querySelector('.pipe-note');
+    var indicatorEl = wrapper.querySelector('.kv-step-indicator');
+    var html = '';
+    stages.forEach(function(st, i) {
+      html += '<div class="pipe-stage" data-stage="' + i + '" style="--delay:' + (i * 0.08).toFixed(2) + 's">'
+        + '<span class="material-symbols-outlined pipe-stage-icon">' + (st.icon || 'circle') + '</span>'
+        + '<span class="pipe-stage-label">' + st.label + '</span></div>';
+      if (i < stages.length - 1) {
+        html += '<div class="pipe-arrow-wrap"><span class="material-symbols-outlined pipe-arrow">arrow_downward</span></div>';
+      }
+    });
+    stagesEl.innerHTML = html;
+    var stageEls = stagesEl.querySelectorAll('.pipe-stage');
+    var active = 0;
+    function update(a) {
+      active = Math.max(0, Math.min(stages.length - 1, a));
+      stageEls.forEach(function(el) {
+        var i = parseInt(el.getAttribute('data-stage'), 10);
+        el.classList.toggle('active', i === active);
+      });
+      if (noteEl) noteEl.textContent = stages[active] ? stages[active].note : '';
+      if (indicatorEl) indicatorEl.textContent = 'Stage ' + (active + 1) + ' / ' + stages.length;
+    }
+    wrapper.querySelectorAll('.kv-step-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var act = btn.getAttribute('data-act');
+        if (act === 'prev') update(active - 1);
+        else if (act === 'next') update(active + 1);
+        else if (act === 'reset') update(0);
+      });
+    });
     update(0);
   }
 

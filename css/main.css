@@ -1059,3 +1059,71 @@ input:focus:not(:focus-visible) {
   color: var(--text-muted);
   min-height: 4rem;
 }
+
+/* ---- Inference pipeline diagram ---- */
+.pipe-diagram {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border-default);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  background: var(--bg-subtle);
+}
+.pipe-stages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pipe-stage {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 22rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.6rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: pipeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--delay, 0s);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.pipe-stage.active {
+  border-color: var(--brand-default);
+  box-shadow: 0 0 0 2px var(--brand-light);
+  background: var(--brand-lighter);
+}
+.pipe-stage-icon {
+  font-size: 1.2rem;
+  color: var(--brand-default);
+  flex-shrink: 0;
+}
+.pipe-stage-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-default);
+}
+.pipe-arrow-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0.15rem 0;
+}
+.pipe-arrow {
+  font-size: 1.1rem;
+  color: var(--text-subtle);
+}
+.pipe-note {
+  margin-top: 1.25rem;
+}
+@keyframes pipeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pipe-stage {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

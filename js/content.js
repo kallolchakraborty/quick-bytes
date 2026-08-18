@@ -2,13 +2,13 @@ const QUICK_BYTES = {
   site: {
     name: 'Quick Bytes',
     tagline: 'LLM interview prep.',
-    description: 'What is an AI model, types of AI models, what is an LLM, types of LLMs, KV cache, and popular examples — with interactive diagrams.',
+    description: 'What is an AI model, types of AI models, what is an LLM, types of LLMs, KV cache, inference, and popular examples — with interactive diagrams.',
     url: 'https://kallolchakraborty.github.io/quick-bytes/',
     author: 'Kallol Chakraborty',
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 2,
+    guides: 3,
     phases: 1,
     platform: 'Engineering',
   },
@@ -17,7 +17,7 @@ const QUICK_BYTES = {
       id: 'llms',
       title: 'AI & LLMs',
       level: 'Interview',
-      description: 'What an AI model is, the types of AI models, what an LLM is, the types of LLMs, and the KV cache.',
+      description: 'What an AI model is, the types of AI models, what an LLM is, the types of LLMs, the KV cache, and inference.',
       guides: [
         {
           id: 'what-are-llms',
@@ -176,6 +176,76 @@ const QUICK_BYTES = {
                   { gen: ['on'], note: 'The model predicts "on" (next token). It computes K/V for "on" ONCE and appends them to the cache (now 4 slots). The following attention step reads all 4 cached K/V pairs — none of the prompt is recomputed.' },
                   { gen: ['on', 'the'], note: 'Predicted "the". Only the newest token needed fresh K/V computation this step; it joins the cache (now 5 slots). Each decoding step adds exactly one K/V pair.' },
                   { gen: ['on', 'the', 'mat'], note: 'Predicted "mat". The cache holds 6 slots. Compute per step stays O(1) in sequence length — this is why decoding is fast, paid for with ever-growing memory (the KV cache).' }
+                ]
+              }
+            },
+          ],
+        },
+        {
+          id: 'inference',
+          title: 'Inference',
+          icon: 'bolt',
+          description: 'What inference is, how LLM inference works (prefill vs decode), and an interactive architecture pipeline diagram.',
+          sections: [
+            {
+              id: 'what-is-inference',
+              title: 'What is an Inference?',
+              icon: 'bolt',
+              content: `**Inference** is the phase where a trained model actually *produces output* from new input — as opposed to **training**, where the model *learns* weights. For an LLM, inference means: take a prompt, run it through the Transformer, and generate tokens.
+
+**Training vs inference:**
+
+| | Training | Inference |
+|---|---|---|
+| Goal | Learn weights from data | Produce output from input |
+| Runs | Once, offline, expensive | Repeatedly, per request |
+| Needs | Labels, gradients, backward pass | Only forward pass |
+| Memory | Gradients + optimizer state | Activations + KV cache |
+| Output | Updated model | Generated tokens |
+
+**Why it matters:** inference is where the model meets users. Its cost, latency, and throughput — not training — determine the real-world bill and experience. Everything from batching to quantization exists to make inference cheaper and faster.
+
+**Golden rule:** training builds the model; inference *runs* it. Optimizing inference (not training) is what makes an LLM usable in production.`
+            },
+            {
+              id: 'how-it-works',
+              title: 'How it works?',
+              icon: 'sync',
+              content: `LLM inference is a two-phase loop driven by the **Transformer forward pass**:
+
+**1. Prefill (prompt processing):** the whole input prompt is fed through the model in parallel (one batched forward pass). The model computes the Key/Value vectors for every prompt token and stores them in the **KV cache**. Output: the logits for the first generated token.
+
+**2. Decode (token generation):** the model generates **one token at a time**. Each step:
+- reads the *last* token + the cached K/V of all previous tokens,
+- computes new K/V (cached),
+- produces logits → samples the next token,
+- appends it and repeats until an end-of-sequence token or max length.
+
+**Prefill vs decode at a glance:**
+
+| | Prefill | Decode |
+|---|---|---|
+| Compute | Parallel over all prompt tokens | Sequential, one token per step |
+| KV cache | Filled here | Read + extended here |
+| Bottleneck | Compute-bound (big matmuls) | Memory-bandwidth-bound (reads weights + cache) |
+
+**Batching:** in production, many requests are batched together (continuous / batch scheduling) so the GPU stays busy during both phases. This is the single biggest throughput lever.
+
+**Golden rule:** prefill is compute-bound, decode is memory-bound. Good serving stacks optimize each phase separately and batch across requests.`
+            },
+            {
+              id: 'inference-architecture',
+              title: 'Architecture (Interactive Pipeline)',
+              icon: 'account_tree',
+              pipeline: {
+                stages: [
+                  { icon: 'text_fields', label: 'Input Prompt', note: 'Raw user text, e.g. "Translate to French: Hello". Untokenized text enters the system.' },
+                  { icon: 'token', label: 'Tokenizer', note: 'Splits text into subword tokens (e.g. BPE). Each token maps to an integer ID. Roughly 1 token ≈ 4 characters of English.' },
+                  { icon: 'grid_on', label: 'Embedding', note: 'Token IDs are mapped to dense vectors that capture meaning. Positional encodings are added so token order is preserved.' },
+                  { icon: 'account_tree', label: 'Transformer (Prefill + Decode)', note: 'Prefill: process the whole prompt in parallel and fill the KV cache. Decode: generate one token at a time, reusing the cache (see the KV Cache guide).' },
+                  { icon: 'functions', label: 'LM Head / Logits', note: 'The final layer outputs a logit vector over the vocabulary — a raw score for every possible next token.' },
+                  { icon: 'tune', label: 'Sampling', note: 'Logits become probabilities via softmax, then a token is chosen: greedy (argmax), or temperature / top-p / top-k for controlled diversity.' },
+                  { icon: 'output', label: 'Output Token → Loop', note: 'The chosen token is emitted, appended to the sequence, and fed back in for the next decode step until an end token or max length.' }
                 ]
               }
             },
