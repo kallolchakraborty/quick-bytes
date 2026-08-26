@@ -8,7 +8,7 @@ const QUICK_BYTES = {
     authorUrl: 'https://www.linkedin.com/in/kallol-chakraborty-9728a699/',
   },
   stats: {
-    guides: 8,
+    guides: 7,
     phases: 1,
     platform: 'Engineering',
   },
@@ -140,44 +140,6 @@ const QUICK_BYTES = {
 - **T5** frames every NLP task as "text-to-text."
 
 **Golden rule:** model choice = capability × cost × privacy. GPT-4 for hardest tasks; Llama/Mistral for control and cost; BERT for fast, lightweight understanding.`
-            },
-          ],
-        },
-        {
-          id: 'kv-cache',
-          title: 'KV Cache',
-          icon: 'memory',
-          description: 'What the KV cache is, why transformers use it, and an interactive architecture diagram of how keys/values are cached across decoding steps.',
-          sections: [
-            {
-              id: 'what-is-kv-cache',
-              title: 'What is KV Cache?',
-              icon: 'memory',
-              content: `A **KV cache** (Key–Value cache) is the memory mechanism that makes transformer *decoding* fast. During autoregressive generation, each token's attention layer computes a **Key** vector and a **Value** vector from that token's representation. The KV cache stores these K and V tensors for every token the model has already processed, so they are **never recomputed** when the next token is generated.
-
-**The problem it solves:** without caching, generating token *t* would require recomputing attention over all *t* prior tokens from scratch. That is O(n²) work per token and O(n³) across the whole sequence. With the cache, each new token only computes its *own* K/V and attends over the cached ones — O(n) per step, O(n²) total.
-
-**Where it lives:** the cache is kept **per layer** and **per attention head**. Its size is:
-
-> 2 (K + V) × sequence_length × num_layers × num_heads × head_dim × bytes_per_element
-
-**The trade-off:** memory for compute. The cache grows linearly with sequence length and model size — it is the dominant memory cost of long-context LLMs, which is why techniques like **Grouped-Query Attention (GQA)**, **Multi-head Latent Attention (MLA)**, and **sliding-window / eviction** policies exist.
-
-**Golden rule:** the KV cache trades *memory* for *compute*. It is why long conversations get expensive and why context length is ultimately a memory budget, not just a number.`
-            },
-            {
-              id: 'kv-cache-architecture',
-              title: 'KV Cache Architecture (Interactive)',
-              icon: 'account_tree',
-              kv: {
-                prompt: ['The', 'cat', 'sat'],
-                frames: [
-                  { gen: [], note: 'Prompt [The, cat, sat] is processed in parallel. The model computes the Key (K) and Value (V) vectors for all 3 prompt tokens and stores them in the KV cache — 3 slots filled. It is now ready to predict the first new token.' },
-                  { gen: ['on'], note: 'The model predicts "on" (next token). It computes K/V for "on" ONCE and appends them to the cache (now 4 slots). The following attention step reads all 4 cached K/V pairs — none of the prompt is recomputed.' },
-                  { gen: ['on', 'the'], note: 'Predicted "the". Only the newest token needed fresh K/V computation this step; it joins the cache (now 5 slots). Each decoding step adds exactly one K/V pair.' },
-                  { gen: ['on', 'the', 'mat'], note: 'Predicted "mat". The cache holds 6 slots. Compute per step stays O(1) in sequence length — this is why decoding is fast, paid for with ever-growing memory (the KV cache).' }
-                ]
-              }
             },
           ],
         },
