@@ -2,7 +2,7 @@
   "name": "quick-bytes",
   "version": "1.0.0",
   "private": true,
-  "description": "Compact, interview-ready SAP RAP reference — determinations & validations with ABAP code.",
+  "description": "Interview-prep notes on AI models and LLMs — with interactive diagrams and OKF knowledge bundle.",
   "scripts": {
     "dev": "tailwindcss -i css/main.css -o css/tailwind.css --watch",
     "build": "tailwindcss -i css/main.css -o css/tailwind.css --minify"
