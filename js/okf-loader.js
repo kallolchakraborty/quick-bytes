@@ -16,46 +16,36 @@
     return obj;
   }
 
-  function mergeOkfData(data) {
-    if (!data || !data.phases || !data.phases.length) {
-      console.warn('OKF bundle missing phases');
-      return false;
-    }
-
-    var cleanData = stripMeta(data);
-    window.QUICK_BYTES = cleanData;
+  function applyOkfData(data) {
+    if (!data || !data.phases || !data.phases.length) return false;
+    window.QUICK_BYTES = stripMeta(data);
     loaded = true;
     console.log('OKF bundle loaded:', data.stats.guides, 'guides across', data.phases.length, 'phases');
     return true;
   }
 
-  function loadOkfBundle() {
-    // If already loaded from content.js, still try to update from OKF
+  function initLoader() {
     fetch(OKF_BUNDLE_URL)
       .then(function(res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       })
       .then(function(data) {
-        if (mergeOkfData(data)) {
-          // Notify app.js to re-render if it already initialized
+        if (applyOkfData(data)) {
+          window.dispatchEvent(new Event('okf-ready'));
           window.dispatchEvent(new Event('okf-reload'));
         }
       })
       .catch(function(err) {
-        console.warn('OKF loader: using content.js fallback (' + err.message + ')');
+        console.error('OKF loader failed:', err.message);
+        document.documentElement.innerHTML = '<body style="font-family:sans-serif;padding:2rem;background:#fef2f2;color:#991b1b"><h1>Failed to load content</h1><p>Could not load <code>okf/bundle.json</code>. Please refresh the page.</p></body>';
       });
   }
 
   window.OkfLoader = {
-    load: loadOkfBundle,
     isLoaded: function() { return loaded; },
     getData: function() { return window.QUICK_BYTES; }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadOkfBundle);
-  } else {
-    loadOkfBundle();
-  }
+  initLoader();
 })();

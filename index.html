@@ -129,27 +129,35 @@
     </div>
   </footer>
 
-  <script src="js/content.js?v=20260823"></script>
   <script src="js/okf-loader.js"></script>
   <script src="js/app.js?v=20260823"></script>
   <script>
     (function() {
-      if (typeof QUICK_BYTES === 'undefined') return;
-      var chips = document.getElementById('topic-chips');
-      if (!chips) return;
-      var html = '';
-      var i = 0;
-      (QUICK_BYTES.phases || []).forEach(function(p) {
-        (p.guides || []).forEach(function(g) {
-          (g.sections || []).forEach(function(s) {
-            html += '<a href="docs.html#' + s.id + '" class="topic-chip" style="--delay:' + (i * 0.06).toFixed(2) + 's">'
-              + '<span class="material-symbols-outlined" aria-hidden="true">' + (s.icon || 'article') + '</span>'
-              + '<span>' + s.title + '</span></a>';
-            i++;
+      var chipsEl = document.getElementById('topic-chips');
+      if (!chipsEl) return;
+
+      function renderTopicChips() {
+        if (typeof QUICK_BYTES === 'undefined' || !QUICK_BYTES.phases) return;
+        var html = '';
+        var i = 0;
+        (QUICK_BYTES.phases || []).forEach(function(p) {
+          (p.guides || []).forEach(function(g) {
+            (g.sections || []).forEach(function(s) {
+              html += '<a href="docs.html#' + s.id + '" class="topic-chip" style="--delay:' + (i * 0.06).toFixed(2) + 's">'
+                + '<span class="material-symbols-outlined" aria-hidden="true">' + (s.icon || 'article') + '</span>'
+                + '<span>' + s.title + '</span></a>';
+              i++;
+            });
           });
         });
-      });
-      chips.innerHTML = html;
+        chipsEl.innerHTML = html;
+      }
+
+      window.addEventListener('okf-ready', renderTopicChips);
+
+      if (typeof QUICK_BYTES !== 'undefined' && QUICK_BYTES.phases) {
+        renderTopicChips();
+      }
     })();
   </script>
   <script>
