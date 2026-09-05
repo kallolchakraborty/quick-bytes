@@ -8,24 +8,33 @@ Compact, interview-ready technical references — built to clear FAANG interview
 
 ## Overview
 
-Quick Bytes is a static documentation site. It is a hash-routed single-page application: content is authored in a JavaScript data file (`js/content.js`), rendered via Markdown at runtime, and navigated through a sidebar-driven UI.
+Quick Bytes is a static documentation site. Content lives in **OKF Markdown files** under `okf/` — it is *not* hardcoded in the HTML. At build time a small script generates `okf/index.json` (a structure manifest listing phases → guides → sections and their file paths). At runtime the loader fetches the manifest, then fetches each section `.md` file dynamically, parses the body, and renders it.
 
-**Current content:** a single SAP RAP guide — *Determinations & Validations in RAP* — with ABAP code examples, execution-order cheatsheet, and detailed interview Q&A.
+**Data flow:**
+
+```
+okf/ai-llms/llms/<guide>/<section>.md   (source of truth)
+        │  npm run build → scripts/build-manifest.js
+        ▼
+okf/index.json                           (structure only — no content bodies)
+        │  js/okf-loader.js (runtime)
+        ▼
+QUICK_BYTES global → js/app.js renders sidebar, search, diagrams
+```
 
 ---
 
 ## Features
 
-- **Markdown-rendered content** via [marked](https://marked.js.org/) with output sanitization
-- **ABAP syntax highlighting** via [Prism.js](https://prismjs.com/) (light + dark themes)
-- **Dark/light theme** — manual toggle, defaults to light
-- **Full-text search** — pre-built index, cached
-- **Reading time estimation** (200 wpm, cached per guide)
-- **Bookmarking** persisted to `localStorage`
-- **Mark-as-complete** progress tracking
-- **Browser back/forward** — popstate handler
-- **Responsive layout** with collapsible sidebar, scrollspy table of contents, glass-morphism nav
-- **PWA-ready** — `manifest.json`, `.nojekyll` for reliable GitHub Pages deployment
+- **OKF-driven content** — every guide/section is fetched from `okf/**/*.md` at runtime; no document content is hardcoded
+- **Markdown rendering** via [marked](https://marked.js.org/) with output sanitization
+- **Interactive diagrams** — `## Pipeline Diagram` / `## Tree Data` + JSON blocks in `.md` files render as animated pipeline/tree visualizations
+- **Syntax highlighting** via [Prism.js](https://prismjs.com/)
+- **Dark/light theme** toggle
+- **Full-text search** — pre-built index from loaded content
+- **Reading time**, **bookmarks**, **mark-as-complete** progress (localStorage)
+- **Browser back/forward** — hash-based routing
+- **Responsive layout** — collapsible sidebar, scrollspy TOC
 
 ---
 
@@ -35,12 +44,9 @@ Quick Bytes is a static documentation site. It is a hash-routed single-page appl
 |-------|--------|
 | **CSS** | [Tailwind CSS v3](https://tailwindcss.com/) — CLI build, no PostCSS |
 | **JavaScript** | Vanilla JS — no framework |
-| **Markdown** | [marked](https://marked.js.org/) with HTML sanitization |
-| **Syntax Highlighting** | [Prism](https://prismjs.com/) |
-| **Routing** | Hash-based SPA with popstate handler |
-| **State** | localStorage |
-| **Font** | Ubuntu + Ubuntu Mono (Google Fonts) |
-| **Theme** | Orange brand (#E95420) |
+| **Markdown** | [marked](https://marked.js.org/) (CDN) with sanitization |
+| **Syntax Highlighting** | [Prism](https://prismjs.com/) (CDN) |
+| **Content** | OKF Markdown (`okf/*.md`) + generated manifest (`okf/index.json`) |
 | **Hosting** | GitHub Pages |
 
 ---
@@ -49,62 +55,103 @@ Quick Bytes is a static documentation site. It is a hash-routed single-page appl
 
 ```
 .
-├── index.html                  # Landing page
-├── docs.html                   # Documentation viewer with sidebar + outline
-├── 404.html                    # Custom error page
+├── index.html                  # Landing page (hero, topic chips, search)
+├── docs.html                   # Docs viewer (sidebar, outline, content)
+├── 404.html
 ├── manifest.json               # PWA manifest
 ├── .nojekyll                   # Disables GitHub Pages Jekyll processing
-├── css/
-│   ├── main.css                # Tailwind input source (CSS variables, custom styles)
-│   └── tailwind.css            # Compiled Tailwind output (gitignored, built in CI)
+├── okf/                        # OKF content — the source of truth
+│   ├── index.json              # Generated structure manifest (do not edit)
+│   └── ai-llms/llms/<guide>/   # Phase + guide index.md + section .md files
 ├── js/
-│   ├── content.js              # Content data — phases, guides, sections (all text + code)
-│   ├── app.js                  # Application logic — rendering, search, bookmarks, progress
-│   └── theme.js                # Theme toggle (defaults to light)
-├── assets/
-│   ├── logo.svg                # Animated SMIL logo (hamburger → checkmark)
-│   └── favicon.svg
-├── tailwind.config.js          # Tailwind config — orange palette, Ubuntu fonts
-├── package.json                # npm scripts (build)
-├── .github/workflows/deploy.yml # GitHub Actions deployment
-├── robots.txt                  # SEO crawl directives
-├── sitemap.xml                 # SEO sitemap
-└── README.md
+│   ├── okf-loader.js           # Fetches manifest + section .md files, builds QUICK_BYTES
+│   ├── app.js                  # Rendering, search, bookmarks, progress, diagrams
+│   └── theme.js                # Theme (defaults to light)
+├── scripts/
+│   └── build-manifest.js       # Generates okf/index.json from okf/**/*.md
+├── css/
+│   ├── main.css                # Tailwind input source
+│   └── tailwind.css            # Compiled output (gitignored, built in CI)
+├── assets/logo.svg
+├── tailwind.config.js
+├── package.json
+└── .github/workflows/deploy.yml
 ```
 
 ---
 
-## Content Architecture
+## Content Format (OKF)
 
-Content is defined in `js/content.js` under the `QUICK_BYTES` global object:
+Content is a hierarchy of three document types, each a Markdown file with YAML frontmatter:
 
+**Phase** — `okf/ai-llms/llms/index.md`
+```yaml
+---
+type: Phase
+title: AI & LLMs
+phase: llms
+level: Interview
+icon: school
+order: 1
+---
 ```
-QUICK_BYTES
-├── site          — metadata (name, tagline, URL, author)
-├── stats         — guide/phase counts
-└── phases        — array of phases
-    └── guides    — array of guides
-        └── sections — array of sections (id, title, content as Markdown)
+
+**Guide** — `okf/ai-llms/llms/<guide>/index.md`
+```yaml
+---
+type: Guide
+title: Caching
+description: What caching is and why it matters.
+guide: caching
+phase: llms
+icon: memory
+order: 7
+---
 ```
 
-The `docs.html` page renders the active guide's sections. Each section's `content` is parsed through `marked.parse()` with output sanitization (strips `<script>`, `on*` handlers, `javascript:` protocol). Parsed output is cached per content string.
+**Section** — `okf/ai-llms/llms/<guide>/<section>.md`
+```yaml
+---
+type: Section
+title: KV Cache Overview
+section: kv-cache-overview
+guide: caching
+phase: llms
+icon: layers
+order: 2
+---
+```
+
+The body is Markdown. Two special headings map JSON to interactive diagrams:
+
+```markdown
+## Pipeline Diagram
+
+```json
+{ "stages": [ { "label": "Input", "note": "...", "icon": "text_fields" } ] }
+```
+```
+
+```markdown
+## Tree Data
+
+```json
+{ "label": "AI Model", "children": [ { "label": "..." } ] }
+```
+```
+
+`order` controls display order inside each container (fallback: filename order). Boilerplate (`# title`, `**Icon:**`) is stripped by the loader at runtime.
 
 ---
 
 ## Adding Content
 
-1. Add a phase (or reuse `sap-rap`) and a guide with sections to `js/content.js`.
-2. Section `content` is Markdown. Use fenced code blocks for ABAP:
+1. Add a section file `okf/ai-llms/llms/<guide>/<new-section>.md` with the frontmatter above (new guide needs an `index.md` too).
+2. Set `order` to place it correctly.
+3. Run `npm run manifest` (or `npm run build`) to regenerate `okf/index.json` and commit both.
+4. Verify: `node --check js/okf-loader.js js/app.js` and load the site locally.
 
-   ```abap
-   METHOD my_determination.
-     " code
-   ENDMETHOD.
-   ```
-
-   Inside the JS template literal, escape code-fence backticks as `\`\`\``.
-3. Update `stats.guides` / `stats.phases` to match.
-4. Verify: `node --check js/content.js`.
+Run `node scripts/build-manifest.js` anytime to refresh the manifest — it walks `okf/**` and never touches content bodies.
 
 ---
 
@@ -114,27 +161,20 @@ The `docs.html` page renders the active guide's sections. Each section's `conten
 # Install dependencies
 npm install
 
-# Build Tailwind CSS (compiles css/main.css → css/tailwind.css)
+# Generate manifest + compile Tailwind CSS
 npm run build
 
 # Serve locally
 python3 -m http.server 8000
 ```
 
-**Note:** The site is pure static HTML — no build step beyond Tailwind. `marked`, `prism`, and `Material Symbols` are loaded from CDN.
+**Note:** `css/tailwind.css` and `okf/index.json` are build outputs — run `npm run build` before serving.
 
 ---
 
 ## Deployment
 
-Pushing to `main` triggers the GitHub Actions workflow (`.github/workflows/deploy.yml`):
-
-1. Checks out the repository
-2. Installs npm dependencies
-3. Builds Tailwind CSS
-4. Deploys to GitHub Pages
-
-**Requirement:** GitHub Pages must be enabled on the repo with source **"GitHub Actions"** (Settings → Pages).
+Pushing to `main` triggers `.github/workflows/deploy.yml`: `npm ci` → `npm run build` (manifest + Tailwind) → deploy to GitHub Pages. GitHub Pages must use the **"GitHub Actions"** source.
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "name": "Quick Bytes",
   "short_name": "Quick Bytes",
-  "description": "Compact, interview-ready SAP RAP reference — determinations & validations with ABAP code.",
+  "description": "Quick, interview-ready notes on AI models and LLMs — what they are, their types, and real-world examples.",
   "start_url": "index.html",
   "scope": "/quick-bytes/",
   "display": "standalone",

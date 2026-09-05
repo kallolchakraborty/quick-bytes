@@ -4,13 +4,11 @@
   "private": true,
   "description": "Interview-prep notes on AI models and LLMs — with interactive diagrams and OKF knowledge bundle.",
   "scripts": {
-    "dev": "tailwindcss -i css/main.css -o css/tailwind.css --watch",
-    "build": "tailwindcss -i css/main.css -o css/tailwind.css --minify"
+    "manifest": "node scripts/build-manifest.js",
+    "dev": "npm run manifest && tailwindcss -i css/main.css -o css/tailwind.css --watch",
+    "build": "npm run manifest && tailwindcss -i css/main.css -o css/tailwind.css --minify"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
-  },
-  "dependencies": {
-    "marked": "^18.0.5"
   }
 }

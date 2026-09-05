@@ -8,6 +8,7 @@ section: caching-optimization
 guide: caching
 phase: llms
 icon: tune
+order: 5
 ---
 
 # Caching Optimization

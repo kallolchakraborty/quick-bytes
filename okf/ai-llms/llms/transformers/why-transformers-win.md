@@ -8,6 +8,7 @@ section: why-transformers-win
 guide: transformers
 phase: llms
 icon: trending_up
+order: 5
 ---
 
 # Why Transformers Dominate

@@ -8,6 +8,7 @@ section: what-is-caching
 guide: caching
 phase: llms
 icon: memory
+order: 1
 ---
 
 # What is Caching?

@@ -8,6 +8,7 @@ section: prompt-architecture
 guide: prompt
 phase: llms
 icon: account_tree
+order: 4
 ---
 
 # Prompt Architecture (Interactive)

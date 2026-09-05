@@ -8,6 +8,7 @@ section: what-is-prompt
 guide: prompt
 phase: llms
 icon: chat
+order: 1
 ---
 
 # What is a Prompt?

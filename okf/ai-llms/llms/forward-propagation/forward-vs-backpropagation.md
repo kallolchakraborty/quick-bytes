@@ -8,6 +8,7 @@ section: forward-vs-backpropagation
 guide: forward-propagation
 phase: llms
 icon: swap_vert
+order: 4
 ---
 
 # Forward vs Backprop

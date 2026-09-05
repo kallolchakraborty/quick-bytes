@@ -8,6 +8,7 @@ section: ai-landscape-tree
 guide: what-are-llms
 phase: llms
 icon: account_tree
+order: 3
 ---
 
 # AI Model Landscape (Tree View)

@@ -7,6 +7,7 @@ timestamp: 2026-08-26T23:11:16.580Z
 guide: forward-propagation
 phase: llms
 icon: forward
+order: 4
 ---
 
 # Forward Propagation

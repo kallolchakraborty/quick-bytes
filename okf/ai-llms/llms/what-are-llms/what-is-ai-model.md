@@ -8,6 +8,7 @@ section: what-is-ai-model
 guide: what-are-llms
 phase: llms
 icon: psychology
+order: 1
 ---
 
 # What is an AI Model?

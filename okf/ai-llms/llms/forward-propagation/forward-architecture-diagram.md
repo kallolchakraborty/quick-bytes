@@ -8,6 +8,7 @@ section: forward-architecture-diagram
 guide: forward-propagation
 phase: llms
 icon: account_tree
+order: 3
 ---
 
 # Forward Architecture (Interactive)

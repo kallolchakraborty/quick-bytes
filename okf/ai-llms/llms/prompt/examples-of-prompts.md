@@ -8,6 +8,7 @@ section: examples-of-prompts
 guide: prompt
 phase: llms
 icon: apps
+order: 5
 ---
 
 # Examples of Prompts

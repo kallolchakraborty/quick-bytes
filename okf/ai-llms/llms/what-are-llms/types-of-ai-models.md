@@ -8,6 +8,7 @@ section: types-of-ai-models
 guide: what-are-llms
 phase: llms
 icon: category
+order: 2
 ---
 
 # Types of AI Models

@@ -8,6 +8,7 @@ section: prompt-compression-optimization
 guide: prompt
 phase: llms
 icon: compress
+order: 6
 ---
 
 # Compression & Optimization

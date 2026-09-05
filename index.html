@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <meta name="google-site-verification" content="" />
   <title>Quick Bytes — LLM &amp; AI Model Interview Guide</title>
   <meta name="description" content="Quick, interview-ready notes on AI models and Large Language Models: what they are, the types of AI models, types of LLMs, and real-world examples — with an interactive tree view." />
   <meta property="og:title" content="Quick Bytes — LLM &amp; AI Model Interview Guide" />
@@ -102,7 +101,7 @@
           <img src="assets/logo.svg" alt="Quick Bytes" class="w-24 h-24 sm:w-32 sm:h-32 select-none" />
         </div>
         <h1 class="text-3xl sm:text-4xl font-bold mb-2">Quick Bytes</h1>
-        <p class="text-base theme-text-muted mb-6 max-w-xl mx-auto">Interview-prep notes on AI models and LLMs — what they are, their types, and real-world examples. Search a topic or explore the full guide.</p>
+        <p id="hero-subtitle" class="text-base theme-text-muted mb-6 max-w-xl mx-auto">Interview-prep notes on AI models and LLMs — what they are, their types, and real-world examples. Search a topic or explore the full guide.</p>
         <button class="open-search-btn mx-auto w-full max-w-lg border-2 theme-border hover:border-brand-500 theme-bg text-left px-5 py-3.5 rounded-xl shadow-lg shadow-slate-100 dark:shadow-slate-900 flex items-center justify-between text-slate-400 font-medium text-sm transition-all group">
           <div class="flex items-center gap-3">
             <span class="material-symbols-outlined text-slate-400 group-hover:text-brand-500 transition-colors">search</span>
@@ -138,6 +137,10 @@
 
       function renderTopicChips() {
         if (typeof QUICK_BYTES === 'undefined' || !QUICK_BYTES.phases) return;
+        var hero = document.getElementById('hero-subtitle');
+        if (hero && QUICK_BYTES.site && QUICK_BYTES.site.description) {
+          hero.textContent = QUICK_BYTES.site.description;
+        }
         var html = '';
         var i = 0;
         (QUICK_BYTES.phases || []).forEach(function(p) {
@@ -159,11 +162,6 @@
         renderTopicChips();
       }
     })();
-  </script>
-  <script>
-    document.querySelectorAll('img[src*="logo.svg"]').forEach(function(img) {
-      img.src = 'assets/logo.svg?v=' + Date.now();
-    });
   </script>
 </body>
 </html>

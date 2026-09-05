@@ -8,6 +8,7 @@ section: how-it-works
 guide: inference
 phase: llms
 icon: sync
+order: 2
 ---
 
 # How it works?

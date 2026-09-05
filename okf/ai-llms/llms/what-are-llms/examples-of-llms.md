@@ -8,6 +8,7 @@ section: examples-of-llms
 guide: what-are-llms
 phase: llms
 icon: apps
+order: 6
 ---
 
 # Examples of LLMs

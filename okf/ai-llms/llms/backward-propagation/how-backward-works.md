@@ -8,6 +8,7 @@ section: how-backward-works
 guide: backward-propagation
 phase: llms
 icon: sync
+order: 2
 ---
 
 # How Backward Propagation Works

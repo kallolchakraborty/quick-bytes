@@ -8,6 +8,7 @@ section: system-vs-user-prompt
 guide: prompt
 phase: llms
 icon: swap_horiz
+order: 3
 ---
 
 # System vs User Prompt

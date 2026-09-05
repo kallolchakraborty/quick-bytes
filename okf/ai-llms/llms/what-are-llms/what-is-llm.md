@@ -8,6 +8,7 @@ section: what-is-llm
 guide: what-are-llms
 phase: llms
 icon: chat
+order: 4
 ---
 
 # What is an LLM?

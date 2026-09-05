@@ -8,6 +8,7 @@ section: caching-architecture
 guide: caching
 phase: llms
 icon: account_tree
+order: 3
 ---
 
 # Caching Architecture (Interactive)

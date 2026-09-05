@@ -8,6 +8,7 @@ section: types-of-llms
 guide: what-are-llms
 phase: llms
 icon: schema
+order: 5
 ---
 
 # Types of LLMs

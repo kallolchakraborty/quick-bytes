@@ -8,6 +8,7 @@ section: caching-summary
 guide: caching
 phase: llms
 icon: summarize
+order: 6
 ---
 
 # Caching Summary

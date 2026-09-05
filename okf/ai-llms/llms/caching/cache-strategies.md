@@ -8,6 +8,7 @@ section: cache-strategies
 guide: caching
 phase: llms
 icon: layers_clear
+order: 4
 ---
 
 # Caching Strategies

@@ -8,6 +8,7 @@ section: how-forward-works
 guide: forward-propagation
 phase: llms
 icon: sync
+order: 2
 ---
 
 # How Forward Propagation Works

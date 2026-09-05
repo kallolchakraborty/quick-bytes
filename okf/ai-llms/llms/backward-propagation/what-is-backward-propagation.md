@@ -8,6 +8,7 @@ section: what-is-backward-propagation
 guide: backward-propagation
 phase: llms
 icon: arrow_back
+order: 1
 ---
 
 # What is Backward Propagation?

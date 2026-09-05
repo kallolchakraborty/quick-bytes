@@ -7,6 +7,7 @@ timestamp: 2026-08-26T23:11:16.578Z
 guide: prompt
 phase: llms
 icon: edit_note
+order: 3
 ---
 
 # Prompt

@@ -8,6 +8,7 @@ section: transformer-architecture-diagram
 guide: transformers
 phase: llms
 icon: account_tree
+order: 3
 ---
 
 # Transformer Architecture (Interactive)

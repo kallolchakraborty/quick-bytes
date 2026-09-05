@@ -8,6 +8,7 @@ section: kv-cache-overview
 guide: caching
 phase: llms
 icon: layers
+order: 2
 ---
 
 # KV Cache Overview

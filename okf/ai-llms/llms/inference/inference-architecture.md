@@ -8,6 +8,7 @@ section: inference-architecture
 guide: inference
 phase: llms
 icon: account_tree
+order: 3
 ---
 
 # Architecture (Interactive Pipeline)

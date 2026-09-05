@@ -7,6 +7,7 @@ timestamp: 2026-08-26T23:11:16.577Z
 guide: inference
 phase: llms
 icon: bolt
+order: 2
 ---
 
 # Inference

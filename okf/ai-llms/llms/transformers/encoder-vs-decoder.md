@@ -8,6 +8,7 @@ section: encoder-vs-decoder
 guide: transformers
 phase: llms
 icon: compare
+order: 4
 ---
 
 # Encoder vs Decoder Architectures

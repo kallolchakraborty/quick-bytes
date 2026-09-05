@@ -263,6 +263,27 @@ function loadBookmarks() {
   try { return JSON.parse(localStorage.getItem('qb-bookmarks') || '[]'); } catch(e) { return []; }
 }
 
+function readProgress() {
+  try { return JSON.parse(localStorage.getItem('qb-progress') || '{}'); } catch(e) { return {}; }
+}
+
+function renderProgressBar(progressData) {
+  var total = 0;
+  var completed = 0;
+  var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
+  phases.forEach(function(p) {
+    (p.guides || []).forEach(function(g) {
+      total++;
+      if (progressData[g.id]) completed++;
+    });
+  });
+  var pct = total ? Math.round((completed / total) * 100) : 0;
+  var bar = document.getElementById('sidebar-progress-bar');
+  var text = document.getElementById('sidebar-progress-text');
+  if (bar) bar.style.width = pct + '%';
+  if (text) text.textContent = completed + '/' + total + ' · ' + pct + '%';
+}
+
 function updateBookmarksSidebar() {
   var container = document.getElementById('sidebar-bookmarks');
   if (!container) return;
@@ -311,33 +332,9 @@ function updateBookmarksSidebar() {
 function initDocs() {
   var currentGuide = null;
   var sidebarLinks = document.querySelectorAll('.sidebar-link');
-  var progressData = loadProgress();
-
-  function loadProgress() {
-    try {
-      return JSON.parse(localStorage.getItem('qb-progress') || '{}');
-    } catch(e) { return {}; }
-  }
-
-  function saveProgress() {
-    localStorage.setItem('qb-progress', JSON.stringify(progressData));
-  }
 
   function updateProgress() {
-    var total = 0;
-    var completed = 0;
-    var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
-    phases.forEach(function(p) {
-      (p.guides || []).forEach(function(g) {
-        total++;
-        if (progressData[g.id]) completed++;
-      });
-    });
-    var pct = total ? Math.round((completed / total) * 100) : 0;
-    var bar = document.getElementById('sidebar-progress-bar');
-    var text = document.getElementById('sidebar-progress-text');
-    if (bar) bar.style.width = pct + '%';
-    if (text) text.textContent = completed + '/' + total + ' · ' + pct + '%';
+    renderProgressBar(readProgress());
   }
 
   function loadGuide(guideId) {
@@ -441,7 +438,7 @@ function initDocs() {
 
     // Progress checkbox
     html += '<div class="mt-8 pt-6 border-t theme-border flex items-center gap-3">';
-    html += '<input type="checkbox" id="progress-check" ' + (progressData[found.guide.id] ? 'checked' : '') +
+    html += '<input type="checkbox" id="progress-check" ' + (readProgress()[found.guide.id] ? 'checked' : '') +
       ' class="w-4 h-4 rounded border-2 theme-border text-brand-500 focus:ring-brand-500 cursor-pointer">';
     html += '<label for="progress-check" class="text-sm theme-text-muted cursor-pointer select-none">Mark as completed</label>';
     html += '</div>';
@@ -886,34 +883,12 @@ function toggleBookmark(guideId) {
 }
 
 function toggleProgress(guideId) {
-  var progressData = JSON.parse(localStorage.getItem('qb-progress') || '{}');
+  var progressData = readProgress();
   if (progressData[guideId]) {
     delete progressData[guideId];
   } else {
     progressData[guideId] = true;
   }
   localStorage.setItem('qb-progress', JSON.stringify(progressData));
-  var total = 0;
-  var completed = 0;
-  var phases = QUICK_BYTES && QUICK_BYTES.phases ? QUICK_BYTES.phases : [];
-  phases.forEach(function(p) {
-    (p.guides || []).forEach(function(g) {
-      total++;
-      if (progressData[g.id]) completed++;
-    });
-  });
-  var pct = total ? Math.round((completed / total) * 100) : 0;
-  var bar = document.getElementById('sidebar-progress-bar');
-  var text = document.getElementById('sidebar-progress-text');
-  if (bar) bar.style.width = pct + '%';
-  if (text) text.textContent = completed + '/' + total + ' · ' + pct + '%';
-}
-
-// Close search function for inline onclick (kept for backward compat)
-function closeSearch() {
-  var modal = document.getElementById('search-modal');
-  var backdrop = document.getElementById('search-backdrop');
-  if (modal) modal.classList.add('hidden');
-  if (backdrop) backdrop.classList.add('hidden');
-  document.body.style.overflow = '';
+  renderProgressBar(progressData);
 }

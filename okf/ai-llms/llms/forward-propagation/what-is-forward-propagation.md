@@ -8,6 +8,7 @@ section: what-is-forward-propagation
 guide: forward-propagation
 phase: llms
 icon: forward
+order: 1
 ---
 
 # What is Forward Propagation?

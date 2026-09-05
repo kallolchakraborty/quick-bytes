@@ -8,6 +8,7 @@ section: what-is-inference
 guide: inference
 phase: llms
 icon: bolt
+order: 1
 ---
 
 # What is an Inference?

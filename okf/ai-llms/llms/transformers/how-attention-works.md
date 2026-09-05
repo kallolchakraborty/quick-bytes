@@ -8,6 +8,7 @@ section: how-attention-works
 guide: transformers
 phase: llms
 icon: sync
+order: 2
 ---
 
 # How Self-Attention Works

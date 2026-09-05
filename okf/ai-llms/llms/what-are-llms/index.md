@@ -7,6 +7,7 @@ timestamp: 2026-08-26T23:11:16.575Z
 guide: what-are-llms
 phase: llms
 icon: auto_awesome
+order: 1
 ---
 
 # What is LLMs, Types & Examples

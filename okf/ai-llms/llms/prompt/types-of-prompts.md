@@ -8,6 +8,7 @@ section: types-of-prompts
 guide: prompt
 phase: llms
 icon: category
+order: 2
 ---
 
 # Types of Prompts

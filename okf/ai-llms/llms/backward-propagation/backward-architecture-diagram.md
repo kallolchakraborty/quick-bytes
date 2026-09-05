@@ -8,6 +8,7 @@ section: backward-architecture-diagram
 guide: backward-propagation
 phase: llms
 icon: account_tree
+order: 3
 ---
 
 # Backward Architecture (Interactive)
