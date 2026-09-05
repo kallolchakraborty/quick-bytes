@@ -13,7 +13,7 @@ Quick Bytes is a static documentation site. Content lives in **OKF Markdown file
 **Data flow:**
 
 ```
-okf/ai-llms/llms/<guide>/<section>.md   (source of truth)
+okf/llms/<guide>/<section>.md   (source of truth)
         │  npm run build → scripts/build-manifest.js
         ▼
 okf/index.json                           (structure only — no content bodies)
@@ -62,7 +62,7 @@ QUICK_BYTES global → js/app.js renders sidebar, search, diagrams
 ├── .nojekyll                   # Disables GitHub Pages Jekyll processing
 ├── okf/                        # OKF content — the source of truth
 │   ├── index.json              # Generated structure manifest (do not edit)
-│   └── ai-llms/llms/<guide>/   # Phase + guide index.md + section .md files
+│   └── llms/<guide>/           # Phase + guide index.md + section .md files
 ├── js/
 │   ├── okf-loader.js           # Fetches manifest + section .md files, builds QUICK_BYTES
 │   ├── app.js                  # Rendering, search, bookmarks, progress, diagrams
@@ -84,7 +84,7 @@ QUICK_BYTES global → js/app.js renders sidebar, search, diagrams
 
 Content is a hierarchy of three document types, each a Markdown file with YAML frontmatter:
 
-**Phase** — `okf/ai-llms/llms/index.md`
+**Phase** — `okf/llms/index.md`
 ```yaml
 ---
 type: Phase
@@ -96,7 +96,7 @@ order: 1
 ---
 ```
 
-**Guide** — `okf/ai-llms/llms/<guide>/index.md`
+**Guide** — `okf/llms/<guide>/index.md`
 ```yaml
 ---
 type: Guide
@@ -109,7 +109,7 @@ order: 7
 ---
 ```
 
-**Section** — `okf/ai-llms/llms/<guide>/<section>.md`
+**Section** — `okf/llms/<guide>/<section>.md`
 ```yaml
 ---
 type: Section
@@ -146,7 +146,7 @@ The body is Markdown. Two special headings map JSON to interactive diagrams:
 
 ## Adding Content
 
-1. Add a section file `okf/ai-llms/llms/<guide>/<new-section>.md` with the frontmatter above (new guide needs an `index.md` too).
+1. Add a section file `okf/llms/<guide>/<new-section>.md` with the frontmatter above (new guide needs an `index.md` too).
 2. Set `order` to place it correctly.
 3. Run `npm run manifest` (or `npm run build`) to regenerate `okf/index.json` and commit both.
 4. Verify: `node --check js/okf-loader.js js/app.js` and load the site locally.

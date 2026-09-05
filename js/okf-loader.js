@@ -86,7 +86,7 @@
       .then(apply)
       .catch(function(err) {
         console.error('OKF loader failed:', err.message);
-        document.documentElement.innerHTML = '<body style="font-family:sans-serif;padding:2rem;background:#fef2f2;color:#991b1b"><h1>Failed to load content</h1><p>Could not load <code>okf/index.json</code>. Please refresh the page.</p></body>';
+        document.documentElement.innerHTML = '<body style="font-family:sans-serif;padding:2rem;background:#fef2f2;color:#991b1b"><h1>Failed to load content</h1><p>Could not load <code>okf/index.json</code>. Please refresh the page. If the problem persists after a deploy, try a hard refresh (Ctrl/Cmd+Shift+R).</p></body>';
       });
   }
 

@@ -27,42 +27,42 @@
               "title": "What is an AI Model?",
               "icon": "psychology",
               "order": 1,
-              "file": "okf/ai-llms/llms/what-are-llms/what-is-ai-model.md"
+              "file": "okf/llms/what-are-llms/what-is-ai-model.md"
             },
             {
               "id": "types-of-ai-models",
               "title": "Types of AI Models",
               "icon": "category",
               "order": 2,
-              "file": "okf/ai-llms/llms/what-are-llms/types-of-ai-models.md"
+              "file": "okf/llms/what-are-llms/types-of-ai-models.md"
             },
             {
               "id": "ai-landscape-tree",
               "title": "AI Model Landscape (Tree View)",
               "icon": "account_tree",
               "order": 3,
-              "file": "okf/ai-llms/llms/what-are-llms/ai-landscape-tree.md"
+              "file": "okf/llms/what-are-llms/ai-landscape-tree.md"
             },
             {
               "id": "what-is-llm",
               "title": "What is an LLM?",
               "icon": "chat",
               "order": 4,
-              "file": "okf/ai-llms/llms/what-are-llms/what-is-llm.md"
+              "file": "okf/llms/what-are-llms/what-is-llm.md"
             },
             {
               "id": "types-of-llms",
               "title": "Types of LLMs",
               "icon": "schema",
               "order": 5,
-              "file": "okf/ai-llms/llms/what-are-llms/types-of-llms.md"
+              "file": "okf/llms/what-are-llms/types-of-llms.md"
             },
             {
               "id": "examples-of-llms",
               "title": "Examples of LLMs",
               "icon": "apps",
               "order": 6,
-              "file": "okf/ai-llms/llms/what-are-llms/examples-of-llms.md"
+              "file": "okf/llms/what-are-llms/examples-of-llms.md"
             }
           ]
         },
@@ -78,21 +78,21 @@
               "title": "What is an Inference?",
               "icon": "bolt",
               "order": 1,
-              "file": "okf/ai-llms/llms/inference/what-is-inference.md"
+              "file": "okf/llms/inference/what-is-inference.md"
             },
             {
               "id": "how-it-works",
               "title": "How it works?",
               "icon": "sync",
               "order": 2,
-              "file": "okf/ai-llms/llms/inference/how-it-works.md"
+              "file": "okf/llms/inference/how-it-works.md"
             },
             {
               "id": "inference-architecture",
               "title": "Architecture (Interactive Pipeline)",
               "icon": "account_tree",
               "order": 3,
-              "file": "okf/ai-llms/llms/inference/inference-architecture.md"
+              "file": "okf/llms/inference/inference-architecture.md"
             }
           ]
         },
@@ -108,42 +108,42 @@
               "title": "What is a Prompt?",
               "icon": "chat",
               "order": 1,
-              "file": "okf/ai-llms/llms/prompt/what-is-prompt.md"
+              "file": "okf/llms/prompt/what-is-prompt.md"
             },
             {
               "id": "types-of-prompts",
               "title": "Types of Prompts",
               "icon": "category",
               "order": 2,
-              "file": "okf/ai-llms/llms/prompt/types-of-prompts.md"
+              "file": "okf/llms/prompt/types-of-prompts.md"
             },
             {
               "id": "system-vs-user-prompt",
               "title": "System vs User Prompt",
               "icon": "swap_horiz",
               "order": 3,
-              "file": "okf/ai-llms/llms/prompt/system-vs-user-prompt.md"
+              "file": "okf/llms/prompt/system-vs-user-prompt.md"
             },
             {
               "id": "prompt-architecture",
               "title": "Prompt Architecture (Interactive)",
               "icon": "account_tree",
               "order": 4,
-              "file": "okf/ai-llms/llms/prompt/prompt-architecture.md"
+              "file": "okf/llms/prompt/prompt-architecture.md"
             },
             {
               "id": "examples-of-prompts",
               "title": "Examples of Prompts",
               "icon": "apps",
               "order": 5,
-              "file": "okf/ai-llms/llms/prompt/examples-of-prompts.md"
+              "file": "okf/llms/prompt/examples-of-prompts.md"
             },
             {
               "id": "prompt-compression-optimization",
               "title": "Compression & Optimization",
               "icon": "compress",
               "order": 6,
-              "file": "okf/ai-llms/llms/prompt/prompt-compression-optimization.md"
+              "file": "okf/llms/prompt/prompt-compression-optimization.md"
             }
           ]
         },
@@ -159,28 +159,28 @@
               "title": "What is Forward Propagation?",
               "icon": "forward",
               "order": 1,
-              "file": "okf/ai-llms/llms/forward-propagation/what-is-forward-propagation.md"
+              "file": "okf/llms/forward-propagation/what-is-forward-propagation.md"
             },
             {
               "id": "how-forward-works",
               "title": "How Forward Propagation Works",
               "icon": "sync",
               "order": 2,
-              "file": "okf/ai-llms/llms/forward-propagation/how-forward-works.md"
+              "file": "okf/llms/forward-propagation/how-forward-works.md"
             },
             {
               "id": "forward-architecture-diagram",
               "title": "Forward Architecture (Interactive)",
               "icon": "account_tree",
               "order": 3,
-              "file": "okf/ai-llms/llms/forward-propagation/forward-architecture-diagram.md"
+              "file": "okf/llms/forward-propagation/forward-architecture-diagram.md"
             },
             {
               "id": "forward-vs-backpropagation",
               "title": "Forward vs Backprop",
               "icon": "swap_vert",
               "order": 4,
-              "file": "okf/ai-llms/llms/forward-propagation/forward-vs-backpropagation.md"
+              "file": "okf/llms/forward-propagation/forward-vs-backpropagation.md"
             }
           ]
         },
@@ -196,21 +196,21 @@
               "title": "What is Backward Propagation?",
               "icon": "arrow_back",
               "order": 1,
-              "file": "okf/ai-llms/llms/backward-propagation/what-is-backward-propagation.md"
+              "file": "okf/llms/backward-propagation/what-is-backward-propagation.md"
             },
             {
               "id": "how-backward-works",
               "title": "How Backward Propagation Works",
               "icon": "sync",
               "order": 2,
-              "file": "okf/ai-llms/llms/backward-propagation/how-backward-works.md"
+              "file": "okf/llms/backward-propagation/how-backward-works.md"
             },
             {
               "id": "backward-architecture-diagram",
               "title": "Backward Architecture (Interactive)",
               "icon": "account_tree",
               "order": 3,
-              "file": "okf/ai-llms/llms/backward-propagation/backward-architecture-diagram.md"
+              "file": "okf/llms/backward-propagation/backward-architecture-diagram.md"
             }
           ]
         },
@@ -226,35 +226,35 @@
               "title": "What is a Transformer?",
               "icon": "account_tree",
               "order": 1,
-              "file": "okf/ai-llms/llms/transformers/what-is-transformer.md"
+              "file": "okf/llms/transformers/what-is-transformer.md"
             },
             {
               "id": "how-attention-works",
               "title": "How Self-Attention Works",
               "icon": "sync",
               "order": 2,
-              "file": "okf/ai-llms/llms/transformers/how-attention-works.md"
+              "file": "okf/llms/transformers/how-attention-works.md"
             },
             {
               "id": "transformer-architecture-diagram",
               "title": "Transformer Architecture (Interactive)",
               "icon": "account_tree",
               "order": 3,
-              "file": "okf/ai-llms/llms/transformers/transformer-architecture-diagram.md"
+              "file": "okf/llms/transformers/transformer-architecture-diagram.md"
             },
             {
               "id": "encoder-vs-decoder",
               "title": "Encoder vs Decoder Architectures",
               "icon": "compare",
               "order": 4,
-              "file": "okf/ai-llms/llms/transformers/encoder-vs-decoder.md"
+              "file": "okf/llms/transformers/encoder-vs-decoder.md"
             },
             {
               "id": "why-transformers-win",
               "title": "Why Transformers Dominate",
               "icon": "trending_up",
               "order": 5,
-              "file": "okf/ai-llms/llms/transformers/why-transformers-win.md"
+              "file": "okf/llms/transformers/why-transformers-win.md"
             }
           ]
         },
@@ -270,42 +270,42 @@
               "title": "What is Caching?",
               "icon": "memory",
               "order": 1,
-              "file": "okf/ai-llms/llms/caching/what-is-caching.md"
+              "file": "okf/llms/caching/what-is-caching.md"
             },
             {
               "id": "kv-cache-overview",
               "title": "KV Cache Overview",
               "icon": "layers",
               "order": 2,
-              "file": "okf/ai-llms/llms/caching/kv-cache-overview.md"
+              "file": "okf/llms/caching/kv-cache-overview.md"
             },
             {
               "id": "caching-architecture",
               "title": "Caching Architecture (Interactive)",
               "icon": "account_tree",
               "order": 3,
-              "file": "okf/ai-llms/llms/caching/caching-architecture.md"
+              "file": "okf/llms/caching/caching-architecture.md"
             },
             {
               "id": "cache-strategies",
               "title": "Caching Strategies",
               "icon": "layers_clear",
               "order": 4,
-              "file": "okf/ai-llms/llms/caching/cache-strategies.md"
+              "file": "okf/llms/caching/cache-strategies.md"
             },
             {
               "id": "caching-optimization",
               "title": "Caching Optimization",
               "icon": "tune",
               "order": 5,
-              "file": "okf/ai-llms/llms/caching/caching-optimization.md"
+              "file": "okf/llms/caching/caching-optimization.md"
             },
             {
               "id": "caching-summary",
               "title": "Caching Summary",
               "icon": "summarize",
               "order": 6,
-              "file": "okf/ai-llms/llms/caching/caching-summary.md"
+              "file": "okf/llms/caching/caching-summary.md"
             }
           ]
         }
